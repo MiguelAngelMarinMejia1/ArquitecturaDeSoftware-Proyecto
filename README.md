@@ -43,17 +43,9 @@ reserva/
 
   * reserva/
 
-## Funcionalidad principal
+## Diagrama de clases
 
-El flujo de creación de una reserva es el siguiente:
-
-1. El usuario completa el formulario.
-2. La vista recibe el request.
-3. La vista delega el proceso a `ReservaService`.
-4. `ReservaService` utiliza `ReservaBuilder` para validar y construir la reserva.
-5. La reserva se almacena en la base de datos.
-6. `NotificadorFactory` selecciona el mecanismo de notificación.
-7. Se envía la confirmación de la reserva.
+<img width="831" height="1600" alt="image" src="https://github.com/user-attachments/assets/ac772ebb-6a25-4bf4-8fb8-18028dfd9107" />
 
 ## Objetivos académicos
 

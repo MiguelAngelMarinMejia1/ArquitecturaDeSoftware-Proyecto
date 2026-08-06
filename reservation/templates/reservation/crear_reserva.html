@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear reserva</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .container { max-width: 720px; margin: 40px auto; background: white; padding: 24px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        h1 { margin-bottom: 16px; font-size: 28px; }
+        .alert { background: #ffe6e6; border: 1px solid #ffcccc; color: #a43d3d; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        textarea { min-height: 100px; resize: vertical; }
+        button { background: #0070f3; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #005bc1; }
+        .note { font-size: 14px; color: #555; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crear reserva</h1>
+
+        <p class="note">
+            Esta p�gina env�a los datos al servicio de reserva que usa el patr�n builder
+            para construir la reserva, la factor�a para seleccionar el notificador y
+            el m�dulo de notificaciones para confirmar la reserva.
+        </p>
+
+        {% if error %}
+            <div class="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <label for="habitacion">Habitaci�n</label>
+            <select id="habitacion" name="habitacion" required>
+                <option value="">Seleccione una habitaci�n</option>
+                {% for habitacion in habitaciones %}
+                    <option value="{{ habitacion.pk }}" {% if datos.habitacion == habitacion.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ habitacion }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="fecha_entrada">Fecha de entrada</label>
+            <input
+                id="fecha_entrada"
+                name="fecha_entrada"
+                type="date"
+                value="{{ datos.fecha_entrada|default_if_none:'' }}"
+                required
+            />
+
+            <label for="fecha_salida">Fecha de salida</label>
+            <input
+                id="fecha_salida"
+                name="fecha_salida"
+                type="date"
+                value="{{ datos.fecha_salida|default_if_none:'' }}"
+                required
+            />
+
+            <label for="num_huespedes">N�mero de hu�spedes</label>
+            <input
+                id="num_huespedes"
+                name="num_huespedes"
+                type="number"
+                min="1"
+                value="{{ datos.num_huespedes|default_if_none:'1' }}"
+                required
+            />
+
+            <label for="solicitudes_especiales">Solicitudes especiales</label>
+            <textarea id="solicitudes_especiales" name="solicitudes_especiales">{{ datos.solicitudes_especiales|default_if_none:'' }}</textarea>
+
+            <button type="submit">Crear reserva</button>
+        </form>
+    </div>
+</body>
+</html>

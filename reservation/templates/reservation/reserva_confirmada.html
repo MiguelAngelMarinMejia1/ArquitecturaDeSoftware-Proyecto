@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reserva confirmada</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .container { max-width: 720px; margin: 40px auto; background: white; padding: 24px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        h1 { margin-bottom: 16px; font-size: 28px; }
+        p { line-height: 1.6; margin-bottom: 12px; }
+        .details { background: #f9f9ff; border: 1px solid #d8d8ff; padding: 16px; border-radius: 8px; }
+        .details strong { display: inline-block; width: 180px; }
+        a { color: #0070f3; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reserva confirmada</h1>
+        <p>Tu reserva se ha creado correctamente. Esta página muestra los datos guardados en el modelo y confirmados por el servicio.</p>
+
+        <div class="details">
+            <p><strong>Reserva:</strong> {{ reserva.idReserva }}</p>
+            <p><strong>Usuario:</strong> {{ reserva.usuario }}</p>
+            <p><strong>Habitación:</strong> {{ reserva.habitacion }}</p>
+            <p><strong>Fecha entrada:</strong> {{ reserva.fechaEntrada }}</p>
+            <p><strong>Fecha salida:</strong> {{ reserva.fechaSalida }}</p>
+            <p><strong>Huéspedes:</strong> {{ reserva.numHuespedes }}</p>
+            <p><strong>Estado:</strong> {{ reserva.estado }}</p>
+        </div>
+
+        <p><a href="{% url 'reservation:crear_reserva' %}">Crear otra reserva</a></p>
+    </div>
+</body>
+</html>
