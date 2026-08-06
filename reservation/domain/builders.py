@@ -1,14 +1,13 @@
 # reservation/domain/builders.py
 """Builder for the Reservation entity.
 
-Responsibility: assemble a Reservation step by step (Fluent Interface) and
+Responsibility: assemble a Reserva step by step (Fluent Interface) and
 guarantee it is valid BEFORE it touches the database. This builder does NOT
 calculate prices or handle state transitions (confirm/cancel) — those belong
-to PricingCalculator and ReservationService respectively, to keep a single
-responsibility here (SRP).
+to ReservaService.
 """
 
-from reservation.models import Reservation
+from reservation.models import Habitacion, Reserva
 from reservation.domain.exceptions import (
     IncompleteReservationDataError,
     InvalidDateRangeError,
@@ -17,119 +16,101 @@ from reservation.domain.exceptions import (
 )
 
 
-class ReservationBuilder:
+class ReservaBuilder:
     """Fluent builder that accumulates reservation data and validates it
-    before persisting. Usage:
+    before persisting."""
 
-        reservation = (
-            ReservationBuilder()
-            .for_customer(customer)
-            .for_room(room)
-            .with_dates(check_in, check_out)
-            .with_guests(4)
-            .build()
-        )
-    """
+    _MAX_HUESPEDES_POR_TIPO = {
+        Habitacion.Tipo.SENCILLA: 1,
+        Habitacion.Tipo.DOBLE: 2,
+        Habitacion.Tipo.SUITE: 4,
+    }
 
     def __init__(self):
-        # Internal state accumulated through the fluent chain.
-        # Nothing is validated or saved until build() is called.
-        self._customer = None
-        self._room = None
-        self._check_in_date = None
-        self._check_out_date = None
-        self._num_guests = None
+        self._usuario = None
+        self._habitacion = None
+        self._fecha_entrada = None
+        self._fecha_salida = None
+        self._num_huespedes = None
+        self._solicitudes_especiales = ""
 
-    def for_customer(self, customer):
-        """Sets the customer making the reservation. Returns self to allow chaining."""
-        self._customer = customer
+    def para_usuario(self, usuario):
+        self._usuario = usuario
         return self
 
-    def for_room(self, room):
-        """Sets the room being reserved. Returns self to allow chaining."""
-        self._room = room
+    def para_habitacion(self, habitacion):
+        self._habitacion = habitacion
         return self
 
-    def with_dates(self, check_in_date, check_out_date):
-        """Sets the requested date range. Returns self to allow chaining."""
-        self._check_in_date = check_in_date
-        self._check_out_date = check_out_date
+    def con_fechas(self, fecha_entrada, fecha_salida):
+        self._fecha_entrada = fecha_entrada
+        self._fecha_salida = fecha_salida
         return self
 
-    def with_guests(self, num_guests):
-        """Sets the number of guests for the reservation. Returns self to allow chaining."""
-        self._num_guests = num_guests
+    def con_huespedes(self, num_huespedes):
+        self._num_huespedes = num_huespedes
         return self
 
-    def build(self) -> Reservation:
-        """Validates all accumulated data and, if everything is correct,
-        creates and persists the Reservation. Raises a specific domain
-        exception on the first validation failure found — the Reservation
-        is never partially saved."""
+    def con_solicitudes(self, solicitudes_especiales):
+        self._solicitudes_especiales = solicitudes_especiales or ""
+        return self
 
+    def build(self) -> Reserva:
         self._validate_completeness()
         self._validate_date_range()
         self._validate_guest_capacity()
         self._validate_room_availability()
 
-        # All checks passed: it's now safe to persist.
-        reservation = Reservation.objects.create(
-            customer=self._customer,
-            room=self._room,
-            check_in_date=self._check_in_date,
-            check_out_date=self._check_out_date,
-            num_guests=self._num_guests,
-            status=Reservation.Status.PENDING,
+        reserva = Reserva.objects.create(
+            usuario=self._usuario,
+            habitacion=self._habitacion,
+            fechaEntrada=self._fecha_entrada,
+            fechaSalida=self._fecha_salida,
+            numHuespedes=self._num_huespedes,
+            solicitudesEspeciales=self._solicitudes_especiales,
         )
-        return reservation
+        return reserva
 
     # --- Internal validation steps -----------------------------------
 
     def _validate_completeness(self):
-        """Ensures every required field was set before attempting to build."""
         missing = [
             name for name, value in [
-                ("customer", self._customer),
-                ("room", self._room),
-                ("check_in_date", self._check_in_date),
-                ("check_out_date", self._check_out_date),
-                ("num_guests", self._num_guests),
+                ("usuario", self._usuario),
+                ("habitacion", self._habitacion),
+                ("fecha_entrada", self._fecha_entrada),
+                ("fecha_salida", self._fecha_salida),
+                ("num_huespedes", self._num_huespedes),
             ] if value is None
         ]
         if missing:
             raise IncompleteReservationDataError(
-                f"Missing required reservation data: {', '.join(missing)}"
+                f"Faltan datos requeridos de reserva: {', '.join(missing)}"
             )
 
     def _validate_date_range(self):
-        """Ensures check-in happens strictly before check-out."""
-        if self._check_in_date >= self._check_out_date:
+        if self._fecha_entrada >= self._fecha_salida:
             raise InvalidDateRangeError(
-                "check_in_date must be strictly before check_out_date."
+                "fecha_entrada debe ser anterior a fecha_salida."
             )
 
     def _validate_guest_capacity(self):
-        """Ensures the number of guests fits the room type's max capacity."""
-        max_capacity = self._room.room_type.max_capacity
-        if self._num_guests > max_capacity:
+        max_capacity = self._MAX_HUESPEDES_POR_TIPO.get(
+            self._habitacion.tipo,
+            self._num_huespedes,
+        )
+        if self._num_huespedes > max_capacity:
             raise GuestCapacityExceededError(
-                f"Room type '{self._room.room_type.name}' allows a maximum "
-                f"of {max_capacity} guests, but {self._num_guests} were requested."
+                f"La habitación '{self._habitacion}' admite hasta {max_capacity} "
+                f"huespedes, pero se solicitaron {self._num_huespedes}."
             )
 
     def _validate_room_availability(self):
-        """Ensures the room has no other reservation overlapping the
-        requested date range. Overlap rule: two ranges [a_in, a_out) and
-        [b_in, b_out) overlap if a_in < b_out AND b_in < a_out."""
-        overlapping = Reservation.objects.filter(
-            room=self._room,
-            status__in=[Reservation.Status.PENDING, Reservation.Status.CONFIRMED],
-            check_in_date__lt=self._check_out_date,
-            check_out_date__gt=self._check_in_date,
-        ).exists()
-
-        if overlapping:
+        if not self._habitacion.esta_disponible(
+            self._fecha_entrada,
+            self._fecha_salida,
+        ):
             raise RoomNotAvailableError(
-                f"Room {self._room.number} is not available between "
-                f"{self._check_in_date} and {self._check_out_date}."
+                f"La habitación {self._habitacion.numero} no está disponible "
+                f"entre {self._fecha_entrada} y {self._fecha_salida}."
             )
