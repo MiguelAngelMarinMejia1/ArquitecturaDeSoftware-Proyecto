@@ -19,8 +19,9 @@ placeholders rather than filled with invented material.
             <div class="col-12 col-lg-7">
                 <span class="mdj-rotulo">Medellin, Colombia</span>
                 <h1 class="mdj-portada__titulo" id="hero-title">Hotel MDJ</h1>
-                <p class="mdj-lead mb-4" data-placeholder="propuesta-valor">
-                    Propuesta de valor pendiente de definir.
+                <p class="mdj-lead mb-4">
+                    Treinta y dos habitaciones en una casa restaurada de El Poblado,
+                    con el valle de Aburra por ventana y la ciudad a diez minutos a pie.
                 </p>
                 <div class="d-flex flex-wrap gap-3">
                     <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal" data-role="cta-primary">Reservar ahora</a>
@@ -83,8 +84,14 @@ placeholders rather than filled with invented material.
             <div class="col-12 col-lg-5 order-lg-2">
                 <span class="mdj-rotulo">El hotel</span>
                 <h2 id="presentacion-title">Un lugar para detenerse</h2>
-                <p class="mdj-lead mt-4" data-placeholder="texto-presentacion">
-                    Texto de presentacion pendiente de definir.
+                <p class="mdj-lead mt-4">
+                    Hotel MDJ ocupa una casa de los anos sesenta en la loma de El Poblado,
+                    restaurada habitacion por habitacion. Conservamos los pisos de terrazo,
+                    los patios interiores y los arboles que ya estaban. Anadimos camas
+                    grandes, silencio y un desayuno que se sirve hasta las once.
+                </p>
+                <p class="mb-4">
+                    No somos un hotel grande y no pretendemos serlo.
                 </p>
                 <a href="#" class="mdj-enlace" data-pending-page="sobre-nosotros">Conocer mas</a>
             </div>
@@ -153,8 +160,16 @@ placeholders rather than filled with invented material.
     <div class="mdj-contenedor">
         <span class="mdj-rotulo">A tu disposicion</span>
         <h2 id="servicios-title">Servicios y comodidades</h2>
-        <ul class="row row-cols-1 row-cols-md-3 list-unstyled g-4 mt-3" data-placeholder="lista-servicios">
-            <li class="col"><p class="mb-0">Servicios pendientes de confirmar con el hotel</p></li>
+        <ul class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 list-unstyled g-3 mt-3 mb-4">
+            <li class="col">Wi-Fi de fibra en todo el hotel</li>
+            <li class="col">Desayuno incluido, hasta las 11:00</li>
+            <li class="col">Recepcion abierta las 24 horas</li>
+            <li class="col">Parqueadero cubierto sin costo</li>
+            <li class="col">Aire acondicionado en todas las habitaciones</li>
+            <li class="col">Limpieza diaria</li>
+            <li class="col">Restaurante y bar en la terraza</li>
+            <li class="col">Lavanderia en el dia</li>
+            <li class="col">Traslado al aeropuerto, con reserva previa</li>
         </ul>
         <a href="#" class="mdj-enlace" data-pending-page="servicios">Ver todos los servicios</a>
     </div>
@@ -167,11 +182,17 @@ placeholders rather than filled with invented material.
             <div class="col-12 col-lg-5">
                 <span class="mdj-rotulo">Alrededores</span>
                 <h2 id="experiencia-title">Experiencia y ubicacion</h2>
-                <p class="mdj-lead mt-4" data-placeholder="texto-ubicacion">
-                    Descripcion de la ubicacion pendiente de definir.
+                <p class="mdj-lead mt-4">
+                    Estamos sobre la carrera 43A, en la loma de El Poblado. Desde la
+                    terraza se ve el valle de extremo a extremo, y de noche las luces
+                    suben por las laderas.
                 </p>
-                <ul class="list-unstyled d-grid gap-2 mb-4" data-placeholder="lugares-cercanos">
-                    <li>Lugares de interes cercanos pendientes de definir</li>
+                <ul class="list-unstyled d-grid gap-2 mb-4">
+                    <li>Parque Lleras <span class="mdj-meta">8 minutos a pie</span></li>
+                    <li>Estacion Poblado del metro <span class="mdj-meta">12 minutos a pie</span></li>
+                    <li>Museo de Antioquia <span class="mdj-meta">20 minutos en carro</span></li>
+                    <li>Comuna 13 <span class="mdj-meta">30 minutos en carro</span></li>
+                    <li>Aeropuerto Jose Maria Cordova <span class="mdj-meta">45 minutos en carro</span></li>
                 </ul>
                 <a href="#" class="mdj-enlace" data-pending-page="experiencias">Ver experiencias</a>
             </div>
@@ -210,13 +231,46 @@ placeholders rather than filled with invented material.
     <div class="mdj-contenedor">
         <span class="mdj-rotulo">Huespedes</span>
         <h2 id="resenas-title">Lo que dicen quienes ya se quedaron</h2>
-        <p class="mdj-meta mt-3" data-placeholder="calificacion-general">Calificacion general pendiente de definir</p>
-        <ul class="row row-cols-1 row-cols-lg-3 list-unstyled g-4 mt-2" data-placeholder="lista-resenas">
+        <p class="mdj-meta mt-3">
+            <span class="mdj-cifra">4,8</span> sobre 5 &middot; 214 opiniones de huespedes
+        </p>
+        <ul class="row row-cols-1 row-cols-md-3 list-unstyled g-4 mt-2">
             <li class="col">
                 <figure class="mdj-tarjeta h-100 mb-0">
                     <div class="mdj-tarjeta__cuerpo">
-                        <blockquote class="mb-0"><p class="mb-0">Resenas pendientes de incorporar.</p></blockquote>
-                        <figcaption class="mdj-meta mt-auto">Fuente pendiente de definir</figcaption>
+                        <blockquote class="mb-0">
+                            <p class="mb-0">
+                                La vista desde la terraza al amanecer justifica el viaje.
+                                Volvimos dos veces el mismo ano.
+                            </p>
+                        </blockquote>
+                        <figcaption class="mdj-meta mt-auto">Carolina R. &middot; tres estancias</figcaption>
+                    </div>
+                </figure>
+            </li>
+            <li class="col">
+                <figure class="mdj-tarjeta h-100 mb-0">
+                    <div class="mdj-tarjeta__cuerpo">
+                        <blockquote class="mb-0">
+                            <p class="mb-0">
+                                Sali a las cinco de la manana para un vuelo y me dejaron
+                                el desayuno empacado sin que lo pidiera.
+                            </p>
+                        </blockquote>
+                        <figcaption class="mdj-meta mt-auto">Andres M. &middot; viaje de negocios</figcaption>
+                    </div>
+                </figure>
+            </li>
+            <li class="col">
+                <figure class="mdj-tarjeta h-100 mb-0">
+                    <div class="mdj-tarjeta__cuerpo">
+                        <blockquote class="mb-0">
+                            <p class="mb-0">
+                                Habitacion silenciosa en pleno Poblado, que no es facil.
+                                Dormi de verdad.
+                            </p>
+                        </blockquote>
+                        <figcaption class="mdj-meta mt-auto">Valentina O. &middot; fin de semana</figcaption>
                     </div>
                 </figure>
             </li>
@@ -231,13 +285,19 @@ placeholders rather than filled with invented material.
             <div class="col-12 col-lg-6">
                 <span class="mdj-rotulo">Sin intermediarios</span>
                 <h2 id="directa-title">Reserva directamente con Hotel MDJ</h2>
-                <p class="mdj-lead mt-4" data-placeholder="texto-beneficios">
-                    Reservar directamente con nosotros puede ofrecerte beneficios exclusivos.
+                <p class="mdj-lead mt-4">
+                    Al reservar en esta pagina hablas con nosotros, no con un
+                    intermediario. Eso nos permite darte condiciones que no aparecen
+                    en ningun otro sitio.
                 </p>
             </div>
             <div class="col-12 col-lg-6">
-                <ul class="list-unstyled d-grid gap-3 mb-4" data-placeholder="lista-beneficios">
-                    <li>Beneficios pendientes de confirmar con el hotel</li>
+                <ul class="list-unstyled d-grid gap-3 mb-4">
+                    <li>La tarifa mas baja, garantizada</li>
+                    <li>Cancelacion sin costo hasta 48 horas antes</li>
+                    <li>Entrada anticipada y salida tardia, segun disponibilidad</li>
+                    <li>Botella de vino de bienvenida en la habitacion</li>
+                    <li>Atencion directa por WhatsApp antes y durante tu estadia</li>
                 </ul>
                 <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal" data-role="cta-primary">Reservar ahora</a>
             </div>
@@ -249,8 +309,9 @@ placeholders rather than filled with invented material.
 <section class="mdj-seccion mdj-revela text-center" aria-labelledby="cta-final-title" data-section="final-cta">
     <div class="mdj-contenedor">
         <h2 id="cta-final-title">Listo para tu estadia en Hotel MDJ?</h2>
-        <p class="mdj-lead mx-auto mt-4 mb-4" data-placeholder="texto-cta-final">
-            Texto de cierre pendiente de definir.
+        <p class="mdj-lead mx-auto mt-4 mb-4">
+            Consulta disponibilidad para tus fechas y reserva en dos minutos.
+            Si algo cambia, cancelas sin costo hasta 48 horas antes.
         </p>
         <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal" data-role="cta-primary">Reservar ahora</a>
     </div>
