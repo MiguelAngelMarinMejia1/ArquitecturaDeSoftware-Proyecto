@@ -8,3 +8,6 @@ venv/
 
 # technical wiki (uploaded manually to the GitHub Wiki)
 wiki/
+
+# local environment variables
+.env

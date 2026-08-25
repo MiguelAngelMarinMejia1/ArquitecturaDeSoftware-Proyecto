@@ -10,17 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Values that differ per environment, or that must never reach the repository,
+# are read from a .env file that git ignores. .env.example lists which ones.
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3n69*38gubn7&r(6wr31$%8d1**c^4fe!+0o!6*2283i_xv1pw'
+# Signs session cookies, password-reset links and every CSRF token, so anyone
+# holding it can forge a session for any account. It is read from the
+# environment and the fallback below is a throwaway meant only for a local
+# checkout: a real deployment must define SECRET_KEY.
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-local-development-only-do-not-deploy-with-this-value',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
