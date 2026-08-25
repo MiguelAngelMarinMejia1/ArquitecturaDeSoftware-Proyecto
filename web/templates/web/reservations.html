@@ -1,13 +1,15 @@
 {% extends "web/base.html" %}
 
 {% comment %}
-Booking funnel. Unlike the Home page this one is not promotional: everything
+Booking wizard. Unlike the Home page this one is not promotional: everything
 here exists to get the guest from "I want to stay" to "I have a reservation".
 
-The three steps render on the same route and are driven by what the request
-carries: no criteria yet -> search form; criteria -> results; rooms picked ->
-summary and guest details. Search criteria live in the query string (they
-identify nobody), guest details only ever leave via POST.
+One step on screen at a time. Which step renders comes from the view, which
+derives it from the URL alone -- dates, then chosen rooms -- so refreshing,
+sharing the link or using the back button all behave the way the guest expects.
+
+Search criteria live in the query string (they identify nobody); guest details
+only ever leave via POST.
 {% endcomment %}
 
 {% block title %}Reservar - Hotel MDJ{% endblock %}
@@ -15,24 +17,70 @@ identify nobody), guest details only ever leave via POST.
 
 {% block content %}
 
-{# 1 - Encabezado y expectativas. #}
 <section class="mdj-seccion pb-0" aria-labelledby="reserva-title" data-section="booking-header">
     <div class="mdj-contenedor">
         <span class="mdj-rotulo">Reservas</span>
         <h1 id="reserva-title">Reserva tu estadia</h1>
+
+        {% comment %}
+        Los pasos ya recorridos son enlaces: la forma mas corta de volver a
+        corregir algo es pulsar sobre el paso al que se quiere regresar.
+        {% endcomment %}
         <ol class="mdj-pasos mt-4" data-role="booking-steps">
-            <li{% if not criteria.is_complete %} aria-current="step"{% endif %}>Elige tus fechas</li>
-            <li{% if criteria.is_complete and not selected_rooms %} aria-current="step"{% endif %}>Selecciona tu habitacion</li>
-            <li{% if selected_rooms %} aria-current="step"{% endif %}>Completa tus datos y confirma</li>
+            <li{% if step == 1 %} aria-current="step"{% elif step > 1 %} data-estado="completado"{% endif %}>
+                {% if step > 1 %}
+                <a href="{{ url_paso_fechas }}">Fechas</a>
+                {% else %}Fechas{% endif %}
+            </li>
+            <li{% if step == 2 %} aria-current="step"{% elif step > 2 %} data-estado="completado"{% endif %}>
+                {% if step > 2 %}
+                <a href="{{ url_paso_habitaciones }}">Habitacion</a>
+                {% else %}Habitacion{% endif %}
+            </li>
+            <li{% if step == 3 %} aria-current="step"{% endif %}>Datos y confirmacion</li>
         </ol>
     </div>
 </section>
 
-{# 2 - Busqueda. Siempre visible para poder cambiar las fechas sin reiniciar. #}
+{% if step > 1 %}
+{% comment %}
+Barra de contexto. Sin ella, volver atras seria un salto a ciegas: el huesped
+tiene que poder ver que fechas eligio sin abandonar el paso en el que esta.
+{% endcomment %}
+<section class="mdj-seccion pb-0" aria-label="Resumen de tu busqueda" data-section="booking-recap">
+    <div class="mdj-contenedor">
+        <div class="mdj-recap">
+            <p class="mdj-recap__dato mb-0">
+                <span class="mdj-etiqueta d-block">Estadia</span>
+                {{ criteria.check_in|date:"d M" }} al {{ criteria.check_out|date:"d M Y" }}
+                <span class="mdj-meta">({{ nights }} noche{{ nights|pluralize }})</span>
+            </p>
+            <p class="mdj-recap__dato mb-0">
+                <span class="mdj-etiqueta d-block">Huespedes</span>
+                {{ criteria.adults }} adulto{{ criteria.adults|pluralize }}{% if criteria.children %}, {{ criteria.children }} nino{{ criteria.children|pluralize }}{% endif %}
+            </p>
+            {% if step > 2 %}
+            <p class="mdj-recap__dato mb-0">
+                <span class="mdj-etiqueta d-block">Habitacion{{ selected_rooms|length|pluralize }}</span>
+                {% for room in selected_rooms %}{{ room.room_type.name }} {{ room.number }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            </p>
+            {% endif %}
+            <a href="{% if step > 2 %}{{ url_paso_habitaciones }}{% else %}{{ url_paso_fechas }}{% endif %}"
+               class="mdj-enlace mdj-recap__cambiar">Cambiar</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+{% if step == 1 %}
+{% comment %} Paso 1 - Fechas y ocupacion. {% endcomment %}
 <section class="mdj-seccion" aria-labelledby="busqueda-title" data-section="booking-search">
     <div class="mdj-contenedor">
         <div class="mdj-buscador">
-            <h2 class="h5 mb-4" id="busqueda-title">Buscar disponibilidad</h2>
+            <h2 class="h5 mb-2" id="busqueda-title">Cuando quieres venir?</h2>
+            <p class="mdj-meta mb-4">Elige tus fechas y cuantos son. Despues escoges la habitacion.</p>
+
             <form action="{% url 'web:reservations' %}" method="get" class="row g-3 align-items-end">
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="mdj-campo">
@@ -48,38 +96,42 @@ identify nobody), guest details only ever leave via POST.
                                value="{{ criteria.check_out|date:'Y-m-d' }}" required>
                     </div>
                 </div>
-                <div class="col-4 col-lg-2">
+                <div class="col-6 col-lg-2">
                     <div class="mdj-campo">
                         <label for="adults">Adultos</label>
                         <input type="number" id="adults" name="adults" min="1" value="{{ criteria.adults }}" required>
                     </div>
                 </div>
-                <div class="col-4 col-lg-2">
+                <div class="col-6 col-lg-2">
                     <div class="mdj-campo">
                         <label for="children">Ninos</label>
                         <input type="number" id="children" name="children" min="0" value="{{ criteria.children }}">
                     </div>
                 </div>
-                <div class="col-4 col-lg-2">
+                <div class="col-12 col-lg-2">
                     <button type="submit" class="mdj-btn mdj-btn--principal w-100">Buscar</button>
                 </div>
             </form>
         </div>
     </div>
 </section>
+{% endif %}
 
-{% if criteria.is_complete %}
 
-{% comment %} 3 - Resultados. Un solo formulario envuelve todas las opciones para poder
-   elegir varias habitaciones de una vez, respetando el 1..* entre reserva y
-   habitacion. {% endcomment %}
+{% if step == 2 %}
+{% comment %}
+Paso 2 - Eleccion de habitacion. Un solo formulario envuelve todas las opciones
+para poder elegir varias de una vez, respetando el 1..* entre reserva y
+habitacion.
+{% endcomment %}
 <section class="mdj-seccion" aria-labelledby="resultados-title" data-section="booking-results">
     <div class="mdj-contenedor">
-        <h2 id="resultados-title">Habitaciones disponibles</h2>
+        <h2 id="resultados-title">Elige tu habitacion</h2>
         <p class="mdj-meta mt-2 mb-5">
-            {{ criteria.check_in|date:"d M Y" }} al {{ criteria.check_out|date:"d M Y" }}
-            &middot; {{ nights }} noche{{ nights|pluralize }}
-            &middot; {{ guests }} huesped{{ guests|pluralize:"es" }}
+            {% if results %}
+            {{ results|length }} habitacion{{ results|length|pluralize:"es" }} disponible{{ results|length|pluralize:"s" }}
+            para tus fechas.
+            {% endif %}
         </p>
 
         <form action="{% url 'web:reservations' %}" method="get">
@@ -91,7 +143,7 @@ identify nobody), guest details only ever leave via POST.
             <ul class="row row-cols-1 row-cols-md-2 row-cols-xl-3 list-unstyled g-4" data-role="result-list">
                 {% for room in results %}
                 <li class="col" data-role="result-card">
-                    <article class="mdj-tarjeta {% if room in selected_rooms %}mdj-tarjeta--elegida{% endif %}"
+                    <article class="mdj-tarjeta {% if room.pk in selected_ids %}mdj-tarjeta--elegida{% endif %}"
                              aria-labelledby="room-{{ room.pk }}">
                         <figure class="mdj-marco mdj-marco--ancho mb-0" data-placeholder="foto-habitacion">
                             <figcaption>Fotografia pendiente</figcaption>
@@ -113,6 +165,10 @@ identify nobody), guest details only ever leave via POST.
                                 <dd>{{ room.floor }}</dd>
                             </dl>
 
+                            {% if room.room_type.description %}
+                            <p class="mdj-meta mb-0">{{ room.room_type.description }}</p>
+                            {% endif %}
+
                             <p class="mdj-meta mb-0">
                                 Incluye desayuno, Wi-Fi, aire acondicionado y limpieza diaria.
                             </p>
@@ -125,7 +181,7 @@ identify nobody), guest details only ever leave via POST.
                                 <div class="mdj-check ms-auto">
                                     <input type="checkbox" id="select-room-{{ room.pk }}"
                                            name="room" value="{{ room.pk }}"
-                                           {% if room in selected_rooms %}checked{% endif %}>
+                                           {% if room.pk in selected_ids %}checked{% endif %}>
                                     <label for="select-room-{{ room.pk }}">Seleccionar</label>
                                 </div>
                             </div>
@@ -135,29 +191,31 @@ identify nobody), guest details only ever leave via POST.
                 {% empty %}
                 <li class="col-12">
                     <div class="mdj-buscador">
-                        <p class="mb-1">No hay habitaciones disponibles para esas fechas.</p>
-                        <p class="mdj-meta mb-0">Prueba con otro rango de fechas.</p>
+                        <p class="mb-2">No hay habitaciones disponibles para esas fechas.</p>
+                        <a href="{{ url_paso_fechas }}" class="mdj-enlace">Probar con otras fechas</a>
                     </div>
                 </li>
                 {% endfor %}
             </ul>
 
             {% if results %}
-            <div class="mt-5">
-                <button type="submit" class="mdj-btn mdj-btn--principal">Continuar con la seleccion</button>
+            <div class="mdj-acciones mt-5">
+                <a href="{{ url_paso_fechas }}" class="mdj-btn mdj-btn--secundario">Cambiar fechas</a>
+                <button type="submit" class="mdj-btn mdj-btn--principal">Continuar</button>
             </div>
             {% endif %}
         </form>
     </div>
 </section>
-
 {% endif %}
 
-{% if selected_rooms and quote %}
 
-{% comment %} 4 a 6 - Resumen, datos del huesped y confirmacion. Un unico POST cierra la
-   reserva: dividirlo mas dejaria datos personales aparcados en la sesion entre
-   peticiones sin ninguna ventaja. {% endcomment %}
+{% if step == 3 %}
+{% comment %}
+Paso 3 - Datos del huesped, resumen y confirmacion. Un unico POST cierra la
+reserva: dividirlo mas dejaria datos personales aparcados en la sesion entre
+peticiones sin ninguna ventaja.
+{% endcomment %}
 <section class="mdj-seccion" data-section="booking-checkout">
     <div class="mdj-contenedor">
         <form action="{% url 'web:reservations' %}" method="post" data-role="booking-form">
@@ -173,14 +231,11 @@ identify nobody), guest details only ever leave via POST.
 
             <div class="row g-4 g-lg-5">
                 <div class="col-12 col-lg-7">
-
-                    {% comment %} 5 - Datos del huesped. El documento de identidad no aparece
-                       aqui a proposito: se recoge en el check-in. {% endcomment %}
                     <section aria-labelledby="huesped-title" data-section="booking-guest">
-                        <span class="mdj-rotulo">Paso final</span>
-                        <h2 id="huesped-title">Informacion del huesped</h2>
+                        <h2 id="huesped-title">Tus datos</h2>
+                        <p class="mdj-meta mt-2 mb-4">Solo lo necesario para tu llegada.</p>
 
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <div class="mdj-campo">
                                     <label for="first-name">Nombre</label>
@@ -220,8 +275,10 @@ identify nobody), guest details only ever leave via POST.
                                 </div>
                             </div>
                             <div class="col-12">
-                                {% comment %} Consentimiento comercial separado y sin marcar:
-                                   nunca condiciona la reserva. {% endcomment %}
+                                {% comment %}
+                                Consentimiento comercial separado y sin marcar: nunca
+                                condiciona la reserva.
+                                {% endcomment %}
                                 <div class="mdj-check">
                                     <input type="checkbox" id="marketing-consent" name="marketing_consent" value="1">
                                     <label for="marketing-consent">Quiero recibir ofertas y novedades de Hotel MDJ</label>
@@ -230,7 +287,6 @@ identify nobody), guest details only ever leave via POST.
                         </div>
                     </section>
 
-                    {# 6 - Pago y politicas que se estan aceptando. #}
                     <section class="mt-5" aria-labelledby="pago-title" data-section="booking-payment">
                         <h2 id="pago-title">Pago</h2>
                         <div class="row g-3 mt-3">
@@ -262,8 +318,6 @@ identify nobody), guest details only ever leave via POST.
                     </section>
                 </div>
 
-                {% comment %} 4 - Resumen de costes, presente todo el tiempo mientras el
-                   huesped rellena sus datos. {% endcomment %}
                 <div class="col-12 col-lg-5">
                     <section class="mdj-resumen mdj-pegajoso" aria-labelledby="resumen-title" data-section="booking-summary">
                         <h2 class="h5 mb-4" id="resumen-title">Resumen de tu reserva</h2>
@@ -302,17 +356,20 @@ identify nobody), guest details only ever leave via POST.
                             </div>
                         </dl>
 
-                        <button type="submit" class="mdj-btn mdj-btn--principal w-100 mt-4" data-role="cta-primary">
-                            Confirmar reserva
-                        </button>
+                        <div class="mdj-acciones mt-4">
+                            <button type="submit" class="mdj-btn mdj-btn--principal w-100" data-role="cta-primary">
+                                Confirmar reserva
+                            </button>
+                            <a href="{{ url_paso_habitaciones }}" class="mdj-enlace text-center">Cambiar habitacion</a>
+                        </div>
                     </section>
                 </div>
             </div>
         </form>
     </div>
 </section>
-
 {% endif %}
+
 
 <section class="mdj-seccion" data-section="booking-help">
     <div class="mdj-contenedor">
