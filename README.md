@@ -1,62 +1,103 @@
-# MDJ Hotel
+# Hotel MDJ
 
-Sistema de gestión de reservas para el Hotel **MDJ**, desarrollado con **Python y Django** como proyecto académico para la asignatura **Arquitectura de Software 2026**.
+Sistema de reservas para el **Hotel MDJ**, desarrollado con **Python, Django y Django Rest
+Framework** como proyecto de la asignatura **Arquitectura de Software 2026**.
 
 ## Descripción
 
-MDJ Hotel permite gestionar el proceso de creación de reservas mediante una arquitectura desacoplada basada en los principios de **Arquitectura Limpia**, **SOLID** y patrones de diseño creacionales.
-
-La funcionalidad principal implementada es **Crear Reserva**, utilizando una separación por capas entre la interfaz, la lógica de negocio y el dominio.
+El sistema permite consultar disponibilidad y crear reservas de habitaciones sin necesidad de tener
+una cuenta, siguiendo el modelo de los sistemas de gestión hotelera reales. La lógica de negocio
+está desacoplada de la presentación mediante una **Service Layer**, y el núcleo se expone a través
+de dos capas independientes: un sitio web renderizado en servidor y una API REST versionada.
 
 ## Arquitectura
 
-El proyecto se organiza en las siguientes capas:
+Las dependencias apuntan siempre hacia el núcleo: `web` conoce a `reservation`, pero `reservation`
+no conoce a `web`, y solo su subpaquete `api/` sabe que existe HTTP.
 
-* **View (CBV):** recibe las solicitudes HTTP.
-* **Service Layer:** contiene la lógica del negocio.
-* **Builder:** construye y valida objetos `Reserva`.
-* **Factory:** crea el servicio de notificación apropiado (real o de desarrollo).
+| Capa | Ubicación | Responsabilidad |
+|---|---|---|
+| Presentación HTML | `web/` | Vistas delgadas y plantillas |
+| Presentación API | `reservation/api/` | Serializers, `APIView`, mapeo a códigos HTTP |
+| Aplicación | `reservation/services.py`, `selectors.py` | Orquestación de casos de uso y consultas |
+| Dominio | `reservation/domain/` | Builder, políticas de precio y capacidad, excepciones |
+| Infraestructura | `reservation/infra/` | Factories, notificaciones, pasarela de pago |
+| Persistencia | `reservation/models.py` | Entidades sin lógica de negocio |
+
+## Patrones de diseño
+
+- **Builder** — `ReservationBuilder` ensambla y valida la reserva, la entidad más compleja del
+  sistema, y devuelve un agregado sin persistir para que el servicio controle la transacción.
+- **Factory** — `NotifierFactory` y `PaymentGatewayFactory` resuelven qué implementación de
+  notificador y de pasarela construir según la configuración del entorno.
 
 ## Tecnologías
 
-* Python 3
-* Django
-* SQLite
-* HTML
+- Python 3.11
+- Django 5.2
+- Django Rest Framework 3.18
+- SQLite
+- HTML semántico
 
-## Estructura del taller 1
+## Puesta en marcha
 
-reserva/
+```bash
+python -m venv venv
+venv\Scripts\activate          # Windows
+pip install -r requirements.txt
 
-* views.py
-* services.py
-* models.py
-* forms.py
-* domain/
+python manage.py migrate
+python manage.py loaddata seed
+python manage.py runserver
+```
 
-  * builders.py
-* infra/
+| URL | Descripción |
+|---|---|
+| `/` | Página de inicio |
+| `/reservaciones/` | Flujo de reserva |
+| `/reservaciones/consultar/` | Consulta de una reserva existente |
+| `/api/v1/` | API REST |
+| `/admin/` | Administración |
 
-  * factories.py
-  * notifications.py
-* templates/
+## API
 
-  * reserva/
+| Método | Ruta | Códigos |
+|---|---|---|
+| `GET` | `/api/v1/health/` | 200 |
+| `GET` | `/api/v1/room-types/` | 200 |
+| `GET` | `/api/v1/rooms/available/` | 200, 400 |
+| `POST` | `/api/v1/reservations/` | 201, 400, 402, 404, 409 |
+| `POST` | `/api/v1/reservations/lookup/` | 200, 400, 404 |
+
+Todos los errores comparten un mismo contrato:
+
+```json
+{
+  "error": {
+    "code": "ROOMNOTAVAILABLE",
+    "detail": "La habitacion 103 no esta disponible entre 2026-09-03 y 2026-09-06."
+  }
+}
+```
 
 ## Diagrama de clases
 
-<img width="831" height="1600" alt="image" src="https://github.com/user-attachments/assets/ac772ebb-6a25-4bf4-8fb8-18028dfd9107" />
+<img width="831" height="1600" alt="Diagrama de clases de Hotel MDJ" src="https://github.com/user-attachments/assets/ac772ebb-6a25-4bf4-8fb8-18028dfd9107" />
 
-## Objetivos académicos
+## Documentación técnica
 
-* Aplicar el principio de responsabilidad única.
-* Desacoplar la lógica de negocio de las vistas.
-* Implementar los patrones **Builder** y **Factory**.
-* Demostrar una arquitectura mantenible y extensible.
+La documentación detallada está en la **Wiki** del repositorio:
+
+1. Arquitectura y estructura de carpetas
+2. Diagrama de secuencia de Crear Reserva
+3. Estrategia de API Gateway y escalabilidad
+4. Patrones creacionales
+5. Identidad y autenticación
+6. Seguridad de los datos personales
 
 ## Equipo
 
-Proyecto desarrollado para el Taller 01 de Arquitectura de Software 2026.
+Proyecto desarrollado para la Entrega 1 de Arquitectura de Software 2026.
 
 ## Licencia
 
