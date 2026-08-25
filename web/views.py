@@ -12,6 +12,17 @@ one, and keeping them in the URL makes a set of results shareable and
 reloadable. Guest details only ever travel in a POST body, because URLs are
 retained in browser history, web server and proxy logs, and are leaked to third
 parties through the ``Referer`` header.
+
+The booking wizard
+------------------
+Booking runs as three steps that share one route. Which step renders is derived
+from what the URL already carries -- dates, then chosen rooms -- so no step is
+stored on the server. That keeps the browser's back button, a refresh and a
+pasted link all working, and it is why a guest who returns to a URL sees exactly
+the step they left.
+
+``paso`` is the one exception: it lets a guest step *backwards* to correct
+something without losing what they had already chosen.
 """
 
 from datetime import date, datetime
@@ -78,49 +89,78 @@ class HomeView(SearchCriteriaMixin, View):
 
 
 class ReservationPageView(SearchCriteriaMixin, View):
-    """The booking funnel: search, compare, fill in details, confirm.
+    """The booking funnel: choose dates, choose a room, fill in details.
 
-    All steps live on one route so the guest can go back and change a date
-    without losing their place; which step renders depends on what the request
-    carries.
+    Only one step is on screen at a time. Stacking all three made the page long
+    enough that every reload dropped the guest back at the top, far above
+    whatever they had just done.
     """
 
     template_name = "web/reservations.html"
 
+    STEP_DATES = 1
+    STEP_ROOMS = 2
+    STEP_DETAILS = 3
+
+    BACK_TARGETS = {"fechas": STEP_DATES, "habitaciones": STEP_ROOMS}
+
     def get(self, request):
         criteria = self.read_criteria(request)
+        selected_ids = [
+            int(value) for value in request.GET.getlist("room") if value.isdigit()
+        ]
+        step = self._resolve_step(criteria, selected_ids, request.GET.get("paso"))
+
         context = {
             "criteria": criteria,
+            "step": step,
             "today": date.today().isoformat(),
-            "room_types": room_types_catalog(),
             "payment_methods": Payment.Method.choices,
+            "url_paso_fechas": self._url_for_step(request, "fechas"),
+            "url_paso_habitaciones": self._url_for_step(request, "habitaciones"),
         }
 
         if criteria["is_complete"]:
-            guests = criteria["adults"] + criteria["children"]
+            context["guests"] = criteria["adults"] + criteria["children"]
+            context["nights"] = (criteria["check_out"] - criteria["check_in"]).days
+
+        if step == self.STEP_ROOMS:
             context["results"] = available_rooms(
                 check_in=criteria["check_in"],
                 check_out=criteria["check_out"],
                 guests=None,
             )
-            context["guests"] = guests
-            context["nights"] = (criteria["check_out"] - criteria["check_in"]).days
+            context["selected_ids"] = selected_ids
 
-            selected_ids = [
-                int(value)
-                for value in request.GET.getlist("room")
-                if value.isdigit()
-            ]
-            if selected_ids:
-                selected = list(
-                    Room.objects.filter(pk__in=selected_ids).select_related("room_type")
-                )
-                context["selected_rooms"] = selected
-                context["quote"] = ReservationService().quote(
-                    selected, criteria["check_in"], criteria["check_out"]
-                )
+        if step == self.STEP_DETAILS:
+            selected = list(
+                Room.objects.filter(pk__in=selected_ids).select_related("room_type")
+            )
+            context["selected_rooms"] = selected
+            context["quote"] = ReservationService().quote(
+                selected, criteria["check_in"], criteria["check_out"]
+            )
 
         return render(request, self.template_name, context)
+
+    def _resolve_step(self, criteria, selected_ids, requested):
+        """Derive the step from the data, letting ``paso`` only move backwards.
+
+        Reading it this way means a guest can never land on a step whose inputs
+        are missing, however the URL was assembled.
+        """
+        if not criteria["is_complete"]:
+            return self.STEP_DATES
+
+        furthest = self.STEP_DETAILS if selected_ids else self.STEP_ROOMS
+        return min(self.BACK_TARGETS.get(requested, furthest), furthest)
+
+    @staticmethod
+    def _url_for_step(request, paso):
+        """Link back to an earlier step carrying everything chosen so far."""
+        params = request.GET.copy()
+        params["paso"] = paso
+        return f"{reverse('web:reservations')}?{params.urlencode()}"
 
     def post(self, request):
         criteria_qs = request.POST.get("criteria_query", "")
