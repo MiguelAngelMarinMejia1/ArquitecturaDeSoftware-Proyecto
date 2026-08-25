@@ -1,4 +1,10 @@
-__pycache__/ 
-__pycache__/ 
+__pycache__/
+*.pyc
 
 db.sqlite3
+
+# virtual environment
+venv/
+
+# technical wiki (uploaded manually to the GitHub Wiki)
+wiki/
