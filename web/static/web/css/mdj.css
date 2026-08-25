@@ -8,10 +8,20 @@
    Bootstrap aporta la retícula, las utilidades y la accesibilidad de sus
    componentes; todo el aspecto se redefine aqui sobrescribiendo sus variables
    CSS, de modo que no quede rastro del tema por defecto.
+
+   METODOLOGIA: mobile first. Todo lo que hay fuera de una media query es la
+   version estrecha, y cada @media (min-width) solo anade a medida que aparece
+   espacio. No se usa ni una sola consulta max-width.
+
+   Puntos de corte, alineados con los de Bootstrap:
+       576px  movil grande
+       768px  tableta
+       992px  escritorio
+      1200px  escritorio amplio
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Tokens
+   1. Tokens — valores base = movil
    -------------------------------------------------------------------------- */
 
 :root {
@@ -33,26 +43,32 @@
 
     --mdj-size-base:  1.0625rem;   /* 17px */
     --mdj-size-meta:  0.9375rem;   /* 15px */
-    --mdj-size-lead:  1.25rem;
-    --mdj-size-h3:    1.375rem;
-    --mdj-size-h2:    clamp(1.875rem, 3.2vw, 2.625rem);
-    --mdj-size-h1:    clamp(2.75rem, 6vw, 4.75rem);
+    --mdj-size-lead:  1.125rem;
+    --mdj-size-h3:    1.25rem;
+    --mdj-size-h2:    clamp(1.625rem, 5.5vw, 2.625rem);
+    --mdj-size-h1:    clamp(2.25rem, 8vw, 4.75rem);
 
-    /* Ritmo vertical. Un unico paso geometrico evita el espaciado arbitrario. */
+    /* Ritmo vertical. Un unico paso geometrico evita el espaciado arbitrario;
+       los tramos largos se ensanchan al haber mas pantalla. */
     --mdj-space-1: 0.5rem;
     --mdj-space-2: 1rem;
-    --mdj-space-3: 1.75rem;
-    --mdj-space-4: 3rem;
-    --mdj-space-5: 5rem;
-    --mdj-space-6: 8rem;
+    --mdj-space-3: 1.25rem;
+    --mdj-space-4: 2rem;
+    --mdj-space-5: 3rem;
+
+    /* Relleno lateral del contenedor. Tiene que ser siempre mayor que la mitad
+       del canal (gutter) de las filas de Bootstrap que viven dentro: .row usa
+       margenes negativos de esa medida, y sin este colchon la fila sobresale y
+       aparece la barra de scroll horizontal. */
+    --mdj-gutter: 1.25rem;
 
     --mdj-radio:   2px;            /* casi recto: el lujo aqui es la precision */
     --mdj-filete:  1px solid color-mix(in srgb, var(--mdj-piedra) 30%, transparent);
 
     /* La firma: sombras largas y direccionales, siempre desde la misma
        inclinacion, como la luz de la tarde sobre una fachada. */
-    --mdj-luz-corta: 12px 16px 32px -18px rgba(35, 40, 42, 0.32);
-    --mdj-luz-larga: 28px 40px 80px -40px rgba(35, 40, 42, 0.38);
+    --mdj-luz-corta: 8px 12px 24px -16px rgba(35, 40, 42, 0.32);
+    --mdj-luz-larga: 16px 24px 56px -32px rgba(35, 40, 42, 0.38);
 
     --mdj-transicion: 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
 
@@ -71,9 +87,41 @@
     --bs-focus-ring-width: 3px;
 }
 
+@media (min-width: 768px) {
+    :root {
+        --mdj-gutter: 1.75rem;
+        --mdj-size-lead: 1.1875rem;
+        --mdj-size-h3: 1.3125rem;
+        --mdj-space-3: 1.5rem;
+        --mdj-space-4: 2.5rem;
+        --mdj-space-5: 4rem;
+    }
+}
+
+@media (min-width: 992px) {
+    :root {
+        --mdj-gutter: 2rem;
+        --mdj-size-lead: 1.25rem;
+        --mdj-size-h3: 1.375rem;
+        --mdj-space-3: 1.75rem;
+        --mdj-space-4: 3rem;
+        --mdj-space-5: 5rem;
+        --mdj-luz-corta: 12px 16px 32px -18px rgba(35, 40, 42, 0.32);
+        --mdj-luz-larga: 28px 40px 80px -40px rgba(35, 40, 42, 0.38);
+    }
+}
+
+@media (min-width: 1200px) {
+    :root { --mdj-gutter: 2.5rem; }
+}
+
 /* --------------------------------------------------------------------------
    2. Base
    -------------------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { overflow-x: clip; }
 
 body {
     background-color: var(--mdj-papel);
@@ -82,18 +130,35 @@ body {
     font-size: var(--mdj-size-base);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    /* Red de seguridad: 'clip' impide el desplazamiento lateral sin crear un
+       contenedor de scroll, de modo que position: sticky sigue funcionando.
+       La causa se corrige en .mdj-contenedor; esto solo evita que un descuido
+       futuro vuelva a sacar la barra. */
+    overflow-x: clip;
 }
+
+/* Una palabra larga (un correo, un codigo) no debe poder ensanchar la pagina. */
+body, h1, h2, h3, p, dd, dt, li, a { overflow-wrap: break-word; }
+
+img, svg, video, iframe { max-width: 100%; height: auto; }
 
 h1, h2, h3, .mdj-display {
     font-family: var(--mdj-display);
     font-weight: 400;
     letter-spacing: -0.015em;
-    line-height: 1.08;
+    line-height: 1.12;
+    text-wrap: balance;
 }
 
 h1 { font-size: var(--mdj-size-h1); }
 h2 { font-size: var(--mdj-size-h2); }
-h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 600; letter-spacing: 0; line-height: 1.3; }
+h3 {
+    font-size: var(--mdj-size-h3);
+    font-family: var(--mdj-texto);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.3;
+}
 
 /* Rotulo que antecede a cada seccion. No numera: el orden de las secciones no
    es un procedimiento, asi que numerarlas mentiria sobre el contenido. */
@@ -105,7 +170,7 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--mdj-piedra);
-    margin-bottom: var(--mdj-space-2);
+    margin-bottom: var(--mdj-space-1);
 }
 
 .mdj-lead {
@@ -122,13 +187,19 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
 
 .mdj-seccion { padding-block: var(--mdj-space-5); }
 .mdj-seccion + .mdj-seccion { border-top: var(--mdj-filete); }
-.mdj-contenedor { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
+
+/* El contenedor lleva su propio relleno lateral, que es lo que absorbe los
+   margenes negativos de las filas de Bootstrap. El ancho maximo suma ese
+   relleno para que la columna de texto conserve su medida. */
+.mdj-contenedor {
+    width: 100%;
+    max-width: calc(1180px + var(--mdj-gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--mdj-gutter);
+}
 
 /* Enlace de salto: invisible hasta que el teclado lo alcanza. */
-[data-role="skip-link"] {
-    position: absolute;
-    left: -9999px;
-}
+[data-role="skip-link"] { position: absolute; left: -9999px; }
 [data-role="skip-link"]:focus {
     left: var(--mdj-space-2);
     top: var(--mdj-space-2);
@@ -138,10 +209,7 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     padding: var(--mdj-space-1) var(--mdj-space-2);
 }
 
-:focus-visible {
-    outline: 3px solid var(--mdj-verde-agua);
-    outline-offset: 3px;
-}
+:focus-visible { outline: 3px solid var(--mdj-verde-agua); outline-offset: 3px; }
 
 /* --------------------------------------------------------------------------
    3. Cabecera
@@ -151,17 +219,18 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: color-mix(in srgb, var(--mdj-papel) 88%, transparent);
+    background: color-mix(in srgb, var(--mdj-papel) 92%, transparent);
     backdrop-filter: blur(14px);
     border-bottom: var(--mdj-filete);
 }
 
 .mdj-marca {
     font-family: var(--mdj-display);
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     letter-spacing: 0.02em;
     color: var(--mdj-tinta);
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .mdj-nav-link {
@@ -179,12 +248,19 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     color: var(--mdj-tinta);
 }
 
+@media (min-width: 992px) {
+    .mdj-marca { font-size: 1.5rem; }
+}
+
 /* --------------------------------------------------------------------------
    4. Acciones
    -------------------------------------------------------------------------- */
 
+/* En movil los botones ocupan el ancho disponible: son el objetivo tactil
+   principal y no compiten por espacio con nada. */
 .mdj-btn {
-    display: inline-flex;
+    display: flex;
+    width: 100%;
     align-items: center;
     justify-content: center;
     gap: var(--mdj-space-1);
@@ -192,10 +268,12 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     font-size: var(--mdj-size-base);
     font-weight: 500;
     letter-spacing: 0.01em;
-    padding: 0.8rem 1.9rem;
+    padding: 0.8rem 1.5rem;
+    min-height: 48px;
     border-radius: var(--mdj-radio);
     border: 1px solid transparent;
     text-decoration: none;
+    text-align: center;
     cursor: pointer;
     transition: transform var(--mdj-transicion), box-shadow var(--mdj-transicion),
                 background-color 200ms ease, color 200ms ease;
@@ -209,8 +287,6 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
 .mdj-btn--principal:hover {
     background: var(--mdj-verde-noche);
     color: var(--mdj-papel);
-    transform: translateY(-2px);
-    box-shadow: var(--mdj-luz-larga);
 }
 
 .mdj-btn--secundario {
@@ -222,6 +298,21 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     border-color: var(--mdj-verde-hondo);
     color: var(--mdj-verde-hondo);
 }
+
+@media (min-width: 576px) {
+    .mdj-btn {
+        display: inline-flex;
+        width: auto;
+        padding-inline: 1.9rem;
+    }
+    /* El desplazamiento al pasar el puntero solo tiene sentido donde hay
+       puntero; en tactil no aporta nada. */
+    .mdj-btn--principal:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--mdj-luz-larga);
+    }
+}
+
 
 /* Enlace de texto con subrayado que crece desde el inicio. */
 .mdj-enlace {
@@ -239,20 +330,21 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
    5. Portada
    -------------------------------------------------------------------------- */
 
-.mdj-portada {
-    padding-block: clamp(var(--mdj-space-5), 12vh, var(--mdj-space-6));
-}
-
+.mdj-portada { padding-block: var(--mdj-space-5); }
 .mdj-portada__titulo { margin-bottom: var(--mdj-space-3); }
 
-/* La imagen recibe la sombra larga y se desplaza levemente respecto al texto:
-   es la pieza donde la luz de la direccion se hace visible. */
+@media (min-width: 992px) {
+    .mdj-portada { padding-block: clamp(var(--mdj-space-5), 12vh, 8rem); }
+}
+
+/* La imagen recibe la sombra larga: es la pieza donde la luz de la direccion
+   se hace visible. */
 .mdj-marco {
     position: relative;
     background: var(--mdj-bruma);
     border-radius: var(--mdj-radio);
     box-shadow: var(--mdj-luz-larga);
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 2;
     display: grid;
     place-items: center;
     overflow: hidden;
@@ -266,6 +358,10 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     text-align: center;
 }
 
+@media (min-width: 768px) {
+    .mdj-marco { aspect-ratio: 4 / 5; }
+}
+
 /* --------------------------------------------------------------------------
    6. Formularios
    -------------------------------------------------------------------------- */
@@ -275,6 +371,10 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     padding: var(--mdj-space-3);
     border-radius: var(--mdj-radio);
     box-shadow: var(--mdj-luz-corta);
+}
+
+@media (min-width: 992px) {
+    .mdj-buscador { padding: var(--mdj-space-4); }
 }
 
 .mdj-campo { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -292,15 +392,20 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
 .mdj-campo select,
 .mdj-campo textarea {
     font-family: var(--mdj-texto);
-    font-size: var(--mdj-size-base);
+    /* 16px como minimo: por debajo de eso Safari en iOS hace zoom al enfocar
+       el campo y descoloca la pagina. */
+    font-size: 1rem;
     color: var(--mdj-tinta);
     background: var(--mdj-papel);
     border: 1px solid color-mix(in srgb, var(--mdj-piedra) 40%, transparent);
     border-radius: var(--mdj-radio);
     padding: 0.7rem 0.85rem;
     width: 100%;
+    max-width: 100%;
+    min-height: 48px;
     transition: border-color 200ms ease, box-shadow 200ms ease;
 }
+.mdj-campo textarea { min-height: 7rem; }
 .mdj-campo input:focus,
 .mdj-campo select:focus,
 .mdj-campo textarea:focus {
@@ -310,13 +415,24 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
 }
 
 .mdj-check { display: flex; align-items: flex-start; gap: 0.7rem; }
-.mdj-check input { width: 1.15rem; height: 1.15rem; margin-top: 0.25rem; flex: none; accent-color: var(--mdj-verde-hondo); }
-.mdj-check label { font-size: var(--mdj-size-base); color: var(--mdj-tinta); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.mdj-check input {
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.3rem;
+    flex: none;
+    accent-color: var(--mdj-verde-hondo);
+}
+.mdj-check label {
+    font-size: var(--mdj-size-base);
+    color: var(--mdj-tinta);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+}
 
 /* --------------------------------------------------------------------------
    7. Tarjetas
    -------------------------------------------------------------------------- */
-
 
 .mdj-tarjeta {
     display: flex;
@@ -328,17 +444,37 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     overflow: hidden;
     transition: transform var(--mdj-transicion), box-shadow var(--mdj-transicion);
 }
-.mdj-tarjeta:hover { transform: translateY(-4px); box-shadow: var(--mdj-luz-larga); }
-.mdj-tarjeta__cuerpo { padding: var(--mdj-space-3); display: flex; flex-direction: column; gap: var(--mdj-space-2); flex: 1; }
-.mdj-tarjeta__pie { margin-top: auto; display: flex; flex-wrap: wrap; gap: var(--mdj-space-2); align-items: center; }
+.mdj-tarjeta__cuerpo {
+    padding: var(--mdj-space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--mdj-space-2);
+    flex: 1;
+}
+.mdj-tarjeta__pie {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mdj-space-2);
+    align-items: center;
+}
 
 .mdj-tarjeta--elegida {
     border-color: var(--mdj-verde-hondo);
     box-shadow: var(--mdj-luz-corta);
 }
 
+@media (min-width: 992px) {
+    .mdj-tarjeta:hover { transform: translateY(-4px); box-shadow: var(--mdj-luz-larga); }
+}
+
 /* Datos de una habitacion: pares etiqueta/valor sin adornos. */
-.mdj-datos { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem var(--mdj-space-2); margin: 0; }
+.mdj-datos {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.35rem var(--mdj-space-2);
+    margin: 0;
+}
 .mdj-datos dt { font-size: var(--mdj-size-meta); color: var(--mdj-piedra); font-weight: 400; }
 .mdj-datos dd { margin: 0; font-size: var(--mdj-size-meta); }
 
@@ -361,18 +497,34 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     border-bottom: var(--mdj-filete);
 }
 .mdj-resumen__linea:last-child { border-bottom: 0; }
-.mdj-resumen__linea dt { font-weight: 400; color: var(--mdj-piedra); font-size: var(--mdj-size-meta); }
-.mdj-resumen__linea dd { margin: 0; text-align: right; }
+.mdj-resumen__linea dt {
+    font-weight: 400;
+    color: var(--mdj-piedra);
+    font-size: var(--mdj-size-meta);
+    flex: none;
+}
+.mdj-resumen__linea dd { margin: 0; text-align: right; min-width: 0; }
 
 .mdj-resumen__total {
     border-top: 2px solid var(--mdj-tinta);
     margin-top: var(--mdj-space-2);
     padding-top: var(--mdj-space-2);
 }
-.mdj-resumen__total dt { font-family: var(--mdj-display); font-size: 1.5rem; color: var(--mdj-tinta); }
-.mdj-resumen__total dd { font-family: var(--mdj-display); font-size: 1.5rem; }
+.mdj-resumen__total dt,
+.mdj-resumen__total dd {
+    font-family: var(--mdj-display);
+    font-size: 1.375rem;
+    color: var(--mdj-tinta);
+}
 
-.mdj-pegajoso { position: sticky; top: 6.5rem; }
+@media (min-width: 992px) {
+    .mdj-resumen { padding: var(--mdj-space-4); }
+    .mdj-resumen__total dt,
+    .mdj-resumen__total dd { font-size: 1.5rem; }
+    /* El resumen acompana al huesped mientras rellena sus datos, pero solo
+       cuando hay dos columnas: en movil va detras del formulario. */
+    .mdj-pegajoso { position: sticky; top: 6.5rem; }
+}
 
 /* --------------------------------------------------------------------------
    9. Pasos y avisos
@@ -380,19 +532,45 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
 
 /* Aqui la numeracion si dice algo cierto: reservar es una secuencia y el
    huesped necesita saber en cual de los tres tramos esta. */
-.mdj-pasos { display: flex; flex-wrap: wrap; gap: var(--mdj-space-3); list-style: none; padding: 0; margin: 0; counter-reset: paso; }
-.mdj-pasos li { counter-increment: paso; display: flex; align-items: center; gap: 0.6rem; color: var(--mdj-piedra); font-size: var(--mdj-size-meta); }
+.mdj-pasos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--mdj-space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: paso;
+}
+.mdj-pasos li {
+    counter-increment: paso;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--mdj-piedra);
+    font-size: var(--mdj-size-meta);
+}
 .mdj-pasos li::before {
     content: counter(paso);
     font-variant-numeric: tabular-nums;
-    width: 1.75rem; height: 1.75rem;
-    display: grid; place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    display: grid;
+    place-items: center;
     border: 1px solid currentColor;
     border-radius: 50%;
     font-size: 0.8125rem;
 }
 .mdj-pasos li[aria-current="step"] { color: var(--mdj-tinta); font-weight: 500; }
-.mdj-pasos li[aria-current="step"]::before { background: var(--mdj-verde-hondo); border-color: var(--mdj-verde-hondo); color: var(--mdj-papel); }
+.mdj-pasos li[aria-current="step"]::before {
+    background: var(--mdj-verde-hondo);
+    border-color: var(--mdj-verde-hondo);
+    color: var(--mdj-papel);
+}
+
+@media (min-width: 768px) {
+    .mdj-pasos { flex-direction: row; flex-wrap: wrap; gap: var(--mdj-space-3); }
+}
 
 .mdj-avisos { list-style: none; padding: 0; margin: 0; }
 .mdj-aviso {
@@ -417,13 +595,25 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     padding-block: var(--mdj-space-5) var(--mdj-space-3);
     margin-top: var(--mdj-space-5);
 }
-.mdj-footer h2 { font-family: var(--mdj-texto); font-size: var(--mdj-size-meta); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--mdj-papel) 60%, transparent); margin-bottom: var(--mdj-space-2); }
+.mdj-footer h2 {
+    font-family: var(--mdj-texto);
+    font-size: var(--mdj-size-meta);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--mdj-papel) 60%, transparent);
+    margin-bottom: var(--mdj-space-2);
+}
 .mdj-footer a { color: var(--mdj-papel); text-decoration: none; }
 .mdj-footer a:hover { text-decoration: underline; }
 .mdj-footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; }
 .mdj-footer address { font-style: normal; }
 .mdj-footer [data-placeholder] { color: color-mix(in srgb, var(--mdj-papel) 55%, transparent); }
-.mdj-footer__marca { font-family: var(--mdj-display); font-size: 2rem; color: var(--mdj-papel); }
+.mdj-footer__marca { font-family: var(--mdj-display); font-size: 1.75rem; color: var(--mdj-papel); }
+
+@media (min-width: 992px) {
+    .mdj-footer__marca { font-size: 2rem; }
+}
 
 /* --------------------------------------------------------------------------
    11. La firma: la luz que recorre la pagina
@@ -444,7 +634,9 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
 }
 
 @keyframes mdj-entrada {
-    from { opacity: 0; transform: translate3d(1.25rem, 1.5rem, 0); }
+    /* Solo desplazamiento vertical: mover en horizontal un bloque que ya ocupa
+       todo el ancho es justo lo que provoca una barra de scroll lateral. */
+    from { opacity: 0; transform: translate3d(0, 1.5rem, 0); }
     to   { opacity: 1; transform: none; }
 }
 
@@ -457,19 +649,4 @@ h3 { font-size: var(--mdj-size-h3); font-family: var(--mdj-texto); font-weight: 
     }
     .mdj-tarjeta:hover,
     .mdj-btn--principal:hover { transform: none; }
-}
-
-/* --------------------------------------------------------------------------
-   12. Responsive
-   -------------------------------------------------------------------------- */
-
-@media (max-width: 991.98px) {
-    :root { --mdj-space-5: 3.5rem; --mdj-space-6: 4.5rem; }
-    .mdj-pegajoso { position: static; }
-}
-
-@media (max-width: 575.98px) {
-    :root { --mdj-space-3: 1.25rem; --mdj-space-4: 2rem; }
-    .mdj-marco { aspect-ratio: 3 / 4; }
-    .mdj-btn { width: 100%; }
 }
