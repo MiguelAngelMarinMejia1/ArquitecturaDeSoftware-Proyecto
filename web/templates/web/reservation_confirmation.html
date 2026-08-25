@@ -11,98 +11,108 @@ rather than making them trust that it was recorded correctly.
 
 {% block content %}
 
-<section aria-labelledby="confirmacion-title" data-section="confirmation">
-    {% if from_lookup %}
-    <h1 id="confirmacion-title">Tu reserva</h1>
-    {% else %}
-    <h1 id="confirmacion-title">Reserva confirmada</h1>
-    <p>Gracias por reservar con Hotel MDJ.</p>
-    {% endif %}
+<section class="mdj-seccion" aria-labelledby="confirmacion-title" data-section="confirmation">
+    <div class="mdj-contenedor">
+        <div class="row g-5">
+            <div class="col-12 col-lg-7">
+                <span class="mdj-rotulo">{% if from_lookup %}Tu reserva{% else %}Todo listo{% endif %}</span>
+                <h1 id="confirmacion-title">
+                    {% if from_lookup %}Reserva {{ reservation.confirmation_code }}{% else %}Reserva confirmada{% endif %}
+                </h1>
 
-    <p data-role="confirmation-code">
-        Numero de reserva: <strong>{{ reservation.confirmation_code }}</strong>
-    </p>
+                {% if not from_lookup %}
+                <p class="mdj-lead mt-4">
+                    Gracias por reservar con Hotel MDJ. Enviaremos la confirmacion a
+                    <strong>{{ reservation.customer.email }}</strong>.
+                </p>
+                {% endif %}
 
-    {% if not from_lookup %}
-    <p>
-        Enviaremos la confirmacion al correo <strong>{{ reservation.customer.email }}</strong>.
-        Guarda tu numero de reserva: lo necesitaras junto con ese correo para
-        consultarla mas adelante.
-    </p>
-    {% endif %}
+                <div class="mdj-buscador mt-4" data-role="confirmation-code">
+                    <span class="mdj-etiqueta d-block mb-2">Numero de reserva</span>
+                    <p class="mdj-cifra fs-3 mb-2">{{ reservation.confirmation_code }}</p>
+                    <p class="mdj-meta mb-0">
+                        Guardalo: lo necesitaras junto con tu correo para consultar esta reserva.
+                    </p>
+                </div>
 
-    <dl data-role="reservation-detail">
-        <dt>Estado</dt>
-        <dd>{{ reservation.get_status_display }}</dd>
+                <section class="mt-5" aria-labelledby="llegada-title" data-section="arrival-info">
+                    <h2 id="llegada-title">Informacion para tu llegada</h2>
+                    <p class="mt-3 mb-2" data-placeholder="info-llegada">
+                        Horarios de check-in y check-out pendientes de definir.
+                    </p>
+                    <p class="mdj-meta mb-0">
+                        Recuerda presentar tu documento de identidad al momento del registro.
+                    </p>
+                </section>
 
-        <dt>Huesped</dt>
-        <dd>{{ reservation.customer }}</dd>
+                <section class="mt-5" aria-labelledby="contacto-title" data-section="hotel-contact">
+                    <h2 id="contacto-title">Contacto Hotel MDJ</h2>
+                    <address class="mt-3 mb-0">
+                        <p class="mb-1" data-placeholder="direccion">Direccion pendiente de definir</p>
+                        <p class="mb-1">Telefono: <a href="#" class="mdj-enlace" data-placeholder="telefono">pendiente</a></p>
+                        <p class="mb-0">Email: <a href="#" class="mdj-enlace" data-placeholder="email">pendiente</a></p>
+                    </address>
+                </section>
 
-        <dt>Habitacion{{ reservation.reservation_rooms.count|pluralize }}</dt>
-        <dd>
-            <ul>
-                {% for line in reservation.reservation_rooms.all %}
-                <li>
-                    {{ line.room.room_type.name }} &middot; habitacion {{ line.room.number }}
-                    ({{ line.price_per_night }} por noche)
-                </li>
-                {% endfor %}
-            </ul>
-        </dd>
+                <nav class="mt-5" aria-label="Acciones sobre la reserva" data-section="confirmation-actions">
+                    <ul class="list-unstyled d-flex flex-wrap gap-4 mb-0">
+                        <li><a href="{% url 'web:reservation-lookup' %}" class="mdj-enlace">Consultar reserva</a></li>
+                        <li><a href="#" class="mdj-enlace" data-pending-page="contacto">Contactar Hotel MDJ</a></li>
+                        <li><a href="{% url 'web:home' %}" class="mdj-enlace">Volver al inicio</a></li>
+                    </ul>
+                </nav>
+            </div>
 
-        <dt>Entrada</dt>
-        <dd>{{ reservation.check_in_date|date:"d M Y" }}</dd>
-
-        <dt>Salida</dt>
-        <dd>{{ reservation.check_out_date|date:"d M Y" }}</dd>
-
-        <dt>Huespedes</dt>
-        <dd>
-            {{ reservation.num_adults }} adulto{{ reservation.num_adults|pluralize }}{% if reservation.num_children %},
-            {{ reservation.num_children }} nino{{ reservation.num_children|pluralize }}{% endif %}
-        </dd>
-
-        {% if reservation.special_requests %}
-        <dt>Solicitudes especiales</dt>
-        <dd>{{ reservation.special_requests }}</dd>
-        {% endif %}
-
-        <dt>Subtotal</dt>
-        <dd>{{ reservation.subtotal }}</dd>
-
-        <dt>Impuestos</dt>
-        <dd>{{ reservation.taxes }}</dd>
-
-        <dt data-role="total-label">Total</dt>
-        <dd data-role="total-value">{{ reservation.total_amount }}</dd>
-    </dl>
+            <div class="col-12 col-lg-5">
+                <div class="mdj-resumen mdj-pegajoso">
+                    <h2 class="h5 mb-4">Detalle de la estadia</h2>
+                    <dl class="mb-0" data-role="reservation-detail">
+                        <div class="mdj-resumen__linea">
+                            <dt>Estado</dt><dd>{{ reservation.get_status_display }}</dd>
+                        </div>
+                        <div class="mdj-resumen__linea">
+                            <dt>Huesped</dt><dd>{{ reservation.customer }}</dd>
+                        </div>
+                        <div class="mdj-resumen__linea">
+                            <dt>Habitacion{{ reservation.reservation_rooms.count|pluralize }}</dt>
+                            <dd>
+                                {% for line in reservation.reservation_rooms.all %}
+                                {{ line.room.room_type.name }} &middot; {{ line.room.number }}<br>
+                                <span class="mdj-meta mdj-cifra">{{ line.price_per_night }} / noche</span>
+                                {% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                            </dd>
+                        </div>
+                        <div class="mdj-resumen__linea">
+                            <dt>Entrada</dt><dd>{{ reservation.check_in_date|date:"d M Y" }}</dd>
+                        </div>
+                        <div class="mdj-resumen__linea">
+                            <dt>Salida</dt><dd>{{ reservation.check_out_date|date:"d M Y" }}</dd>
+                        </div>
+                        <div class="mdj-resumen__linea">
+                            <dt>Huespedes</dt>
+                            <dd>{{ reservation.num_adults }} adulto{{ reservation.num_adults|pluralize }}{% if reservation.num_children %}, {{ reservation.num_children }} nino{{ reservation.num_children|pluralize }}{% endif %}</dd>
+                        </div>
+                        {% if reservation.special_requests %}
+                        <div class="mdj-resumen__linea">
+                            <dt>Solicitudes</dt><dd>{{ reservation.special_requests }}</dd>
+                        </div>
+                        {% endif %}
+                        <div class="mdj-resumen__linea">
+                            <dt>Subtotal</dt><dd class="mdj-cifra">{{ reservation.subtotal }}</dd>
+                        </div>
+                        <div class="mdj-resumen__linea">
+                            <dt>Impuestos</dt><dd class="mdj-cifra">{{ reservation.taxes }}</dd>
+                        </div>
+                        <div class="mdj-resumen__linea mdj-resumen__total">
+                            <dt data-role="total-label">Total</dt>
+                            <dd class="mdj-cifra" data-role="total-value">{{ reservation.total_amount }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
-
-<section aria-labelledby="llegada-title" data-section="arrival-info">
-    <h2 id="llegada-title">Informacion para tu llegada</h2>
-    <p data-placeholder="info-llegada">
-        Horarios de check-in y check-out pendientes de definir.
-    </p>
-    <p>
-        Recuerda presentar tu documento de identidad al momento del registro.
-    </p>
-</section>
-
-<section aria-labelledby="contacto-title" data-section="hotel-contact">
-    <h2 id="contacto-title">Contacto Hotel MDJ</h2>
-    <address>
-        <p data-placeholder="direccion">Direccion pendiente de definir</p>
-        <p>Telefono: <a href="#" data-placeholder="telefono">Pendiente de definir</a></p>
-        <p>Email: <a href="#" data-placeholder="email">Pendiente de definir</a></p>
-    </address>
-</section>
-
-<nav aria-label="Acciones sobre la reserva" data-section="confirmation-actions">
-    <ul>
-        <li><a href="{% url 'web:reservation-lookup' %}">Consultar reserva</a></li>
-        <li><a href="#" data-pending-page="contacto">Contactar Hotel MDJ</a></li>
-        <li><a href="{% url 'web:home' %}">Volver al inicio</a></li>
-    </ul>
-</nav>
 
 {% endblock %}
