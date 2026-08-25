@@ -15,8 +15,8 @@
 </head>
 <body>
 
-{# El encabezado queda fijo para que Reservar siga al alcance en cualquier
-   punto de una pagina larga. #}
+{% comment %} El encabezado queda fijo para que Reservar siga al alcance en cualquier
+   punto de una pagina larga. {% endcomment %}
 <header class="mdj-header" data-region="site-header">
     <a href="#contenido-principal" data-role="skip-link">Saltar al contenido</a>
 
@@ -26,9 +26,9 @@
         <nav class="d-none d-lg-block" aria-label="Navegacion principal">
             <ul class="list-unstyled d-flex align-items-center gap-4 mb-0">
                 <li><a class="mdj-nav-link" href="{% url 'web:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Inicio</a></li>
-                {# Paginas aun no construidas: las entradas existen para fijar la
+                {% comment %} Paginas aun no construidas: las entradas existen para fijar la
                    arquitectura de informacion, y cada href aterriza cuando su
-                   pagina se publique. #}
+                   pagina se publique. {% endcomment %}
                 <li><a class="mdj-nav-link" href="#" data-pending-page="habitaciones">Habitaciones</a></li>
                 <li><a class="mdj-nav-link" href="#" data-pending-page="servicios">Servicios</a></li>
                 <li><a class="mdj-nav-link" href="#" data-pending-page="experiencias">Experiencias</a></li>
@@ -38,8 +38,8 @@
         </nav>
 
         <div class="d-flex align-items-center gap-2">
-            {# La reserva directa es el objetivo comercial del sitio, de modo que
-               esta accion no compite con la navegacion: la encabeza. #}
+            {% comment %} La reserva directa es el objetivo comercial del sitio, de modo que
+               esta accion no compite con la navegacion: la encabeza. {% endcomment %}
             <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal d-none d-sm-inline-flex" data-role="cta-primary">Reservar</a>
 
             <button class="btn d-lg-none border" type="button" data-bs-toggle="collapse"

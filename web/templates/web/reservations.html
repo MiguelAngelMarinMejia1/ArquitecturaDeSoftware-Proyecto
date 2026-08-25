@@ -70,9 +70,9 @@ identify nobody), guest details only ever leave via POST.
 
 {% if criteria.is_complete %}
 
-{# 3 - Resultados. Un solo formulario envuelve todas las opciones para poder
+{% comment %} 3 - Resultados. Un solo formulario envuelve todas las opciones para poder
    elegir varias habitaciones de una vez, respetando el 1..* entre reserva y
-   habitacion. #}
+   habitacion. {% endcomment %}
 <section class="mdj-seccion" aria-labelledby="resultados-title" data-section="booking-results">
     <div class="mdj-contenedor">
         <h2 id="resultados-title">Habitaciones disponibles</h2>
@@ -155,9 +155,9 @@ identify nobody), guest details only ever leave via POST.
 
 {% if selected_rooms and quote %}
 
-{# 4 a 6 - Resumen, datos del huesped y confirmacion. Un unico POST cierra la
+{% comment %} 4 a 6 - Resumen, datos del huesped y confirmacion. Un unico POST cierra la
    reserva: dividirlo mas dejaria datos personales aparcados en la sesion entre
-   peticiones sin ninguna ventaja. #}
+   peticiones sin ninguna ventaja. {% endcomment %}
 <section class="mdj-seccion" data-section="booking-checkout">
     <div class="mdj-contenedor">
         <form action="{% url 'web:reservations' %}" method="post" data-role="booking-form">
@@ -174,8 +174,8 @@ identify nobody), guest details only ever leave via POST.
             <div class="row g-5">
                 <div class="col-12 col-lg-7">
 
-                    {# 5 - Datos del huesped. El documento de identidad no aparece
-                       aqui a proposito: se recoge en el check-in. #}
+                    {% comment %} 5 - Datos del huesped. El documento de identidad no aparece
+                       aqui a proposito: se recoge en el check-in. {% endcomment %}
                     <section aria-labelledby="huesped-title" data-section="booking-guest">
                         <span class="mdj-rotulo">Paso final</span>
                         <h2 id="huesped-title">Informacion del huesped</h2>
@@ -220,8 +220,8 @@ identify nobody), guest details only ever leave via POST.
                                 </div>
                             </div>
                             <div class="col-12">
-                                {# Consentimiento comercial separado y sin marcar:
-                                   nunca condiciona la reserva. #}
+                                {% comment %} Consentimiento comercial separado y sin marcar:
+                                   nunca condiciona la reserva. {% endcomment %}
                                 <div class="mdj-check">
                                     <input type="checkbox" id="marketing-consent" name="marketing_consent" value="1">
                                     <label for="marketing-consent">Quiero recibir ofertas y novedades de Hotel MDJ</label>
@@ -259,8 +259,8 @@ identify nobody), guest details only ever leave via POST.
                     </section>
                 </div>
 
-                {# 4 - Resumen de costes, presente todo el tiempo mientras el
-                   huesped rellena sus datos. #}
+                {% comment %} 4 - Resumen de costes, presente todo el tiempo mientras el
+                   huesped rellena sus datos. {% endcomment %}
                 <div class="col-12 col-lg-5">
                     <section class="mdj-resumen mdj-pegajoso" aria-labelledby="resumen-title" data-section="booking-summary">
                         <h2 class="h5 mb-4" id="resumen-title">Resumen de tu reserva</h2>
