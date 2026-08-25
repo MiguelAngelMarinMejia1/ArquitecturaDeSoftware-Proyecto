@@ -37,7 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third party
+    'rest_framework',
+
+    # Local apps
     'reservation',
+    'web',
 ]
 
 MIDDLEWARE = [
@@ -103,9 +109,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -121,3 +127,33 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Django Rest Framework
+# The custom exception handler translates domain exceptions into HTTP status
+# codes, so the APIViews stay free of business-level try/except blocks.
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'reservation.api.exception_handler.domain_exception_handler',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+}
+
+
+# --- Hotel MDJ business configuration -------------------------------------
+# These values are infrastructure configuration, never hard-coded in the
+# domain layer. Policies read them through django.conf.settings.
+
+# Notification channel built by NotifierFactory: CONSOLE | EMAIL
+NOTIFIER_TYPE = 'CONSOLE'
+
+# Payment gateway built by PaymentGatewayFactory: SIMULATED
+PAYMENT_GATEWAY_TYPE = 'SIMULATED'
+
+# Tax rate applied on top of the room subtotal. Provisional value pending the
+# rate that actually applies to the hotel.
+TAX_RATE = '0.19'
+
+# Prefix prepended to every reservation confirmation code.
+CONFIRMATION_CODE_PREFIX = 'MDJ'
