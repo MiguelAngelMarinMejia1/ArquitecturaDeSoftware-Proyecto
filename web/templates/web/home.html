@@ -8,176 +8,252 @@ placeholders rather than filled with invented material.
 {% endcomment %}
 
 {% block title %}Hotel MDJ{% endblock %}
-{% block meta_description %}Hotel MDJ: hospedaje y experiencia.{% endblock %}
+{% block meta_description %}Hotel MDJ, Medellin. Hospedaje y experiencia.{% endblock %}
 
 {% block content %}
 
-{# 1 - Hero: what this place is and the one action that matters. #}
-<section aria-labelledby="hero-title" data-section="hero">
-    <h1 id="hero-title">Hotel MDJ</h1>
-    <p data-placeholder="propuesta-valor">
-        Propuesta de valor pendiente de definir.
-    </p>
-    <p data-placeholder="ubicacion">Ubicacion pendiente de definir</p>
-
-    <a href="{% url 'web:reservations' %}" data-role="cta-primary">Reservar ahora</a>
-    <a href="#conocer-el-hotel" data-role="cta-secondary">Conocer el hotel</a>
-
-    <figure data-placeholder="imagen-hero">
-        <figcaption>Imagen principal del hotel pendiente de definir</figcaption>
-    </figure>
-</section>
-
-{# 2 - Availability search. Complements the hero CTA for visitors who already
-   know their dates; it submits to the booking page rather than handling the
-   search itself. #}
-<section aria-labelledby="disponibilidad-title" data-section="availability">
-    <h2 id="disponibilidad-title">Consultar disponibilidad</h2>
-
-    <form action="{% url 'web:reservations' %}" method="get">
-        <div>
-            <label for="home-check-in">Fecha de entrada</label>
-            <input type="date" id="home-check-in" name="check_in" min="{{ today }}" required>
-        </div>
-        <div>
-            <label for="home-check-out">Fecha de salida</label>
-            <input type="date" id="home-check-out" name="check_out" min="{{ today }}" required>
-        </div>
-        <div>
-            <label for="home-adults">Adultos</label>
-            <input type="number" id="home-adults" name="adults" min="1" value="2" required>
-        </div>
-        <div>
-            <label for="home-children">Ninos</label>
-            <input type="number" id="home-children" name="children" min="0" value="0">
-        </div>
-        <button type="submit">Buscar disponibilidad</button>
-    </form>
-</section>
-
-{# 3 - Who the hotel is. Short by design: depth belongs on the inner pages. #}
-<section id="conocer-el-hotel" aria-labelledby="presentacion-title" data-section="about">
-    <h2 id="presentacion-title">Sobre Hotel MDJ</h2>
-    <p data-placeholder="texto-presentacion">
-        Texto de presentacion pendiente de definir.
-    </p>
-    <figure data-placeholder="imagen-presentacion">
-        <figcaption>Imagen del hotel pendiente de definir</figcaption>
-    </figure>
-    <a href="#" data-pending-page="sobre-nosotros">Conocer mas</a>
-</section>
-
-{# 4 - Room preview. Driven by real RoomType records so the catalogue and the
-   booking flow can never disagree. #}
-<section aria-labelledby="habitaciones-title" data-section="rooms-preview">
-    <h2 id="habitaciones-title">Habitaciones</h2>
-
-    <ul data-role="room-list">
-        {% for room_type in room_types %}
-        <li data-role="room-card">
-            <article aria-labelledby="room-type-{{ room_type.pk }}">
-                <figure data-placeholder="foto-habitacion">
-                    <figcaption>Fotografia pendiente de definir</figcaption>
+{# 1 - Portada: que es este lugar y la unica accion que importa. #}
+<section class="mdj-portada" aria-labelledby="hero-title" data-section="hero">
+    <div class="mdj-contenedor">
+        <div class="row align-items-center g-5">
+            <div class="col-12 col-lg-7">
+                <span class="mdj-rotulo">Medellin, Colombia</span>
+                <h1 class="mdj-portada__titulo" id="hero-title">Hotel MDJ</h1>
+                <p class="mdj-lead mb-4" data-placeholder="propuesta-valor">
+                    Propuesta de valor pendiente de definir.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal" data-role="cta-primary">Reservar ahora</a>
+                    <a href="#conocer-el-hotel" class="mdj-btn mdj-btn--secundario" data-role="cta-secondary">Conocer el hotel</a>
+                </div>
+            </div>
+            <div class="col-12 col-lg-5">
+                <figure class="mdj-marco mb-0" data-placeholder="imagen-hero">
+                    <figcaption>Imagen principal del hotel pendiente de definir</figcaption>
                 </figure>
-                <h3 id="room-type-{{ room_type.pk }}">{{ room_type.name }}</h3>
-                <dl>
-                    <dt>Capacidad</dt>
-                    <dd>Hasta {{ room_type.max_capacity }} huesped{{ room_type.max_capacity|pluralize:"es" }}</dd>
-                    {% if room_type.bed_type %}
-                    <dt>Cama</dt>
-                    <dd>{{ room_type.bed_type }}</dd>
-                    {% endif %}
-                    <dt>Desde</dt>
-                    <dd>{{ room_type.base_price_per_night }} por noche</dd>
-                </dl>
-                {% if room_type.description %}
-                <p>{{ room_type.description }}</p>
-                {% endif %}
-                <a href="#" data-pending-page="habitaciones">Ver habitacion</a>
-                <a href="{% url 'web:reservations' %}?room_type={{ room_type.pk }}">Reservar</a>
-            </article>
-        </li>
-        {% empty %}
-        <li>Aun no hay tipos de habitacion cargados.</li>
-        {% endfor %}
-    </ul>
-
-    <a href="#" data-pending-page="habitaciones">Ver todas las habitaciones</a>
+            </div>
+        </div>
+    </div>
 </section>
 
-{# 5 - Services. The list stays empty until the hotel confirms what it offers:
-   inventing amenities would misrepresent the property. #}
-<section aria-labelledby="servicios-title" data-section="services">
-    <h2 id="servicios-title">Servicios y comodidades</h2>
-    <ul data-placeholder="lista-servicios">
-        <li>Servicios pendientes de confirmar con el hotel</li>
-    </ul>
-    <a href="#" data-pending-page="servicios">Ver todos los servicios</a>
+{# 2 - Consultar disponibilidad. Complementa el CTA de la portada para quien ya
+   sabe sus fechas; no resuelve la busqueda, la delega en la pagina de reserva. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="disponibilidad-title" data-section="availability">
+    <div class="mdj-contenedor">
+        <div class="mdj-buscador">
+            <h2 class="h5 mb-4" id="disponibilidad-title">Consultar disponibilidad</h2>
+            <form action="{% url 'web:reservations' %}" method="get" class="row g-3 align-items-end">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="mdj-campo">
+                        <label for="home-check-in">Entrada</label>
+                        <input type="date" id="home-check-in" name="check_in" min="{{ today }}" required>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="mdj-campo">
+                        <label for="home-check-out">Salida</label>
+                        <input type="date" id="home-check-out" name="check_out" min="{{ today }}" required>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <div class="mdj-campo">
+                        <label for="home-adults">Adultos</label>
+                        <input type="number" id="home-adults" name="adults" min="1" value="2" required>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <div class="mdj-campo">
+                        <label for="home-children">Ninos</label>
+                        <input type="number" id="home-children" name="children" min="0" value="0">
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button type="submit" class="mdj-btn mdj-btn--principal w-100">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </section>
 
-{# 6 - Location and surroundings. #}
-<section aria-labelledby="experiencia-title" data-section="location">
-    <h2 id="experiencia-title">Experiencia y ubicacion</h2>
-    <p data-placeholder="texto-ubicacion">
-        Descripcion de la ubicacion pendiente de definir.
-    </p>
-    <figure data-placeholder="mapa">
-        <figcaption>Mapa de ubicacion pendiente de definir</figcaption>
-    </figure>
-    <ul data-placeholder="lugares-cercanos">
-        <li>Lugares de interes cercanos pendientes de definir</li>
-    </ul>
-    <a href="#" data-pending-page="experiencias">Ver experiencias</a>
+{# 3 - Quien es el hotel. Breve a proposito: el detalle vive en las paginas
+   internas. #}
+<section class="mdj-seccion mdj-revela" id="conocer-el-hotel" aria-labelledby="presentacion-title" data-section="about">
+    <div class="mdj-contenedor">
+        <div class="row align-items-center g-5">
+            <div class="col-12 col-lg-5 order-lg-2">
+                <span class="mdj-rotulo">El hotel</span>
+                <h2 id="presentacion-title">Un lugar para detenerse</h2>
+                <p class="mdj-lead mt-4" data-placeholder="texto-presentacion">
+                    Texto de presentacion pendiente de definir.
+                </p>
+                <a href="#" class="mdj-enlace" data-pending-page="sobre-nosotros">Conocer mas</a>
+            </div>
+            <div class="col-12 col-lg-7 order-lg-1">
+                <figure class="mdj-marco mdj-marco--ancho mb-0" data-placeholder="imagen-presentacion">
+                    <figcaption>Imagen del hotel pendiente de definir</figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
 </section>
 
-{# 7 - Gallery preview. #}
-<section aria-labelledby="galeria-title" data-section="gallery-preview">
-    <h2 id="galeria-title">Galeria</h2>
-    <ul data-placeholder="galeria-imagenes">
-        <li>
-            <figure>
-                <figcaption>Fotografias pendientes de definir</figcaption>
-            </figure>
-        </li>
-    </ul>
-    <a href="#" data-pending-page="galeria">Ver galeria</a>
+{# 4 - Habitaciones. Alimentada con los RoomType reales, de modo que el catalogo
+   y el flujo de reserva no puedan contradecirse. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="habitaciones-title" data-section="rooms-preview">
+    <div class="mdj-contenedor">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
+            <div>
+                <span class="mdj-rotulo">Alojamiento</span>
+                <h2 id="habitaciones-title">Habitaciones</h2>
+            </div>
+            <a href="#" class="mdj-enlace" data-pending-page="habitaciones">Ver todas las habitaciones</a>
+        </div>
+
+        <ul class="row row-cols-1 row-cols-md-2 row-cols-lg-4 list-unstyled g-4" data-role="room-list">
+            {% for room_type in room_types %}
+            <li class="col" data-role="room-card">
+                <article class="mdj-tarjeta" aria-labelledby="room-type-{{ room_type.pk }}">
+                    <figure class="mdj-marco mb-0" data-placeholder="foto-habitacion">
+                        <figcaption>Fotografia pendiente</figcaption>
+                    </figure>
+                    <div class="mdj-tarjeta__cuerpo">
+                        <h3 id="room-type-{{ room_type.pk }}">{{ room_type.name }}</h3>
+                        <dl class="mdj-datos">
+                            <dt>Capacidad</dt>
+                            <dd>{{ room_type.max_capacity }} huesped{{ room_type.max_capacity|pluralize:"es" }}</dd>
+                            {% if room_type.bed_type %}
+                            <dt>Cama</dt>
+                            <dd>{{ room_type.bed_type }}</dd>
+                            {% endif %}
+                        </dl>
+                        {% if room_type.description %}
+                        <p class="mdj-meta mb-0">{{ room_type.description }}</p>
+                        {% endif %}
+                        <div class="mdj-tarjeta__pie">
+                            <p class="mb-0">
+                                <span class="mdj-meta d-block">Desde</span>
+                                <span class="mdj-cifra fs-5">{{ room_type.base_price_per_night }}</span>
+                                <span class="mdj-meta">/ noche</span>
+                            </p>
+                            <a href="{% url 'web:reservations' %}?room_type={{ room_type.pk }}" class="mdj-enlace ms-auto">Reservar</a>
+                        </div>
+                    </div>
+                </article>
+            </li>
+            {% empty %}
+            <li class="col"><p class="mdj-meta">Aun no hay tipos de habitacion cargados.</p></li>
+            {% endfor %}
+        </ul>
+    </div>
 </section>
 
-{# 8 - Social proof. No rating or testimonial is shown until real ones exist. #}
-<section aria-labelledby="resenas-title" data-section="reviews">
-    <h2 id="resenas-title">Lo que dicen nuestros huespedes</h2>
-    <p data-placeholder="calificacion-general">
-        Calificacion general pendiente de definir
-    </p>
-    <ul data-placeholder="lista-resenas">
-        <li>
-            <blockquote>
-                <p>Resenas pendientes de incorporar.</p>
-            </blockquote>
-            <figcaption>Fuente pendiente de definir</figcaption>
-        </li>
-    </ul>
+{# 5 - Servicios. La lista queda vacia hasta que el hotel confirme lo que
+   ofrece: inventar comodidades seria describir mal la propiedad. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="servicios-title" data-section="services">
+    <div class="mdj-contenedor">
+        <span class="mdj-rotulo">A tu disposicion</span>
+        <h2 id="servicios-title">Servicios y comodidades</h2>
+        <ul class="row row-cols-1 row-cols-md-3 list-unstyled g-4 mt-3" data-placeholder="lista-servicios">
+            <li class="col"><p class="mb-0">Servicios pendientes de confirmar con el hotel</p></li>
+        </ul>
+        <a href="#" class="mdj-enlace" data-pending-page="servicios">Ver todos los servicios</a>
+    </div>
 </section>
 
-{# 9 - Direct booking incentive. #}
-<section aria-labelledby="directa-title" data-section="direct-booking">
-    <h2 id="directa-title">Reserva directamente con Hotel MDJ</h2>
-    <p data-placeholder="texto-beneficios">
-        Reservar directamente con nosotros puede ofrecerte beneficios exclusivos.
-    </p>
-    <ul data-placeholder="lista-beneficios">
-        <li>Beneficios pendientes de confirmar con el hotel</li>
-    </ul>
-    <a href="{% url 'web:reservations' %}" data-role="cta-primary">Reservar ahora</a>
+{# 6 - Ubicacion y entorno. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="experiencia-title" data-section="location">
+    <div class="mdj-contenedor">
+        <div class="row align-items-center g-5">
+            <div class="col-12 col-lg-5">
+                <span class="mdj-rotulo">Alrededores</span>
+                <h2 id="experiencia-title">Experiencia y ubicacion</h2>
+                <p class="mdj-lead mt-4" data-placeholder="texto-ubicacion">
+                    Descripcion de la ubicacion pendiente de definir.
+                </p>
+                <ul class="list-unstyled d-grid gap-2 mb-4" data-placeholder="lugares-cercanos">
+                    <li>Lugares de interes cercanos pendientes de definir</li>
+                </ul>
+                <a href="#" class="mdj-enlace" data-pending-page="experiencias">Ver experiencias</a>
+            </div>
+            <div class="col-12 col-lg-7">
+                <figure class="mdj-marco mdj-marco--ancho mb-0" data-placeholder="mapa">
+                    <figcaption>Mapa de ubicacion pendiente de definir</figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
 </section>
 
-{# 10 - Closing call to action. #}
-<section aria-labelledby="cta-final-title" data-section="final-cta">
-    <h2 id="cta-final-title">Listo para tu estadia en Hotel MDJ?</h2>
-    <p data-placeholder="texto-cta-final">
-        Texto de cierre pendiente de definir.
-    </p>
-    <a href="{% url 'web:reservations' %}" data-role="cta-primary">Reservar ahora</a>
+{# 7 - Galeria. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="galeria-title" data-section="gallery-preview">
+    <div class="mdj-contenedor">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
+            <div>
+                <span class="mdj-rotulo">El lugar</span>
+                <h2 id="galeria-title">Galeria</h2>
+            </div>
+            <a href="#" class="mdj-enlace" data-pending-page="galeria">Ver galeria</a>
+        </div>
+        <ul class="row row-cols-2 row-cols-lg-4 list-unstyled g-4" data-placeholder="galeria-imagenes">
+            {% for _ in "1234" %}
+            <li class="col">
+                <figure class="mdj-marco mb-0"><figcaption>Fotografia pendiente</figcaption></figure>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+{# 8 - Prueba social. No se muestra ninguna calificacion ni testimonio hasta que
+   existan de verdad. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="resenas-title" data-section="reviews">
+    <div class="mdj-contenedor">
+        <span class="mdj-rotulo">Huespedes</span>
+        <h2 id="resenas-title">Lo que dicen quienes ya se quedaron</h2>
+        <p class="mdj-meta mt-3" data-placeholder="calificacion-general">Calificacion general pendiente de definir</p>
+        <ul class="row row-cols-1 row-cols-lg-3 list-unstyled g-4 mt-2" data-placeholder="lista-resenas">
+            <li class="col">
+                <figure class="mdj-tarjeta h-100 mb-0">
+                    <div class="mdj-tarjeta__cuerpo">
+                        <blockquote class="mb-0"><p class="mb-0">Resenas pendientes de incorporar.</p></blockquote>
+                        <figcaption class="mdj-meta mt-auto">Fuente pendiente de definir</figcaption>
+                    </div>
+                </figure>
+            </li>
+        </ul>
+    </div>
+</section>
+
+{# 9 - Incentivo a la reserva directa. #}
+<section class="mdj-seccion mdj-revela" aria-labelledby="directa-title" data-section="direct-booking">
+    <div class="mdj-contenedor">
+        <div class="row align-items-center g-5">
+            <div class="col-12 col-lg-6">
+                <span class="mdj-rotulo">Sin intermediarios</span>
+                <h2 id="directa-title">Reserva directamente con Hotel MDJ</h2>
+                <p class="mdj-lead mt-4" data-placeholder="texto-beneficios">
+                    Reservar directamente con nosotros puede ofrecerte beneficios exclusivos.
+                </p>
+            </div>
+            <div class="col-12 col-lg-6">
+                <ul class="list-unstyled d-grid gap-3 mb-4" data-placeholder="lista-beneficios">
+                    <li>Beneficios pendientes de confirmar con el hotel</li>
+                </ul>
+                <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal" data-role="cta-primary">Reservar ahora</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# 10 - Cierre. #}
+<section class="mdj-seccion mdj-revela text-center" aria-labelledby="cta-final-title" data-section="final-cta">
+    <div class="mdj-contenedor">
+        <h2 id="cta-final-title">Listo para tu estadia en Hotel MDJ?</h2>
+        <p class="mdj-lead mx-auto mt-4 mb-4" data-placeholder="texto-cta-final">
+            Texto de cierre pendiente de definir.
+        </p>
+        <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal" data-role="cta-primary">Reservar ahora</a>
+    </div>
 </section>
 
 {% endblock %}
