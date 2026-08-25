@@ -1,116 +1,210 @@
-# reservation/domain/builders.py
-"""Builder for the Reservation entity.
+"""Builder for the Reservation aggregate.
 
-Responsibility: assemble a Reserva step by step (Fluent Interface) and
-guarantee it is valid BEFORE it touches the database. This builder does NOT
-calculate prices or handle state transitions (confirm/cancel) — those belong
-to ReservaService.
+Why a Builder here? A reservation is the most complex entity in Hotel MDJ: it
+ties together a customer, *one or more* rooms (UML multiplicity ``1..*``), a
+date range, an occupancy split between adults and children, a frozen nightly
+rate per room and three monetary totals. Assembling that with a single
+constructor call would mean a long, order-dependent argument list where an
+invalid combination is only discovered after the object exists.
+
+The builder accumulates those parts through a fluent interface and runs every
+invariant in ``build()``, so an invalid reservation can never be produced.
+
+Responsibility boundary
+-----------------------
+``build()`` returns an **unsaved** aggregate. It does not touch the database,
+does not send notifications and does not decide prices -- those belong to
+``ReservationService`` and ``domain.policies`` respectively. This is what keeps
+the class compliant with the Single Responsibility Principle: it builds and
+validates, nothing else.
 """
 
-from reservation.models import Habitacion, Reserva
+from dataclasses import dataclass, field
+from datetime import date
+from decimal import Decimal
+
 from reservation.domain.exceptions import (
+    GuestCapacityExceededError,
     IncompleteReservationDataError,
     InvalidDateRangeError,
+    NoRoomsSelectedError,
     RoomNotAvailableError,
-    GuestCapacityExceededError,
 )
+from reservation.domain.policies import CapacityPolicy, PricingPolicy
+from reservation.models import Reservation, ReservationRoom
 
 
-class ReservaBuilder:
-    """Fluent builder that accumulates reservation data and validates it
-    before persisting."""
+@dataclass(frozen=True)
+class ReservationDraft:
+    """A fully validated, not yet persisted reservation aggregate.
 
-    _MAX_HUESPEDES_POR_TIPO = {
-        Habitacion.Tipo.SENCILLA: 1,
-        Habitacion.Tipo.DOBLE: 2,
-        Habitacion.Tipo.SUITE: 4,
-    }
+    Holding the room lines alongside the reservation is what makes the ``1..*``
+    association buildable in one atomic step: the service saves the parent and
+    its lines inside a single transaction, or nothing at all.
+    """
 
-    def __init__(self):
-        self._usuario = None
-        self._habitacion = None
-        self._fecha_entrada = None
-        self._fecha_salida = None
-        self._num_huespedes = None
-        self._solicitudes_especiales = ""
+    reservation: Reservation
+    room_lines: list = field(default_factory=list)
+    breakdown: object = None
 
-    def para_usuario(self, usuario):
-        self._usuario = usuario
+
+class ReservationBuilder:
+    """Fluent builder that assembles and validates a reservation."""
+
+    def __init__(self, pricing_policy=None, availability_checker=None):
+        # Injected collaborators, so the builder can be unit-tested without a
+        # database and so a different pricing strategy needs no edit here.
+        self._pricing = pricing_policy or PricingPolicy()
+        self._is_available = availability_checker or self._default_availability_checker
+
+        self._customer = None
+        self._rooms = []
+        self._check_in = None
+        self._check_out = None
+        self._num_adults = None
+        self._num_children = 0
+        self._special_requests = ""
+        self._confirmation_code = None
+
+    # --- Fluent interface -------------------------------------------------
+
+    def for_customer(self, customer):
+        self._customer = customer
         return self
 
-    def para_habitacion(self, habitacion):
-        self._habitacion = habitacion
+    def add_room(self, room):
+        """Add one room. Called once per room to honour the ``1..*`` UML link."""
+        if room is not None and room not in self._rooms:
+            self._rooms.append(room)
         return self
 
-    def con_fechas(self, fecha_entrada, fecha_salida):
-        self._fecha_entrada = fecha_entrada
-        self._fecha_salida = fecha_salida
+    def add_rooms(self, rooms):
+        for room in rooms or []:
+            self.add_room(room)
         return self
 
-    def con_huespedes(self, num_huespedes):
-        self._num_huespedes = num_huespedes
+    def with_dates(self, check_in: date, check_out: date):
+        self._check_in = check_in
+        self._check_out = check_out
         return self
 
-    def con_solicitudes(self, solicitudes_especiales):
-        self._solicitudes_especiales = solicitudes_especiales or ""
+    def with_guests(self, num_adults: int, num_children: int = 0):
+        self._num_adults = num_adults
+        self._num_children = num_children or 0
         return self
 
-    def build(self) -> Reserva:
+    def with_special_requests(self, special_requests: str):
+        self._special_requests = (special_requests or "").strip()
+        return self
+
+    def with_confirmation_code(self, confirmation_code: str):
+        self._confirmation_code = confirmation_code
+        return self
+
+    # --- Terminal operation ----------------------------------------------
+
+    def build(self) -> ReservationDraft:
+        """Validate every invariant and return an unsaved aggregate."""
         self._validate_completeness()
+        self._validate_rooms_selected()
         self._validate_date_range()
         self._validate_guest_capacity()
         self._validate_room_availability()
 
-        reserva = Reserva.objects.create(
-            usuario=self._usuario,
-            habitacion=self._habitacion,
-            fechaEntrada=self._fecha_entrada,
-            fechaSalida=self._fecha_salida,
-            numHuespedes=self._num_huespedes,
-            solicitudesEspeciales=self._solicitudes_especiales,
-        )
-        return reserva
+        breakdown = self._pricing.quote(self._rooms, self._check_in, self._check_out)
 
-    # --- Internal validation steps -----------------------------------
+        reservation = Reservation(
+            customer=self._customer,
+            check_in_date=self._check_in,
+            check_out_date=self._check_out,
+            num_adults=self._num_adults,
+            num_children=self._num_children,
+            special_requests=self._special_requests,
+            confirmation_code=self._confirmation_code,
+            subtotal=breakdown.subtotal,
+            taxes=breakdown.taxes,
+            total_amount=breakdown.total,
+            status=Reservation.Status.PENDING,
+        )
+
+        room_lines = [
+            ReservationRoom(
+                room=room,
+                price_per_night=breakdown.price_per_night_by_room.get(
+                    room.pk, Decimal("0.00")
+                ),
+            )
+            for room in self._rooms
+        ]
+
+        return ReservationDraft(
+            reservation=reservation,
+            room_lines=room_lines,
+            breakdown=breakdown,
+        )
+
+    # --- Invariants -------------------------------------------------------
 
     def _validate_completeness(self):
         missing = [
-            name for name, value in [
-                ("usuario", self._usuario),
-                ("habitacion", self._habitacion),
-                ("fecha_entrada", self._fecha_entrada),
-                ("fecha_salida", self._fecha_salida),
-                ("num_huespedes", self._num_huespedes),
-            ] if value is None
+            name
+            for name, value in (
+                ("cliente", self._customer),
+                ("fecha de entrada", self._check_in),
+                ("fecha de salida", self._check_out),
+                ("numero de adultos", self._num_adults),
+                ("codigo de confirmacion", self._confirmation_code),
+            )
+            if value is None
         ]
         if missing:
             raise IncompleteReservationDataError(
-                f"Faltan datos requeridos de reserva: {', '.join(missing)}"
+                "Faltan datos requeridos para crear la reserva: "
+                + ", ".join(missing)
+                + "."
+            )
+
+    def _validate_rooms_selected(self):
+        if not self._rooms:
+            raise NoRoomsSelectedError(
+                "Una reserva debe incluir al menos una habitacion."
             )
 
     def _validate_date_range(self):
-        if self._fecha_entrada >= self._fecha_salida:
+        if self._check_out <= self._check_in:
             raise InvalidDateRangeError(
-                "fecha_entrada debe ser anterior a fecha_salida."
+                "La fecha de salida debe ser posterior a la fecha de entrada."
+            )
+        if self._check_in < date.today():
+            raise InvalidDateRangeError(
+                "La fecha de entrada no puede estar en el pasado."
             )
 
     def _validate_guest_capacity(self):
-        max_capacity = self._MAX_HUESPEDES_POR_TIPO.get(
-            self._habitacion.tipo,
-            self._num_huespedes,
-        )
-        if self._num_huespedes > max_capacity:
+        if self._num_adults < 1:
             raise GuestCapacityExceededError(
-                f"La habitación '{self._habitacion}' admite hasta {max_capacity} "
-                f"huespedes, pero se solicitaron {self._num_huespedes}."
+                "La reserva debe incluir al menos un adulto."
+            )
+        if not CapacityPolicy.fits(self._rooms, self._num_adults, self._num_children):
+            capacity = CapacityPolicy.total_capacity(self._rooms)
+            guests = self._num_adults + self._num_children
+            raise GuestCapacityExceededError(
+                f"Las habitaciones seleccionadas admiten hasta {capacity} huespedes, "
+                f"pero se solicitaron {guests}."
             )
 
     def _validate_room_availability(self):
-        if not self._habitacion.esta_disponible(
-            self._fecha_entrada,
-            self._fecha_salida,
-        ):
-            raise RoomNotAvailableError(
-                f"La habitación {self._habitacion.numero} no está disponible "
-                f"entre {self._fecha_entrada} y {self._fecha_salida}."
-            )
+        for room in self._rooms:
+            if not self._is_available(room, self._check_in, self._check_out):
+                raise RoomNotAvailableError(
+                    f"La habitacion {room.number} no esta disponible entre "
+                    f"{self._check_in} y {self._check_out}."
+                )
+
+    @staticmethod
+    def _default_availability_checker(room, check_in, check_out):
+        # Imported lazily to keep the module importable without Django apps
+        # being ready (and to avoid a circular import with selectors).
+        from reservation.selectors import is_room_available
+
+        return is_room_available(room, check_in, check_out)
