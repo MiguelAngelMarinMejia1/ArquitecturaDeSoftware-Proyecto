@@ -21,7 +21,7 @@ stored on the server. That keeps the browser's back button, a refresh and a
 pasted link all working, and it is why a guest who returns to a URL sees exactly
 the step they left.
 
-``paso`` is the one exception: it lets a guest step *backwards* to correct
+``step`` is the one exception: it lets a guest move *backwards* to correct
 something without losing what they had already chosen.
 """
 
@@ -102,22 +102,22 @@ class ReservationPageView(SearchCriteriaMixin, View):
     STEP_ROOMS = 2
     STEP_DETAILS = 3
 
-    BACK_TARGETS = {"fechas": STEP_DATES, "habitaciones": STEP_ROOMS}
+    BACK_TARGETS = {"dates": STEP_DATES, "rooms": STEP_ROOMS}
 
     def get(self, request):
         criteria = self.read_criteria(request)
         selected_ids = [
             int(value) for value in request.GET.getlist("room") if value.isdigit()
         ]
-        step = self._resolve_step(criteria, selected_ids, request.GET.get("paso"))
+        step = self._resolve_step(criteria, selected_ids, request.GET.get("step"))
 
         context = {
             "criteria": criteria,
             "step": step,
             "today": date.today().isoformat(),
             "payment_methods": Payment.Method.choices,
-            "url_paso_fechas": self._url_for_step(request, "fechas"),
-            "url_paso_habitaciones": self._url_for_step(request, "habitaciones"),
+            "url_step_dates": self._url_for_step(request, "dates"),
+            "url_step_rooms": self._url_for_step(request, "rooms"),
         }
 
         if criteria["is_complete"]:
@@ -144,7 +144,7 @@ class ReservationPageView(SearchCriteriaMixin, View):
         return render(request, self.template_name, context)
 
     def _resolve_step(self, criteria, selected_ids, requested):
-        """Derive the step from the data, letting ``paso`` only move backwards.
+        """Derive the step from the data, letting ``step`` only move backwards.
 
         Reading it this way means a guest can never land on a step whose inputs
         are missing, however the URL was assembled.
@@ -156,10 +156,10 @@ class ReservationPageView(SearchCriteriaMixin, View):
         return min(self.BACK_TARGETS.get(requested, furthest), furthest)
 
     @staticmethod
-    def _url_for_step(request, paso):
+    def _url_for_step(request, step):
         """Link back to an earlier step carrying everything chosen so far."""
         params = request.GET.copy()
-        params["paso"] = paso
+        params["step"] = step
         return f"{reverse('web:reservations')}?{params.urlencode()}"
 
     def post(self, request):

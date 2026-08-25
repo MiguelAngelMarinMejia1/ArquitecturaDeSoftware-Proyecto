@@ -27,14 +27,14 @@ only ever leave via POST.
         corregir algo es pulsar sobre el paso al que se quiere regresar.
         {% endcomment %}
         <ol class="mdj-pasos mt-4" data-role="booking-steps">
-            <li{% if step == 1 %} aria-current="step"{% elif step > 1 %} data-estado="completado"{% endif %}>
+            <li{% if step == 1 %} aria-current="step"{% elif step > 1 %} data-state="complete"{% endif %}>
                 {% if step > 1 %}
-                <a href="{{ url_paso_fechas }}">Fechas</a>
+                <a href="{{ url_step_dates }}">Fechas</a>
                 {% else %}Fechas{% endif %}
             </li>
-            <li{% if step == 2 %} aria-current="step"{% elif step > 2 %} data-estado="completado"{% endif %}>
+            <li{% if step == 2 %} aria-current="step"{% elif step > 2 %} data-state="complete"{% endif %}>
                 {% if step > 2 %}
-                <a href="{{ url_paso_habitaciones }}">Habitacion</a>
+                <a href="{{ url_step_rooms }}">Habitacion</a>
                 {% else %}Habitacion{% endif %}
             </li>
             <li{% if step == 3 %} aria-current="step"{% endif %}>Datos y confirmacion</li>
@@ -65,7 +65,7 @@ tiene que poder ver que fechas eligio sin abandonar el paso en el que esta.
                 {% for room in selected_rooms %}{{ room.room_type.name }} {{ room.number }}{% if not forloop.last %}, {% endif %}{% endfor %}
             </p>
             {% endif %}
-            <a href="{% if step > 2 %}{{ url_paso_habitaciones }}{% else %}{{ url_paso_fechas }}{% endif %}"
+            <a href="{% if step > 2 %}{{ url_step_rooms }}{% else %}{{ url_step_dates }}{% endif %}"
                class="mdj-enlace mdj-recap__cambiar">Cambiar</a>
         </div>
     </div>
@@ -192,7 +192,7 @@ habitacion.
                 <li class="col-12">
                     <div class="mdj-buscador">
                         <p class="mb-2">No hay habitaciones disponibles para esas fechas.</p>
-                        <a href="{{ url_paso_fechas }}" class="mdj-enlace">Probar con otras fechas</a>
+                        <a href="{{ url_step_dates }}" class="mdj-enlace">Probar con otras fechas</a>
                     </div>
                 </li>
                 {% endfor %}
@@ -200,7 +200,7 @@ habitacion.
 
             {% if results %}
             <div class="mdj-acciones mt-5">
-                <a href="{{ url_paso_fechas }}" class="mdj-btn mdj-btn--secundario">Cambiar fechas</a>
+                <a href="{{ url_step_dates }}" class="mdj-btn mdj-btn--secundario">Cambiar fechas</a>
                 <button type="submit" class="mdj-btn mdj-btn--principal">Continuar</button>
             </div>
             {% endif %}
@@ -360,7 +360,7 @@ peticiones sin ninguna ventaja.
                             <button type="submit" class="mdj-btn mdj-btn--principal w-100" data-role="cta-primary">
                                 Confirmar reserva
                             </button>
-                            <a href="{{ url_paso_habitaciones }}" class="mdj-enlace text-center">Cambiar habitacion</a>
+                            <a href="{{ url_step_rooms }}" class="mdj-enlace text-center">Cambiar habitacion</a>
                         </div>
                     </section>
                 </div>

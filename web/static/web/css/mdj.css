@@ -613,8 +613,8 @@ h3 {
 
 /* Un paso resuelto muestra una marca en lugar de su numero: el numero ya no
    informa de nada una vez se ha pasado por el. */
-.mdj-pasos li[data-estado="completado"] { color: var(--mdj-verde-hondo); }
-.mdj-pasos li[data-estado="completado"]::before {
+.mdj-pasos li[data-state="complete"] { color: var(--mdj-verde-hondo); }
+.mdj-pasos li[data-state="complete"]::before {
     content: "\2713";
     border-color: var(--mdj-verde-agua);
     color: var(--mdj-verde-hondo);
