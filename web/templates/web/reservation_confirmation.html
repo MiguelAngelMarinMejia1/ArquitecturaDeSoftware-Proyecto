@@ -1,0 +1,108 @@
+{% extends "web/base.html" %}
+
+{% comment %}
+Confirmation page, reached either right after booking or through the lookup
+form. It is the guest's receipt, so it repeats every detail they agreed to
+rather than making them trust that it was recorded correctly.
+{% endcomment %}
+
+{% block title %}Reserva {{ reservation.confirmation_code }} - Hotel MDJ{% endblock %}
+{% block meta_description %}Detalle de tu reserva en Hotel MDJ.{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="confirmacion-title" data-section="confirmation">
+    {% if from_lookup %}
+    <h1 id="confirmacion-title">Tu reserva</h1>
+    {% else %}
+    <h1 id="confirmacion-title">Reserva confirmada</h1>
+    <p>Gracias por reservar con Hotel MDJ.</p>
+    {% endif %}
+
+    <p data-role="confirmation-code">
+        Numero de reserva: <strong>{{ reservation.confirmation_code }}</strong>
+    </p>
+
+    {% if not from_lookup %}
+    <p>
+        Enviaremos la confirmacion al correo <strong>{{ reservation.customer.email }}</strong>.
+        Guarda tu numero de reserva: lo necesitaras junto con ese correo para
+        consultarla mas adelante.
+    </p>
+    {% endif %}
+
+    <dl data-role="reservation-detail">
+        <dt>Estado</dt>
+        <dd>{{ reservation.get_status_display }}</dd>
+
+        <dt>Huesped</dt>
+        <dd>{{ reservation.customer }}</dd>
+
+        <dt>Habitacion{{ reservation.reservation_rooms.count|pluralize }}</dt>
+        <dd>
+            <ul>
+                {% for line in reservation.reservation_rooms.all %}
+                <li>
+                    {{ line.room.room_type.name }} &middot; habitacion {{ line.room.number }}
+                    ({{ line.price_per_night }} por noche)
+                </li>
+                {% endfor %}
+            </ul>
+        </dd>
+
+        <dt>Entrada</dt>
+        <dd>{{ reservation.check_in_date|date:"d M Y" }}</dd>
+
+        <dt>Salida</dt>
+        <dd>{{ reservation.check_out_date|date:"d M Y" }}</dd>
+
+        <dt>Huespedes</dt>
+        <dd>
+            {{ reservation.num_adults }} adulto{{ reservation.num_adults|pluralize }}{% if reservation.num_children %},
+            {{ reservation.num_children }} nino{{ reservation.num_children|pluralize }}{% endif %}
+        </dd>
+
+        {% if reservation.special_requests %}
+        <dt>Solicitudes especiales</dt>
+        <dd>{{ reservation.special_requests }}</dd>
+        {% endif %}
+
+        <dt>Subtotal</dt>
+        <dd>{{ reservation.subtotal }}</dd>
+
+        <dt>Impuestos</dt>
+        <dd>{{ reservation.taxes }}</dd>
+
+        <dt data-role="total-label">Total</dt>
+        <dd data-role="total-value">{{ reservation.total_amount }}</dd>
+    </dl>
+</section>
+
+<section aria-labelledby="llegada-title" data-section="arrival-info">
+    <h2 id="llegada-title">Informacion para tu llegada</h2>
+    <p data-placeholder="info-llegada">
+        Horarios de check-in y check-out pendientes de definir.
+    </p>
+    <p>
+        Recuerda presentar tu documento de identidad al momento del registro.
+    </p>
+</section>
+
+<section aria-labelledby="contacto-title" data-section="hotel-contact">
+    <h2 id="contacto-title">Contacto Hotel MDJ</h2>
+    <address>
+        <p data-placeholder="direccion">Direccion pendiente de definir</p>
+        <p>Telefono: <a href="#" data-placeholder="telefono">Pendiente de definir</a></p>
+        <p>Email: <a href="#" data-placeholder="email">Pendiente de definir</a></p>
+    </address>
+</section>
+
+<nav aria-label="Acciones sobre la reserva" data-section="confirmation-actions">
+    <ul>
+        <li><a href="{% url 'web:reservation-lookup' %}">Consultar reserva</a></li>
+        <li><a href="#" data-pending-page="contacto">Contactar Hotel MDJ</a></li>
+        <li><a href="{% url 'web:home' %}">Volver al inicio</a></li>
+    </ul>
+</nav>
+
+{% endblock %}
