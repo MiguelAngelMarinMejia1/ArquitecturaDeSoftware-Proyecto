@@ -17,16 +17,16 @@ only ever leave via POST.
 
 {% block content %}
 
-<section class="mdj-seccion pb-0" aria-labelledby="reserva-title" data-section="booking-header">
-    <div class="mdj-contenedor">
-        <span class="mdj-rotulo">Reservas</span>
-        <h1 id="reserva-title">Reserva tu estadia</h1>
+<section class="mdj-section pb-0" aria-labelledby="booking-title" data-section="booking-header">
+    <div class="mdj-container">
+        <span class="mdj-eyebrow">Reservas</span>
+        <h1 id="booking-title">Reserva tu estadia</h1>
 
         {% comment %}
         Los pasos ya recorridos son enlaces: la forma mas corta de volver a
         corregir algo es pulsar sobre el paso al que se quiere regresar.
         {% endcomment %}
-        <ol class="mdj-pasos mt-4" data-role="booking-steps">
+        <ol class="mdj-steps mt-4" data-role="booking-steps">
             <li{% if step == 1 %} aria-current="step"{% elif step > 1 %} data-state="complete"{% endif %}>
                 {% if step > 1 %}
                 <a href="{{ url_step_dates }}">Fechas</a>
@@ -47,26 +47,26 @@ only ever leave via POST.
 Barra de contexto. Sin ella, volver atras seria un salto a ciegas: el huesped
 tiene que poder ver que fechas eligio sin abandonar el paso en el que esta.
 {% endcomment %}
-<section class="mdj-seccion pb-0" aria-label="Resumen de tu busqueda" data-section="booking-recap">
-    <div class="mdj-contenedor">
+<section class="mdj-section pb-0" aria-label="Resumen de tu busqueda" data-section="booking-recap">
+    <div class="mdj-container">
         <div class="mdj-recap">
-            <p class="mdj-recap__dato mb-0">
-                <span class="mdj-etiqueta d-block">Estadia</span>
+            <p class="mdj-recap__item mb-0">
+                <span class="mdj-label d-block">Estadia</span>
                 {{ criteria.check_in|date:"d M" }} al {{ criteria.check_out|date:"d M Y" }}
                 <span class="mdj-meta">({{ nights }} noche{{ nights|pluralize }})</span>
             </p>
-            <p class="mdj-recap__dato mb-0">
-                <span class="mdj-etiqueta d-block">Huespedes</span>
+            <p class="mdj-recap__item mb-0">
+                <span class="mdj-label d-block">Huespedes</span>
                 {{ criteria.adults }} adulto{{ criteria.adults|pluralize }}{% if criteria.children %}, {{ criteria.children }} nino{{ criteria.children|pluralize }}{% endif %}
             </p>
             {% if step > 2 %}
-            <p class="mdj-recap__dato mb-0">
-                <span class="mdj-etiqueta d-block">Habitacion{{ selected_rooms|length|pluralize }}</span>
+            <p class="mdj-recap__item mb-0">
+                <span class="mdj-label d-block">Habitacion{{ selected_rooms|length|pluralize }}</span>
                 {% for room in selected_rooms %}{{ room.room_type.name }} {{ room.number }}{% if not forloop.last %}, {% endif %}{% endfor %}
             </p>
             {% endif %}
             <a href="{% if step > 2 %}{{ url_step_rooms }}{% else %}{{ url_step_dates }}{% endif %}"
-               class="mdj-enlace mdj-recap__cambiar">Cambiar</a>
+               class="mdj-link mdj-recap__change">Cambiar</a>
         </div>
     </div>
 </section>
@@ -75,41 +75,41 @@ tiene que poder ver que fechas eligio sin abandonar el paso en el que esta.
 
 {% if step == 1 %}
 {% comment %} Paso 1 - Fechas y ocupacion. {% endcomment %}
-<section class="mdj-seccion" aria-labelledby="busqueda-title" data-section="booking-search">
-    <div class="mdj-contenedor">
-        <div class="mdj-buscador">
-            <h2 class="h5 mb-2" id="busqueda-title">Cuando quieres venir?</h2>
+<section class="mdj-section" aria-labelledby="search-title" data-section="booking-search">
+    <div class="mdj-container">
+        <div class="mdj-panel">
+            <h2 class="h5 mb-2" id="search-title">Cuando quieres venir?</h2>
             <p class="mdj-meta mb-4">Elige tus fechas y cuantos son. Despues escoges la habitacion.</p>
 
             <form action="{% url 'web:reservations' %}" method="get" class="row g-3 align-items-end">
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="mdj-campo">
+                    <div class="mdj-field">
                         <label for="check-in">Entrada</label>
                         <input type="date" id="check-in" name="check_in" min="{{ today }}"
                                value="{{ criteria.check_in|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="mdj-campo">
+                    <div class="mdj-field">
                         <label for="check-out">Salida</label>
                         <input type="date" id="check-out" name="check_out" min="{{ today }}"
                                value="{{ criteria.check_out|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
-                    <div class="mdj-campo">
+                    <div class="mdj-field">
                         <label for="adults">Adultos</label>
                         <input type="number" id="adults" name="adults" min="1" value="{{ criteria.adults }}" required>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
-                    <div class="mdj-campo">
+                    <div class="mdj-field">
                         <label for="children">Ninos</label>
                         <input type="number" id="children" name="children" min="0" value="{{ criteria.children }}">
                     </div>
                 </div>
                 <div class="col-12 col-lg-2">
-                    <button type="submit" class="mdj-btn mdj-btn--principal w-100">Buscar</button>
+                    <button type="submit" class="mdj-btn mdj-btn--primary w-100">Buscar</button>
                 </div>
             </form>
         </div>
@@ -124,9 +124,9 @@ Paso 2 - Eleccion de habitacion. Un solo formulario envuelve todas las opciones
 para poder elegir varias de una vez, respetando el 1..* entre reserva y
 habitacion.
 {% endcomment %}
-<section class="mdj-seccion" aria-labelledby="resultados-title" data-section="booking-results">
-    <div class="mdj-contenedor">
-        <h2 id="resultados-title">Elige tu habitacion</h2>
+<section class="mdj-section" aria-labelledby="results-title" data-section="booking-results">
+    <div class="mdj-container">
+        <h2 id="results-title">Elige tu habitacion</h2>
         <p class="mdj-meta mt-2 mb-5">
             {% if results %}
             {{ results|length }} habitacion{{ results|length|pluralize:"es" }} disponible{{ results|length|pluralize:"s" }}
@@ -143,18 +143,18 @@ habitacion.
             <ul class="row row-cols-1 row-cols-md-2 row-cols-xl-3 list-unstyled g-4" data-role="result-list">
                 {% for room in results %}
                 <li class="col" data-role="result-card">
-                    <article class="mdj-tarjeta {% if room.pk in selected_ids %}mdj-tarjeta--elegida{% endif %}"
+                    <article class="mdj-card {% if room.pk in selected_ids %}mdj-card--selected{% endif %}"
                              aria-labelledby="room-{{ room.pk }}">
-                        <figure class="mdj-marco mdj-marco--ancho mb-0" data-placeholder="foto-habitacion">
+                        <figure class="mdj-frame mdj-frame--wide mb-0" data-placeholder="room-photo">
                             <figcaption>Fotografia pendiente</figcaption>
                         </figure>
-                        <div class="mdj-tarjeta__cuerpo">
+                        <div class="mdj-card__body">
                             <div>
-                                <span class="mdj-rotulo mb-1">Habitacion {{ room.number }}</span>
+                                <span class="mdj-eyebrow mb-1">Habitacion {{ room.number }}</span>
                                 <h3 id="room-{{ room.pk }}">{{ room.room_type.name }}</h3>
                             </div>
 
-                            <dl class="mdj-datos">
+                            <dl class="mdj-specs">
                                 <dt>Capacidad</dt>
                                 <dd>{{ room.room_type.max_capacity }} huesped{{ room.room_type.max_capacity|pluralize:"es" }}</dd>
                                 {% if room.room_type.bed_type %}
@@ -173,9 +173,9 @@ habitacion.
                                 Incluye desayuno, Wi-Fi, aire acondicionado y limpieza diaria.
                             </p>
 
-                            <div class="mdj-tarjeta__pie">
+                            <div class="mdj-card__footer">
                                 <p class="mb-0">
-                                    <span class="mdj-cifra fs-5">{{ room.room_type.base_price_per_night }}</span>
+                                    <span class="mdj-numeric fs-5">{{ room.room_type.base_price_per_night }}</span>
                                     <span class="mdj-meta">/ noche</span>
                                 </p>
                                 <div class="mdj-check ms-auto">
@@ -190,18 +190,18 @@ habitacion.
                 </li>
                 {% empty %}
                 <li class="col-12">
-                    <div class="mdj-buscador">
+                    <div class="mdj-panel">
                         <p class="mb-2">No hay habitaciones disponibles para esas fechas.</p>
-                        <a href="{{ url_step_dates }}" class="mdj-enlace">Probar con otras fechas</a>
+                        <a href="{{ url_step_dates }}" class="mdj-link">Probar con otras fechas</a>
                     </div>
                 </li>
                 {% endfor %}
             </ul>
 
             {% if results %}
-            <div class="mdj-acciones mt-5">
-                <a href="{{ url_step_dates }}" class="mdj-btn mdj-btn--secundario">Cambiar fechas</a>
-                <button type="submit" class="mdj-btn mdj-btn--principal">Continuar</button>
+            <div class="mdj-actions mt-5">
+                <a href="{{ url_step_dates }}" class="mdj-btn mdj-btn--secondary">Cambiar fechas</a>
+                <button type="submit" class="mdj-btn mdj-btn--primary">Continuar</button>
             </div>
             {% endif %}
         </form>
@@ -216,8 +216,8 @@ Paso 3 - Datos del huesped, resumen y confirmacion. Un unico POST cierra la
 reserva: dividirlo mas dejaria datos personales aparcados en la sesion entre
 peticiones sin ninguna ventaja.
 {% endcomment %}
-<section class="mdj-seccion" data-section="booking-checkout">
-    <div class="mdj-contenedor">
+<section class="mdj-section" data-section="booking-checkout">
+    <div class="mdj-container">
         <form action="{% url 'web:reservations' %}" method="post" data-role="booking-form">
             {% csrf_token %}
             <input type="hidden" name="check_in" value="{{ criteria.check_in|date:'Y-m-d' }}">
@@ -231,45 +231,45 @@ peticiones sin ninguna ventaja.
 
             <div class="row g-4 g-lg-5">
                 <div class="col-12 col-lg-7">
-                    <section aria-labelledby="huesped-title" data-section="booking-guest">
-                        <h2 id="huesped-title">Tus datos</h2>
+                    <section aria-labelledby="guest-title" data-section="booking-guest">
+                        <h2 id="guest-title">Tus datos</h2>
                         <p class="mdj-meta mt-2 mb-4">Solo lo necesario para tu llegada.</p>
 
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="first-name">Nombre</label>
                                     <input type="text" id="first-name" name="first_name" autocomplete="given-name" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="last-name">Apellido</label>
                                     <input type="text" id="last-name" name="last_name" autocomplete="family-name" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="email">Correo electronico</label>
                                     <input type="email" id="email" name="email" autocomplete="email"
-                                           aria-describedby="email-ayuda" required>
-                                    <small class="mdj-meta" id="email-ayuda">Te enviaremos aqui la confirmacion.</small>
+                                           aria-describedby="email-help" required>
+                                    <small class="mdj-meta" id="email-help">Te enviaremos aqui la confirmacion.</small>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="phone">Telefono</label>
                                     <input type="tel" id="phone" name="phone" autocomplete="tel" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="country">Pais</label>
                                     <input type="text" id="country" name="country" autocomplete="country-name">
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="special-requests">Solicitudes especiales (opcional)</label>
                                     <textarea id="special-requests" name="special_requests" rows="4"></textarea>
                                 </div>
@@ -287,11 +287,11 @@ peticiones sin ninguna ventaja.
                         </div>
                     </section>
 
-                    <section class="mt-5" aria-labelledby="pago-title" data-section="booking-payment">
-                        <h2 id="pago-title">Pago</h2>
+                    <section class="mt-5" aria-labelledby="payment-title" data-section="booking-payment">
+                        <h2 id="payment-title">Pago</h2>
                         <div class="row g-3 mt-3">
                             <div class="col-12 col-md-6">
-                                <div class="mdj-campo">
+                                <div class="mdj-field">
                                     <label for="payment-method">Metodo de pago</label>
                                     <select id="payment-method" name="payment_method" required>
                                         {% for value, label in payment_methods %}
@@ -319,11 +319,11 @@ peticiones sin ninguna ventaja.
                 </div>
 
                 <div class="col-12 col-lg-5">
-                    <section class="mdj-resumen mdj-pegajoso" aria-labelledby="resumen-title" data-section="booking-summary">
-                        <h2 class="h5 mb-4" id="resumen-title">Resumen de tu reserva</h2>
+                    <section class="mdj-summary mdj-sticky" aria-labelledby="summary-title" data-section="booking-summary">
+                        <h2 class="h5 mb-4" id="summary-title">Resumen de tu reserva</h2>
 
                         <dl class="mb-0">
-                            <div class="mdj-resumen__linea">
+                            <div class="mdj-summary__row">
                                 <dt>Habitacion{{ selected_rooms|length|pluralize }}</dt>
                                 <dd>
                                     {% for room in selected_rooms %}
@@ -331,36 +331,36 @@ peticiones sin ninguna ventaja.
                                     {% endfor %}
                                 </dd>
                             </div>
-                            <div class="mdj-resumen__linea">
+                            <div class="mdj-summary__row">
                                 <dt>Entrada</dt><dd>{{ criteria.check_in|date:"d M Y" }}</dd>
                             </div>
-                            <div class="mdj-resumen__linea">
+                            <div class="mdj-summary__row">
                                 <dt>Salida</dt><dd>{{ criteria.check_out|date:"d M Y" }}</dd>
                             </div>
-                            <div class="mdj-resumen__linea">
-                                <dt>Noches</dt><dd class="mdj-cifra">{{ quote.nights }}</dd>
+                            <div class="mdj-summary__row">
+                                <dt>Noches</dt><dd class="mdj-numeric">{{ quote.nights }}</dd>
                             </div>
-                            <div class="mdj-resumen__linea">
+                            <div class="mdj-summary__row">
                                 <dt>Huespedes</dt>
                                 <dd>{{ criteria.adults }} adulto{{ criteria.adults|pluralize }}{% if criteria.children %}, {{ criteria.children }} nino{{ criteria.children|pluralize }}{% endif %}</dd>
                             </div>
-                            <div class="mdj-resumen__linea">
-                                <dt>Subtotal</dt><dd class="mdj-cifra">{{ quote.subtotal }}</dd>
+                            <div class="mdj-summary__row">
+                                <dt>Subtotal</dt><dd class="mdj-numeric">{{ quote.subtotal }}</dd>
                             </div>
-                            <div class="mdj-resumen__linea">
-                                <dt>Impuestos</dt><dd class="mdj-cifra">{{ quote.taxes }}</dd>
+                            <div class="mdj-summary__row">
+                                <dt>Impuestos</dt><dd class="mdj-numeric">{{ quote.taxes }}</dd>
                             </div>
-                            <div class="mdj-resumen__linea mdj-resumen__total">
+                            <div class="mdj-summary__row mdj-summary__total">
                                 <dt data-role="total-label">Total</dt>
-                                <dd class="mdj-cifra" data-role="total-value">{{ quote.total }}</dd>
+                                <dd class="mdj-numeric" data-role="total-value">{{ quote.total }}</dd>
                             </div>
                         </dl>
 
-                        <div class="mdj-acciones mt-4">
-                            <button type="submit" class="mdj-btn mdj-btn--principal w-100" data-role="cta-primary">
+                        <div class="mdj-actions mt-4">
+                            <button type="submit" class="mdj-btn mdj-btn--primary w-100" data-role="cta-primary">
                                 Confirmar reserva
                             </button>
-                            <a href="{{ url_step_rooms }}" class="mdj-enlace text-center">Cambiar habitacion</a>
+                            <a href="{{ url_step_rooms }}" class="mdj-link text-center">Cambiar habitacion</a>
                         </div>
                     </section>
                 </div>
@@ -371,11 +371,11 @@ peticiones sin ninguna ventaja.
 {% endif %}
 
 
-<section class="mdj-seccion" data-section="booking-help">
-    <div class="mdj-contenedor">
+<section class="mdj-section" data-section="booking-help">
+    <div class="mdj-container">
         <p class="mdj-meta mb-0">
             Ya tienes una reserva?
-            <a href="{% url 'web:reservation-lookup' %}" class="mdj-enlace">Consultala aqui</a>.
+            <a href="{% url 'web:reservation-lookup' %}" class="mdj-link">Consultala aqui</a>.
         </p>
     </div>
 </section>

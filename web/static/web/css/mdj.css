@@ -1,45 +1,45 @@
 /* ==========================================================================
-   Hotel MDJ — sistema visual "Luz de las cuatro"
+   Hotel MDJ — "Luz de las cuatro" visual system
    --------------------------------------------------------------------------
-   La direccion nace de la luz de la tarde en el valle de Aburra: fondos claros,
-   mucho aire y una sombra direccional larga que atraviesa toda la pagina. El
-   lujo se expresa como espacio y calma, no como ornamento.
+   The direction comes from late afternoon light over the Aburra valley: pale
+   grounds, generous air, and one long directional shadow running through the
+   whole page. Luxury is expressed as space and calm, never as ornament.
 
-   Bootstrap aporta la retícula, las utilidades y la accesibilidad de sus
-   componentes; todo el aspecto se redefine aqui sobrescribiendo sus variables
-   CSS, de modo que no quede rastro del tema por defecto.
+   Bootstrap supplies the grid, the utilities and the accessibility of its
+   components; every appearance is redefined here by overriding its CSS
+   variables, so that none of its default theme shows through.
 
-   METODOLOGIA: mobile first. Todo lo que hay fuera de una media query es la
-   version estrecha, y cada @media (min-width) solo anade a medida que aparece
-   espacio. No se usa ni una sola consulta max-width.
+   METHOD: mobile first. Everything outside a media query is the narrow
+   version, and each @media (min-width) only adds as space appears. There is
+   not a single max-width query in this file.
 
-   Puntos de corte, alineados con los de Bootstrap:
-       576px  movil grande
-       768px  tableta
-       992px  escritorio
-      1200px  escritorio amplio
+   Breakpoints, aligned with Bootstrap's:
+       576px  large phone
+       768px  tablet
+       992px  desktop
+      1200px  wide desktop
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Tokens — valores base = movil
+   1. Tokens — base values are the mobile ones
    -------------------------------------------------------------------------- */
 
 :root {
-    /* Color. Los tonos claros cargan la pagina; el verde hondo es el unico
-       color que actua, y por eso se reserva a lo que se puede pulsar. */
-    --mdj-papel:       #FBFAF7;
-    --mdj-bruma:       #EDEFEB;
-    --mdj-piedra:      #7C857E;
-    --mdj-tinta:       #23282A;
-    --mdj-verde-agua:  #6E8F86;
-    --mdj-verde-hondo: #35544B;
-    --mdj-verde-noche: #22382F;
+    /* Colour. The pale tones carry the page; the deep green is the only
+       colour that acts, which is why it is reserved for anything clickable. */
+    --mdj-paper:       #FBFAF7;
+    --mdj-mist:       #EDEFEB;
+    --mdj-stone:      #7C857E;
+    --mdj-ink:       #23282A;
+    --mdj-sage:  #6E8F86;
+    --mdj-deep-green: #35544B;
+    --mdj-night-green: #22382F;
 
-    /* Tipografia. Instrument Serif pone la voz; Inter Tight sostiene la
-       lectura. La escala es media a proposito: reservar tiene que resultar
-       comodo, y el lujo con letra diminuta se vuelve frio. */
-    --mdj-display: "Instrument Serif", Georgia, "Times New Roman", serif;
-    --mdj-texto:   "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Type. Instrument Serif carries the voice; Inter Tight carries the
+       reading. The scale is deliberately mid-sized: booking has to feel
+       comfortable, and luxury set in tiny type just reads as cold. */
+    --mdj-font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+    --mdj-font-body:   "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
 
     --mdj-size-base:  1.0625rem;   /* 17px */
     --mdj-size-meta:  0.9375rem;   /* 15px */
@@ -48,42 +48,42 @@
     --mdj-size-h2:    clamp(1.625rem, 5.5vw, 2.625rem);
     --mdj-size-h1:    clamp(2.25rem, 8vw, 4.75rem);
 
-    /* Ritmo vertical. Un unico paso geometrico evita el espaciado arbitrario;
-       los tramos largos se ensanchan al haber mas pantalla. */
+    /* Vertical rhythm. One geometric step keeps spacing from being arbitrary;
+       the long intervals widen once there is more screen. */
     --mdj-space-1: 0.5rem;
     --mdj-space-2: 1rem;
     --mdj-space-3: 1.25rem;
     --mdj-space-4: 2rem;
     --mdj-space-5: 3rem;
 
-    /* Relleno lateral del contenedor. Tiene que ser siempre mayor que la mitad
-       del canal (gutter) de las filas de Bootstrap que viven dentro: .row usa
-       margenes negativos de esa medida, y sin este colchon la fila sobresale y
-       aparece la barra de scroll horizontal. */
+    /* Container side padding. It must always exceed half the gutter of any
+       Bootstrap row living inside: .row applies negative margins of that size,
+       and without this cushion the row spills past the viewport and a
+       horizontal scrollbar appears. */
     --mdj-gutter: 1.25rem;
 
-    --mdj-radio:   2px;            /* casi recto: el lujo aqui es la precision */
-    --mdj-filete:  1px solid color-mix(in srgb, var(--mdj-piedra) 30%, transparent);
+    --mdj-radius:   2px;            /* casi recto: el lujo aqui es la precision */
+    --mdj-hairline:  1px solid color-mix(in srgb, var(--mdj-stone) 30%, transparent);
 
-    /* La firma: sombras largas y direccionales, siempre desde la misma
-       inclinacion, como la luz de la tarde sobre una fachada. */
-    --mdj-luz-corta: 8px 12px 24px -16px rgba(35, 40, 42, 0.32);
-    --mdj-luz-larga: 16px 24px 56px -32px rgba(35, 40, 42, 0.38);
+    /* The signature: long directional shadows, always from the same angle,
+       like afternoon light falling across a facade. */
+    --mdj-light-near: 8px 12px 24px -16px rgba(35, 40, 42, 0.32);
+    --mdj-light-far: 16px 24px 56px -32px rgba(35, 40, 42, 0.38);
 
-    --mdj-transicion: 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    --mdj-transition: 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
 
-    /* Reasignacion del tema de Bootstrap */
-    --bs-body-bg: var(--mdj-papel);
-    --bs-body-color: var(--mdj-tinta);
-    --bs-body-font-family: var(--mdj-texto);
+    /* Bootstrap theme reassignment */
+    --bs-body-bg: var(--mdj-paper);
+    --bs-body-color: var(--mdj-ink);
+    --bs-body-font-family: var(--mdj-font-body);
     --bs-body-font-size: var(--mdj-size-base);
     --bs-body-line-height: 1.65;
-    --bs-primary: var(--mdj-verde-hondo);
-    --bs-link-color: var(--mdj-verde-hondo);
-    --bs-link-hover-color: var(--mdj-verde-noche);
-    --bs-border-color: color-mix(in srgb, var(--mdj-piedra) 30%, transparent);
-    --bs-border-radius: var(--mdj-radio);
-    --bs-focus-ring-color: color-mix(in srgb, var(--mdj-verde-agua) 55%, transparent);
+    --bs-primary: var(--mdj-deep-green);
+    --bs-link-color: var(--mdj-deep-green);
+    --bs-link-hover-color: var(--mdj-night-green);
+    --bs-border-color: color-mix(in srgb, var(--mdj-stone) 30%, transparent);
+    --bs-border-radius: var(--mdj-radius);
+    --bs-focus-ring-color: color-mix(in srgb, var(--mdj-sage) 55%, transparent);
     --bs-focus-ring-width: 3px;
 }
 
@@ -106,8 +106,8 @@
         --mdj-space-3: 1.75rem;
         --mdj-space-4: 3rem;
         --mdj-space-5: 5rem;
-        --mdj-luz-corta: 12px 16px 32px -18px rgba(35, 40, 42, 0.32);
-        --mdj-luz-larga: 28px 40px 80px -40px rgba(35, 40, 42, 0.38);
+        --mdj-light-near: 12px 16px 32px -18px rgba(35, 40, 42, 0.32);
+        --mdj-light-far: 28px 40px 80px -40px rgba(35, 40, 42, 0.38);
     }
 }
 
@@ -124,26 +124,26 @@
 html { overflow-x: clip; }
 
 body {
-    background-color: var(--mdj-papel);
-    color: var(--mdj-tinta);
-    font-family: var(--mdj-texto);
+    background-color: var(--mdj-paper);
+    color: var(--mdj-ink);
+    font-family: var(--mdj-font-body);
     font-size: var(--mdj-size-base);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    /* Red de seguridad: 'clip' impide el desplazamiento lateral sin crear un
-       contenedor de scroll, de modo que position: sticky sigue funcionando.
-       La causa se corrige en .mdj-contenedor; esto solo evita que un descuido
-       futuro vuelva a sacar la barra. */
+    /* Safety net: 'clip' prevents sideways scrolling without creating a
+       scroll container, so position: sticky keeps working. The cause is fixed
+       in .mdj-container; this only stops a future slip from bringing the
+       scrollbar back. */
     overflow-x: clip;
 }
 
-/* Una palabra larga (un correo, un codigo) no debe poder ensanchar la pagina. */
+/* One long word -- an e-mail, a booking code -- must not widen the page. */
 body, h1, h2, h3, p, dd, dt, li, a { overflow-wrap: break-word; }
 
 img, svg, video, iframe { max-width: 100%; height: auto; }
 
 h1, h2, h3, .mdj-display {
-    font-family: var(--mdj-display);
+    font-family: var(--mdj-font-display);
     font-weight: 400;
     letter-spacing: -0.015em;
     line-height: 1.12;
@@ -154,22 +154,22 @@ h1 { font-size: var(--mdj-size-h1); }
 h2 { font-size: var(--mdj-size-h2); }
 h3 {
     font-size: var(--mdj-size-h3);
-    font-family: var(--mdj-texto);
+    font-family: var(--mdj-font-body);
     font-weight: 600;
     letter-spacing: 0;
     line-height: 1.3;
 }
 
-/* Rotulo que antecede a cada seccion. No numera: el orden de las secciones no
-   es un procedimiento, asi que numerarlas mentiria sobre el contenido. */
-.mdj-rotulo {
+/* Eyebrow label above a section. It carries no number: the order of the
+   sections is not a procedure, so numbering them would misdescribe them. */
+.mdj-eyebrow {
     display: block;
-    font-family: var(--mdj-texto);
+    font-family: var(--mdj-font-body);
     font-size: var(--mdj-size-meta);
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--mdj-piedra);
+    color: var(--mdj-stone);
     margin-bottom: var(--mdj-space-1);
 }
 
@@ -179,62 +179,62 @@ h3 {
     max-width: 46ch;
 }
 
-.mdj-meta { font-size: var(--mdj-size-meta); color: var(--mdj-piedra); }
+.mdj-meta { font-size: var(--mdj-size-meta); color: var(--mdj-stone); }
 
-/* Cifras alineadas: los precios de una lista tienen que poder compararse de
-   un vistazo, columna contra columna. */
-.mdj-cifra { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+/* Lining figures: prices in a list have to be comparable at a glance,
+   digit column against digit column. */
+.mdj-numeric { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 
-.mdj-seccion { padding-block: var(--mdj-space-5); }
-.mdj-seccion + .mdj-seccion { border-top: var(--mdj-filete); }
+.mdj-section { padding-block: var(--mdj-space-5); }
+.mdj-section + .mdj-section { border-top: var(--mdj-hairline); }
 
-/* El contenedor lleva su propio relleno lateral, que es lo que absorbe los
-   margenes negativos de las filas de Bootstrap. El ancho maximo suma ese
-   relleno para que la columna de texto conserve su medida. */
-.mdj-contenedor {
+/* The container carries its own side padding, which is what absorbs the
+   negative margins of Bootstrap rows. The max width adds that padding back so
+   the text column keeps its measure. */
+.mdj-container {
     width: 100%;
     max-width: calc(1180px + var(--mdj-gutter) * 2);
     margin-inline: auto;
     padding-inline: var(--mdj-gutter);
 }
 
-/* Enlace de salto: invisible hasta que el teclado lo alcanza. */
+/* Skip link: out of sight until the keyboard reaches it. */
 [data-role="skip-link"] { position: absolute; left: -9999px; }
 [data-role="skip-link"]:focus {
     left: var(--mdj-space-2);
     top: var(--mdj-space-2);
     z-index: 1080;
-    background: var(--mdj-tinta);
-    color: var(--mdj-papel);
+    background: var(--mdj-ink);
+    color: var(--mdj-paper);
     padding: var(--mdj-space-1) var(--mdj-space-2);
 }
 
-:focus-visible { outline: 3px solid var(--mdj-verde-agua); outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--mdj-sage); outline-offset: 3px; }
 
 /* --------------------------------------------------------------------------
-   3. Cabecera
+   3. Header
    -------------------------------------------------------------------------- */
 
 .mdj-header {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: color-mix(in srgb, var(--mdj-papel) 92%, transparent);
+    background: color-mix(in srgb, var(--mdj-paper) 92%, transparent);
     backdrop-filter: blur(14px);
-    border-bottom: var(--mdj-filete);
+    border-bottom: var(--mdj-hairline);
 }
 
-.mdj-marca {
-    font-family: var(--mdj-display);
+.mdj-wordmark {
+    font-family: var(--mdj-font-display);
     font-size: 1.375rem;
     letter-spacing: 0.02em;
-    color: var(--mdj-tinta);
+    color: var(--mdj-ink);
     text-decoration: none;
     white-space: nowrap;
 }
 
 .mdj-nav-link {
-    color: var(--mdj-tinta);
+    color: var(--mdj-ink);
     text-decoration: none;
     font-size: var(--mdj-size-meta);
     letter-spacing: 0.02em;
@@ -244,14 +244,14 @@ h3 {
 }
 .mdj-nav-link:hover,
 .mdj-nav-link[aria-current="page"] {
-    border-bottom-color: var(--mdj-verde-agua);
-    color: var(--mdj-tinta);
+    border-bottom-color: var(--mdj-sage);
+    color: var(--mdj-ink);
 }
 
-/* Boton del menu movil. Las barras se dibujan con pseudo-elementos y giran
-   hasta formar una equis cuando el panel se abre; Bootstrap ya mantiene
-   aria-expanded al dia, asi que el estado visual sale del estado accesible en
-   lugar de duplicarlo. */
+/* Mobile menu button. The bars are drawn with pseudo-elements and rotate into
+   a cross when the panel opens; Bootstrap already keeps aria-expanded current,
+   so the visual state derives from the accessible state instead of duplicating
+   it. */
 .mdj-menu {
     width: 48px;
     height: 48px;
@@ -260,86 +260,86 @@ h3 {
     place-items: center;
     padding: 0;
     background: transparent;
-    border: 1px solid color-mix(in srgb, var(--mdj-piedra) 45%, transparent);
-    border-radius: var(--mdj-radio);
+    border: 1px solid color-mix(in srgb, var(--mdj-stone) 45%, transparent);
+    border-radius: var(--mdj-radius);
     cursor: pointer;
 }
-.mdj-menu:hover { border-color: var(--mdj-verde-hondo); }
+.mdj-menu:hover { border-color: var(--mdj-deep-green); }
 
-.mdj-menu__barras {
+.mdj-menu__bars {
     position: relative;
     display: block;
     width: 20px;
     height: 1.5px;
-    background: var(--mdj-tinta);
+    background: var(--mdj-ink);
     transition: background-color 160ms ease;
 }
-.mdj-menu__barras::before,
-.mdj-menu__barras::after {
+.mdj-menu__bars::before,
+.mdj-menu__bars::after {
     content: "";
     position: absolute;
     left: 0;
     width: 20px;
     height: 1.5px;
-    background: var(--mdj-tinta);
+    background: var(--mdj-ink);
     transition: transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.mdj-menu__barras::before { top: -6px; }
-.mdj-menu__barras::after  { top: 6px; }
+.mdj-menu__bars::before { top: -6px; }
+.mdj-menu__bars::after  { top: 6px; }
 
-.mdj-menu[aria-expanded="true"] .mdj-menu__barras { background: transparent; }
-.mdj-menu[aria-expanded="true"] .mdj-menu__barras::before { transform: translateY(6px) rotate(45deg); }
-.mdj-menu[aria-expanded="true"] .mdj-menu__barras::after  { transform: translateY(-6px) rotate(-45deg); }
+.mdj-menu[aria-expanded="true"] .mdj-menu__bars { background: transparent; }
+.mdj-menu[aria-expanded="true"] .mdj-menu__bars::before { transform: translateY(6px) rotate(45deg); }
+.mdj-menu[aria-expanded="true"] .mdj-menu__bars::after  { transform: translateY(-6px) rotate(-45deg); }
 
 @media (min-width: 992px) {
-    .mdj-marca { font-size: 1.5rem; }
+    .mdj-wordmark { font-size: 1.5rem; }
 }
 
 /* --------------------------------------------------------------------------
-   4. Acciones
+   4. Actions
    -------------------------------------------------------------------------- */
 
-/* En movil los botones ocupan el ancho disponible: son el objetivo tactil
-   principal y no compiten por espacio con nada. */
+/* On mobile the buttons take the full width: they are the primary touch
+   target and nothing else is competing for the room. */
 .mdj-btn {
     display: flex;
     width: 100%;
     align-items: center;
     justify-content: center;
     gap: var(--mdj-space-1);
-    font-family: var(--mdj-texto);
+    font-family: var(--mdj-font-body);
     font-size: var(--mdj-size-base);
     font-weight: 500;
     letter-spacing: 0.01em;
     padding: 0.8rem 1.5rem;
     min-height: 48px;
-    border-radius: var(--mdj-radio);
+    border-radius: var(--mdj-radius);
     border: 1px solid transparent;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
-    transition: transform var(--mdj-transicion), box-shadow var(--mdj-transicion),
+    transition: transform var(--mdj-transition), box-shadow var(--mdj-transition),
                 background-color 200ms ease, color 200ms ease;
 }
 
-.mdj-btn--principal {
-    background: var(--mdj-verde-hondo);
-    color: var(--mdj-papel);
-    box-shadow: var(--mdj-luz-corta);
+.mdj-btn--primary {
+    background: var(--mdj-deep-green);
+    color: var(--mdj-paper);
+    box-shadow: var(--mdj-light-near);
 }
-.mdj-btn--principal:hover {
-    background: var(--mdj-verde-noche);
-    color: var(--mdj-papel);
+.mdj-btn--primary:hover {
+    background: var(--mdj-night-green);
+    color: var(--mdj-paper);
 }
 
-.mdj-btn--secundario {
+.mdj-btn--secondary {
     background: transparent;
-    color: var(--mdj-tinta);
-    border-color: color-mix(in srgb, var(--mdj-piedra) 45%, transparent);
+    color: var(--mdj-ink);
+    border-color: color-mix(in srgb, var(--mdj-stone) 45%, transparent);
 }
-.mdj-btn--secundario:hover {
-    border-color: var(--mdj-verde-hondo);
-    color: var(--mdj-verde-hondo);
+.mdj-btn--secondary:hover {
+    border-color: var(--mdj-deep-green);
+    color: var(--mdj-deep-green);
 }
 
 @media (min-width: 576px) {
@@ -348,112 +348,112 @@ h3 {
         width: auto;
         padding-inline: 1.9rem;
     }
-    /* El desplazamiento al pasar el puntero solo tiene sentido donde hay
-       puntero; en tactil no aporta nada. */
-    .mdj-btn--principal:hover {
+    /* The lift on hover only means something where there is a pointer; on
+       touch it does nothing at all. */
+    .mdj-btn--primary:hover {
         transform: translateY(-2px);
-        box-shadow: var(--mdj-luz-larga);
+        box-shadow: var(--mdj-light-far);
     }
 }
 
 
-/* Enlace de texto con subrayado que crece desde el inicio. */
-.mdj-enlace {
-    color: var(--mdj-verde-hondo);
+/* Text link whose underline thickens on hover. */
+.mdj-link {
+    color: var(--mdj-deep-green);
     text-decoration: none;
-    background-image: linear-gradient(var(--mdj-verde-agua), var(--mdj-verde-agua));
+    background-image: linear-gradient(var(--mdj-sage), var(--mdj-sage));
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 100% 1px;
     transition: background-size 260ms ease;
 }
-.mdj-enlace:hover { background-size: 100% 2px; color: var(--mdj-verde-noche); }
+.mdj-link:hover { background-size: 100% 2px; color: var(--mdj-night-green); }
 
 /* --------------------------------------------------------------------------
-   5. Portada
+   5. Hero
    -------------------------------------------------------------------------- */
 
-.mdj-portada { padding-block: var(--mdj-space-5); }
-.mdj-portada__titulo { margin-bottom: var(--mdj-space-3); }
+.mdj-hero { padding-block: var(--mdj-space-5); }
+.mdj-hero__title { margin-bottom: var(--mdj-space-3); }
 
 @media (min-width: 992px) {
-    .mdj-portada { padding-block: clamp(var(--mdj-space-5), 12vh, 8rem); }
+    .mdj-hero { padding-block: clamp(var(--mdj-space-5), 12vh, 8rem); }
 }
 
-/* La imagen recibe la sombra larga: es la pieza donde la luz de la direccion
-   se hace visible. */
-.mdj-marco {
+/* The image takes the long shadow: it is the piece where the light of the
+   direction becomes visible. */
+.mdj-frame {
     position: relative;
-    background: var(--mdj-bruma);
-    border-radius: var(--mdj-radio);
-    box-shadow: var(--mdj-luz-larga);
+    background: var(--mdj-mist);
+    border-radius: var(--mdj-radius);
+    box-shadow: var(--mdj-light-far);
     aspect-ratio: 3 / 2;
     display: grid;
     place-items: center;
     overflow: hidden;
 }
-.mdj-marco--ancho { aspect-ratio: 16 / 9; }
-.mdj-marco img { width: 100%; height: 100%; object-fit: cover; }
-.mdj-marco figcaption {
+.mdj-frame--wide { aspect-ratio: 16 / 9; }
+.mdj-frame img { width: 100%; height: 100%; object-fit: cover; }
+.mdj-frame figcaption {
     font-size: var(--mdj-size-meta);
-    color: var(--mdj-piedra);
+    color: var(--mdj-stone);
     padding: var(--mdj-space-2);
     text-align: center;
 }
 
 @media (min-width: 768px) {
-    .mdj-marco { aspect-ratio: 4 / 5; }
+    .mdj-frame { aspect-ratio: 4 / 5; }
 }
 
 /* --------------------------------------------------------------------------
-   6. Formularios
+   6. Forms
    -------------------------------------------------------------------------- */
 
-.mdj-buscador {
-    background: var(--mdj-bruma);
+.mdj-panel {
+    background: var(--mdj-mist);
     padding: var(--mdj-space-3);
-    border-radius: var(--mdj-radio);
-    box-shadow: var(--mdj-luz-corta);
+    border-radius: var(--mdj-radius);
+    box-shadow: var(--mdj-light-near);
 }
 
 @media (min-width: 992px) {
-    .mdj-buscador { padding: var(--mdj-space-4); }
+    .mdj-panel { padding: var(--mdj-space-4); }
 }
 
-.mdj-campo { display: flex; flex-direction: column; gap: 0.4rem; }
+.mdj-field { display: flex; flex-direction: column; gap: 0.4rem; }
 
-.mdj-campo > label,
-.mdj-etiqueta {
+.mdj-field > label,
+.mdj-label {
     font-size: var(--mdj-size-meta);
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--mdj-piedra);
+    color: var(--mdj-stone);
 }
 
-.mdj-campo input,
-.mdj-campo select,
-.mdj-campo textarea {
-    font-family: var(--mdj-texto);
-    /* 16px como minimo: por debajo de eso Safari en iOS hace zoom al enfocar
-       el campo y descoloca la pagina. */
+.mdj-field input,
+.mdj-field select,
+.mdj-field textarea {
+    font-family: var(--mdj-font-body);
+    /* 16px minimum: below that Safari on iOS zooms in when the field takes
+       focus and knocks the page out of place. */
     font-size: 1rem;
-    color: var(--mdj-tinta);
-    background: var(--mdj-papel);
-    border: 1px solid color-mix(in srgb, var(--mdj-piedra) 40%, transparent);
-    border-radius: var(--mdj-radio);
+    color: var(--mdj-ink);
+    background: var(--mdj-paper);
+    border: 1px solid color-mix(in srgb, var(--mdj-stone) 40%, transparent);
+    border-radius: var(--mdj-radius);
     padding: 0.7rem 0.85rem;
     width: 100%;
     max-width: 100%;
     min-height: 48px;
     transition: border-color 200ms ease, box-shadow 200ms ease;
 }
-.mdj-campo textarea { min-height: 7rem; }
-.mdj-campo input:focus,
-.mdj-campo select:focus,
-.mdj-campo textarea:focus {
-    border-color: var(--mdj-verde-hondo);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mdj-verde-agua) 30%, transparent);
+.mdj-field textarea { min-height: 7rem; }
+.mdj-field input:focus,
+.mdj-field select:focus,
+.mdj-field textarea:focus {
+    border-color: var(--mdj-deep-green);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mdj-sage) 30%, transparent);
     outline: none;
 }
 
@@ -463,38 +463,38 @@ h3 {
     height: 1.15rem;
     margin-top: 0.3rem;
     flex: none;
-    accent-color: var(--mdj-verde-hondo);
+    accent-color: var(--mdj-deep-green);
 }
 .mdj-check label {
     font-size: var(--mdj-size-base);
-    color: var(--mdj-tinta);
+    color: var(--mdj-ink);
     text-transform: none;
     letter-spacing: 0;
     font-weight: 400;
 }
 
 /* --------------------------------------------------------------------------
-   7. Tarjetas
+   7. Cards
    -------------------------------------------------------------------------- */
 
-.mdj-tarjeta {
+.mdj-card {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--mdj-papel);
-    border: var(--mdj-filete);
-    border-radius: var(--mdj-radio);
+    background: var(--mdj-paper);
+    border: var(--mdj-hairline);
+    border-radius: var(--mdj-radius);
     overflow: hidden;
-    transition: transform var(--mdj-transicion), box-shadow var(--mdj-transicion);
+    transition: transform var(--mdj-transition), box-shadow var(--mdj-transition);
 }
-.mdj-tarjeta__cuerpo {
+.mdj-card__body {
     padding: var(--mdj-space-3);
     display: flex;
     flex-direction: column;
     gap: var(--mdj-space-2);
     flex: 1;
 }
-.mdj-tarjeta__pie {
+.mdj-card__footer {
     margin-top: auto;
     display: flex;
     flex-wrap: wrap;
@@ -502,80 +502,80 @@ h3 {
     align-items: center;
 }
 
-.mdj-tarjeta--elegida {
-    border-color: var(--mdj-verde-hondo);
-    box-shadow: var(--mdj-luz-corta);
+.mdj-card--selected {
+    border-color: var(--mdj-deep-green);
+    box-shadow: var(--mdj-light-near);
 }
 
 @media (min-width: 992px) {
-    .mdj-tarjeta:hover { transform: translateY(-4px); box-shadow: var(--mdj-luz-larga); }
+    .mdj-card:hover { transform: translateY(-4px); box-shadow: var(--mdj-light-far); }
 }
 
-/* Datos de una habitacion: pares etiqueta/valor sin adornos. */
-.mdj-datos {
+/* Room facts: label/value pairs, unadorned. */
+.mdj-specs {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: 0.35rem var(--mdj-space-2);
     margin: 0;
 }
-.mdj-datos dt { font-size: var(--mdj-size-meta); color: var(--mdj-piedra); font-weight: 400; }
-.mdj-datos dd { margin: 0; font-size: var(--mdj-size-meta); }
+.mdj-specs dt { font-size: var(--mdj-size-meta); color: var(--mdj-stone); font-weight: 400; }
+.mdj-specs dd { margin: 0; font-size: var(--mdj-size-meta); }
 
 /* --------------------------------------------------------------------------
-   8. Resumen de la reserva
+   8. Booking summary
    -------------------------------------------------------------------------- */
 
-.mdj-resumen {
-    background: var(--mdj-bruma);
-    border-radius: var(--mdj-radio);
+.mdj-summary {
+    background: var(--mdj-mist);
+    border-radius: var(--mdj-radius);
     padding: var(--mdj-space-3);
-    box-shadow: var(--mdj-luz-corta);
+    box-shadow: var(--mdj-light-near);
 }
 
-.mdj-resumen__linea {
+.mdj-summary__row {
     display: flex;
     justify-content: space-between;
     gap: var(--mdj-space-2);
     padding-block: 0.5rem;
-    border-bottom: var(--mdj-filete);
+    border-bottom: var(--mdj-hairline);
 }
-.mdj-resumen__linea:last-child { border-bottom: 0; }
-.mdj-resumen__linea dt {
+.mdj-summary__row:last-child { border-bottom: 0; }
+.mdj-summary__row dt {
     font-weight: 400;
-    color: var(--mdj-piedra);
+    color: var(--mdj-stone);
     font-size: var(--mdj-size-meta);
     flex: none;
 }
-.mdj-resumen__linea dd { margin: 0; text-align: right; min-width: 0; }
+.mdj-summary__row dd { margin: 0; text-align: right; min-width: 0; }
 
-.mdj-resumen__total {
-    border-top: 2px solid var(--mdj-tinta);
+.mdj-summary__total {
+    border-top: 2px solid var(--mdj-ink);
     margin-top: var(--mdj-space-2);
     padding-top: var(--mdj-space-2);
 }
-.mdj-resumen__total dt,
-.mdj-resumen__total dd {
-    font-family: var(--mdj-display);
+.mdj-summary__total dt,
+.mdj-summary__total dd {
+    font-family: var(--mdj-font-display);
     font-size: 1.375rem;
-    color: var(--mdj-tinta);
+    color: var(--mdj-ink);
 }
 
 @media (min-width: 992px) {
-    .mdj-resumen { padding: var(--mdj-space-4); }
-    .mdj-resumen__total dt,
-    .mdj-resumen__total dd { font-size: 1.5rem; }
-    /* El resumen acompana al huesped mientras rellena sus datos, pero solo
-       cuando hay dos columnas: en movil va detras del formulario. */
-    .mdj-pegajoso { position: sticky; top: 6.5rem; }
+    .mdj-summary { padding: var(--mdj-space-4); }
+    .mdj-summary__total dt,
+    .mdj-summary__total dd { font-size: 1.5rem; }
+    /* The summary follows the guest while they fill in their details, but
+       only where there are two columns: on mobile it sits after the form. */
+    .mdj-sticky { position: sticky; top: 6.5rem; }
 }
 
 /* --------------------------------------------------------------------------
-   9. Pasos y avisos
+   9. Steps and alerts
    -------------------------------------------------------------------------- */
 
-/* Aqui la numeracion si dice algo cierto: reservar es una secuencia y el
-   huesped necesita saber en cual de los tres tramos esta. */
-.mdj-pasos {
+/* Here numbering does state something true: booking is a sequence, and the
+   guest needs to know which of the three stretches they are in. */
+.mdj-steps {
     display: flex;
     flex-direction: column;
     gap: var(--mdj-space-2);
@@ -584,15 +584,15 @@ h3 {
     margin: 0;
     counter-reset: paso;
 }
-.mdj-pasos li {
+.mdj-steps li {
     counter-increment: paso;
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    color: var(--mdj-piedra);
+    color: var(--mdj-stone);
     font-size: var(--mdj-size-meta);
 }
-.mdj-pasos li::before {
+.mdj-steps li::before {
     content: counter(paso);
     font-variant-numeric: tabular-nums;
     width: 1.75rem;
@@ -604,52 +604,52 @@ h3 {
     border-radius: 50%;
     font-size: 0.8125rem;
 }
-.mdj-pasos li[aria-current="step"] { color: var(--mdj-tinta); font-weight: 500; }
-.mdj-pasos li[aria-current="step"]::before {
-    background: var(--mdj-verde-hondo);
-    border-color: var(--mdj-verde-hondo);
-    color: var(--mdj-papel);
+.mdj-steps li[aria-current="step"] { color: var(--mdj-ink); font-weight: 500; }
+.mdj-steps li[aria-current="step"]::before {
+    background: var(--mdj-deep-green);
+    border-color: var(--mdj-deep-green);
+    color: var(--mdj-paper);
 }
 
-/* Un paso resuelto muestra una marca en lugar de su numero: el numero ya no
-   informa de nada una vez se ha pasado por el. */
-.mdj-pasos li[data-state="complete"] { color: var(--mdj-verde-hondo); }
-.mdj-pasos li[data-state="complete"]::before {
+/* A finished step shows a mark instead of its number: the number stops
+   informing anything once the step is behind you. */
+.mdj-steps li[data-state="complete"] { color: var(--mdj-deep-green); }
+.mdj-steps li[data-state="complete"]::before {
     content: "\2713";
-    border-color: var(--mdj-verde-agua);
-    color: var(--mdj-verde-hondo);
+    border-color: var(--mdj-sage);
+    color: var(--mdj-deep-green);
 }
-.mdj-pasos a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
-.mdj-pasos a:hover { border-bottom-color: currentColor; }
+.mdj-steps a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+.mdj-steps a:hover { border-bottom-color: currentColor; }
 
 @media (min-width: 768px) {
-    .mdj-pasos { flex-direction: row; flex-wrap: wrap; gap: var(--mdj-space-3); }
+    .mdj-steps { flex-direction: row; flex-wrap: wrap; gap: var(--mdj-space-3); }
 }
 
-/* Barra de contexto de los pasos 2 y 3: recuerda lo ya elegido sin obligar a
-   volver atras para comprobarlo. */
+/* Context bar for steps 2 and 3: it recalls what was already chosen without
+   making the guest go back to check. */
 .mdj-recap {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     gap: var(--mdj-space-2) var(--mdj-space-4);
-    background: var(--mdj-bruma);
-    border-radius: var(--mdj-radio);
+    background: var(--mdj-mist);
+    border-radius: var(--mdj-radius);
     padding: var(--mdj-space-3);
 }
-.mdj-recap__dato { font-size: var(--mdj-size-meta); }
-.mdj-recap__cambiar { margin-left: auto; font-size: var(--mdj-size-meta); }
+.mdj-recap__item { font-size: var(--mdj-size-meta); }
+.mdj-recap__change { margin-left: auto; font-size: var(--mdj-size-meta); }
 
-/* Fila de acciones de un paso. En movil se apilan con la accion principal
-   arriba, que es la que casi siempre se pulsa. */
-.mdj-acciones {
+/* Action row of a step. On mobile they stack with the primary action on top,
+   since that is the one almost always pressed. */
+.mdj-actions {
     display: flex;
     flex-direction: column-reverse;
     gap: var(--mdj-space-2);
 }
 
 @media (min-width: 576px) {
-    .mdj-acciones {
+    .mdj-actions {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
@@ -657,73 +657,73 @@ h3 {
     }
 }
 
-/* Dentro del resumen lateral la accion manda: no compite con nada. */
-.mdj-resumen .mdj-acciones { flex-direction: column; align-items: stretch; }
+/* Inside the side summary the action leads: nothing competes with it. */
+.mdj-summary .mdj-actions { flex-direction: column; align-items: stretch; }
 
-.mdj-avisos { list-style: none; padding: 0; margin: 0; }
-.mdj-aviso {
+.mdj-alerts { list-style: none; padding: 0; margin: 0; }
+.mdj-alert {
     padding: var(--mdj-space-2) var(--mdj-space-3);
-    border-left: 3px solid var(--mdj-verde-hondo);
-    background: var(--mdj-bruma);
+    border-left: 3px solid var(--mdj-deep-green);
+    background: var(--mdj-mist);
     margin-bottom: var(--mdj-space-2);
 }
-.mdj-aviso[data-level~="error"] { border-left-color: #8C3A32; }
+.mdj-alert[data-level~="error"] { border-left-color: #8C3A32; }
 
-/* Contenido que aun no ha entregado el hotel. Marcado en el DOM para que sea
-   facil localizarlo, pero sin ruido visual en pantalla. */
-[data-placeholder] { color: var(--mdj-piedra); font-style: italic; }
+/* Content the hotel has not supplied yet. Marked in the DOM so it is easy to
+   find, but without visual noise on screen. */
+[data-placeholder] { color: var(--mdj-stone); font-style: italic; }
 
 /* --------------------------------------------------------------------------
-   10. Pie
+   10. Footer
    -------------------------------------------------------------------------- */
 
 .mdj-footer {
-    background: var(--mdj-verde-noche);
-    color: color-mix(in srgb, var(--mdj-papel) 82%, transparent);
+    background: var(--mdj-night-green);
+    color: color-mix(in srgb, var(--mdj-paper) 82%, transparent);
     padding-block: var(--mdj-space-5) var(--mdj-space-3);
     margin-top: var(--mdj-space-5);
 }
 .mdj-footer h2 {
-    font-family: var(--mdj-texto);
+    font-family: var(--mdj-font-body);
     font-size: var(--mdj-size-meta);
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--mdj-papel) 60%, transparent);
+    color: color-mix(in srgb, var(--mdj-paper) 60%, transparent);
     margin-bottom: var(--mdj-space-2);
 }
-.mdj-footer a { color: var(--mdj-papel); text-decoration: none; }
+.mdj-footer a { color: var(--mdj-paper); text-decoration: none; }
 .mdj-footer a:hover { text-decoration: underline; }
 .mdj-footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; }
 .mdj-footer address { font-style: normal; }
-.mdj-footer [data-placeholder] { color: color-mix(in srgb, var(--mdj-papel) 55%, transparent); }
-.mdj-footer__marca { font-family: var(--mdj-display); font-size: 1.75rem; color: var(--mdj-papel); }
+.mdj-footer [data-placeholder] { color: color-mix(in srgb, var(--mdj-paper) 55%, transparent); }
+.mdj-footer__wordmark { font-family: var(--mdj-font-display); font-size: 1.75rem; color: var(--mdj-paper); }
 
 @media (min-width: 992px) {
-    .mdj-footer__marca { font-size: 2rem; }
+    .mdj-footer__wordmark { font-size: 2rem; }
 }
 
 /* --------------------------------------------------------------------------
-   11. La firma: la luz que recorre la pagina
+   11. The signature: light travelling down the page
    --------------------------------------------------------------------------
-   Cada bloque entra desplazandose desde la direccion de la que llega la luz.
-   Sin JavaScript: animation-timeline lo resuelve donde el navegador lo soporta,
-   y donde no, el contenido simplemente aparece en su sitio.
+   Each block enters drifting in from the direction the light arrives from.
+   No JavaScript: animation-timeline handles it where the browser supports it,
+   and where it does not, the content simply appears in place.
    -------------------------------------------------------------------------- */
 
 @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-        .mdj-revela {
-            animation: mdj-entrada linear both;
+        .mdj-reveal {
+            animation: mdj-enter linear both;
             animation-timeline: view();
             animation-range: entry 5% cover 28%;
         }
     }
 }
 
-@keyframes mdj-entrada {
-    /* Solo desplazamiento vertical: mover en horizontal un bloque que ya ocupa
-       todo el ancho es justo lo que provoca una barra de scroll lateral. */
+@keyframes mdj-enter {
+    /* Vertical travel only: shifting a full-width block sideways is exactly
+       what brings a horizontal scrollbar back. */
     from { opacity: 0; transform: translate3d(0, 1.5rem, 0); }
     to   { opacity: 1; transform: none; }
 }
@@ -735,6 +735,6 @@ h3 {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-    .mdj-tarjeta:hover,
-    .mdj-btn--principal:hover { transform: none; }
+    .mdj-card:hover,
+    .mdj-btn--primary:hover { transform: none; }
 }

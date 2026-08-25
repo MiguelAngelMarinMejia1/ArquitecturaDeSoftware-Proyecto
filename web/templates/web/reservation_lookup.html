@@ -11,37 +11,37 @@ or found in a log -- must not be enough to reveal a guest's data.
 
 {% block content %}
 
-<section class="mdj-seccion" aria-labelledby="consulta-title" data-section="lookup">
-    <div class="mdj-contenedor">
+<section class="mdj-section" aria-labelledby="lookup-title" data-section="lookup">
+    <div class="mdj-container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-6">
-                <span class="mdj-rotulo">Reservas</span>
-                <h1 id="consulta-title">Consultar mi reserva</h1>
+                <span class="mdj-eyebrow">Reservas</span>
+                <h1 id="lookup-title">Consultar mi reserva</h1>
                 <p class="mdj-lead mt-4 mb-5">
                     Ingresa el numero de reserva que recibiste y el correo electronico
                     con el que reservaste.
                 </p>
 
-                <form action="{% url 'web:reservation-lookup' %}" method="post" class="mdj-buscador">
+                <form action="{% url 'web:reservation-lookup' %}" method="post" class="mdj-panel">
                     {% csrf_token %}
                     <div class="d-grid gap-3">
-                        <div class="mdj-campo">
+                        <div class="mdj-field">
                             <label for="confirmation-code">Numero de reserva</label>
                             <input type="text" id="confirmation-code" name="confirmation_code"
                                    value="{{ confirmation_code|default:'' }}"
                                    placeholder="MDJ-XXXXXXXX" required>
                         </div>
-                        <div class="mdj-campo">
+                        <div class="mdj-field">
                             <label for="lookup-email">Correo electronico</label>
                             <input type="email" id="lookup-email" name="email" autocomplete="email" required>
                         </div>
-                        <button type="submit" class="mdj-btn mdj-btn--principal">Consultar reserva</button>
+                        <button type="submit" class="mdj-btn mdj-btn--primary">Consultar reserva</button>
                     </div>
                 </form>
 
                 <p class="mdj-meta mt-4 mb-0" data-section="lookup-help">
                     Aun no tienes una reserva?
-                    <a href="{% url 'web:reservations' %}" class="mdj-enlace">Reserva tu estadia</a>.
+                    <a href="{% url 'web:reservations' %}" class="mdj-link">Reserva tu estadia</a>.
                 </p>
             </div>
         </div>

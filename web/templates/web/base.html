@@ -18,10 +18,10 @@
 {% comment %} El encabezado queda fijo para que Reservar siga al alcance en cualquier
    punto de una pagina larga. {% endcomment %}
 <header class="mdj-header" data-region="site-header">
-    <a href="#contenido-principal" data-role="skip-link">Saltar al contenido</a>
+    <a href="#main-content" data-role="skip-link">Saltar al contenido</a>
 
-    <div class="mdj-contenedor d-flex align-items-center justify-content-between gap-3 py-3">
-        <a href="{% url 'web:home' %}" class="mdj-marca" data-role="brand">Hotel MDJ</a>
+    <div class="mdj-container d-flex align-items-center justify-content-between gap-3 py-3">
+        <a href="{% url 'web:home' %}" class="mdj-wordmark" data-role="brand">Hotel MDJ</a>
 
         <nav class="d-none d-lg-block" aria-label="Navegacion principal">
             <ul class="list-unstyled d-flex align-items-center gap-4 mb-0">
@@ -29,61 +29,61 @@
                 {% comment %} Paginas aun no construidas: las entradas existen para fijar la
                    arquitectura de informacion, y cada href aterriza cuando su
                    pagina se publique. {% endcomment %}
-                <li><a class="mdj-nav-link" href="#" data-pending-page="habitaciones">Habitaciones</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="servicios">Servicios</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="experiencias">Experiencias</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="galeria">Galeria</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="contacto">Contacto</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="rooms">Habitaciones</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="services">Servicios</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="experiences">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="gallery">Galeria</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="contact">Contacto</a></li>
             </ul>
         </nav>
 
         <div class="d-flex align-items-center gap-2">
             {% comment %} La reserva directa es el objetivo comercial del sitio, de modo que
                esta accion no compite con la navegacion: la encabeza. {% endcomment %}
-            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal d-none d-sm-inline-flex" data-role="cta-primary">Reservar</a>
+            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary d-none d-sm-inline-flex" data-role="cta-primary">Reservar</a>
 
             <button class="mdj-menu d-lg-none" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#nav-movil" aria-controls="nav-movil"
+                    data-bs-target="#nav-mobile" aria-controls="nav-mobile"
                     aria-expanded="false" aria-label="Menu">
-                <span class="mdj-menu__barras" aria-hidden="true"></span>
+                <span class="mdj-menu__bars" aria-hidden="true"></span>
             </button>
         </div>
     </div>
 
-    <div class="collapse d-lg-none" id="nav-movil">
-        <nav class="mdj-contenedor pb-3" aria-label="Navegacion principal movil">
+    <div class="collapse d-lg-none" id="nav-mobile">
+        <nav class="mdj-container pb-3" aria-label="Navegacion principal movil">
             <ul class="list-unstyled d-grid gap-3 mb-3">
                 <li><a class="mdj-nav-link" href="{% url 'web:home' %}">Inicio</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="habitaciones">Habitaciones</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="servicios">Servicios</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="experiencias">Experiencias</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="galeria">Galeria</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="contacto">Contacto</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="rooms">Habitaciones</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="services">Servicios</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="experiences">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="gallery">Galeria</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="contact">Contacto</a></li>
             </ul>
-            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal">Reservar</a>
+            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary">Reservar</a>
         </nav>
     </div>
 </header>
 
 {% if messages %}
-<div class="mdj-contenedor pt-4" data-region="messages" role="status" aria-live="polite">
-    <ul class="mdj-avisos">
+<div class="mdj-container pt-4" data-region="messages" role="status" aria-live="polite">
+    <ul class="mdj-alerts">
         {% for message in messages %}
-        <li class="mdj-aviso" data-level="{{ message.tags }}">{{ message }}</li>
+        <li class="mdj-alert" data-level="{{ message.tags }}">{{ message }}</li>
         {% endfor %}
     </ul>
 </div>
 {% endif %}
 
-<main id="contenido-principal">
+<main id="main-content">
     {% block content %}{% endblock %}
 </main>
 
 <footer class="mdj-footer" data-region="site-footer">
-    <div class="mdj-contenedor">
+    <div class="mdj-container">
         <div class="row g-4 g-lg-5">
             <div class="col-12 col-lg-4">
-                <p class="mdj-footer__marca mb-3">Hotel MDJ</p>
+                <p class="mdj-footer__wordmark mb-3">Hotel MDJ</p>
                 <p>
                     Treinta y dos habitaciones en una casa restaurada de El Poblado,
                     con el valle de Aburra por ventana. Abierto todo el ano.
@@ -96,11 +96,11 @@
                     <h2>Navegacion</h2>
                     <ul>
                         <li><a href="{% url 'web:home' %}">Inicio</a></li>
-                        <li><a href="#" data-pending-page="habitaciones">Habitaciones</a></li>
-                        <li><a href="#" data-pending-page="servicios">Servicios</a></li>
-                        <li><a href="#" data-pending-page="experiencias">Experiencias y ubicacion</a></li>
-                        <li><a href="#" data-pending-page="galeria">Galeria</a></li>
-                        <li><a href="#" data-pending-page="contacto">Contacto</a></li>
+                        <li><a href="#" data-pending-page="rooms">Habitaciones</a></li>
+                        <li><a href="#" data-pending-page="services">Servicios</a></li>
+                        <li><a href="#" data-pending-page="experiences">Experiencias y ubicacion</a></li>
+                        <li><a href="#" data-pending-page="gallery">Galeria</a></li>
+                        <li><a href="#" data-pending-page="contact">Contacto</a></li>
                         <li><a href="{% url 'web:reservations' %}">Reservas</a></li>
                         <li><a href="{% url 'web:reservation-lookup' %}">Consultar mi reserva</a></li>
                     </ul>
