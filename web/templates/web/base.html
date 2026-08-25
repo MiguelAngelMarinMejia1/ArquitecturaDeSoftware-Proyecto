@@ -5,39 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Hotel MDJ{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Hotel MDJ{% endblock %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'web/vendor/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}">
 </head>
 <body>
 
-{# Global header. Kept sticky-capable via a landmark element so the booking CTA
-   stays reachable from anywhere in a long page. #}
-<header data-region="site-header">
+{# El encabezado queda fijo para que Reservar siga al alcance en cualquier
+   punto de una pagina larga. #}
+<header class="mdj-header" data-region="site-header">
     <a href="#contenido-principal" data-role="skip-link">Saltar al contenido</a>
 
-    <a href="{% url 'web:home' %}" data-role="brand">Hotel MDJ</a>
+    <div class="mdj-contenedor d-flex align-items-center justify-content-between gap-3 py-3">
+        <a href="{% url 'web:home' %}" class="mdj-marca" data-role="brand">Hotel MDJ</a>
 
-    <nav aria-label="Navegacion principal">
-        <ul>
-            <li><a href="{% url 'web:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Inicio</a></li>
-            {# Sections not built yet: the entries exist so the information
-               architecture is final, and each href lands when its page ships. #}
-            <li><a href="#" data-pending-page="habitaciones">Habitaciones</a></li>
-            <li><a href="#" data-pending-page="servicios">Servicios</a></li>
-            <li><a href="#" data-pending-page="experiencias">Experiencias</a></li>
-            <li><a href="#" data-pending-page="galeria">Galeria</a></li>
-            <li><a href="#" data-pending-page="contacto">Contacto</a></li>
-        </ul>
-    </nav>
+        <nav class="d-none d-lg-block" aria-label="Navegacion principal">
+            <ul class="list-unstyled d-flex align-items-center gap-4 mb-0">
+                <li><a class="mdj-nav-link" href="{% url 'web:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Inicio</a></li>
+                {# Paginas aun no construidas: las entradas existen para fijar la
+                   arquitectura de informacion, y cada href aterriza cuando su
+                   pagina se publique. #}
+                <li><a class="mdj-nav-link" href="#" data-pending-page="habitaciones">Habitaciones</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="servicios">Servicios</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="experiencias">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="galeria">Galeria</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="contacto">Contacto</a></li>
+            </ul>
+        </nav>
 
-    {# Direct booking is the commercial goal of the site, so this CTA is marked
-       as the primary action rather than being one more nav entry. #}
-    <a href="{% url 'web:reservations' %}" data-role="cta-primary">Reservar</a>
+        <div class="d-flex align-items-center gap-2">
+            {# La reserva directa es el objetivo comercial del sitio, de modo que
+               esta accion no compite con la navegacion: la encabeza. #}
+            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal d-none d-sm-inline-flex" data-role="cta-primary">Reservar</a>
+
+            <button class="btn d-lg-none border" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#nav-movil" aria-controls="nav-movil"
+                    aria-expanded="false" aria-label="Abrir la navegacion">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="collapse d-lg-none" id="nav-movil">
+        <nav class="mdj-contenedor pb-3" aria-label="Navegacion principal movil">
+            <ul class="list-unstyled d-grid gap-3 mb-3">
+                <li><a class="mdj-nav-link" href="{% url 'web:home' %}">Inicio</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="habitaciones">Habitaciones</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="servicios">Servicios</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="experiencias">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="galeria">Galeria</a></li>
+                <li><a class="mdj-nav-link" href="#" data-pending-page="contacto">Contacto</a></li>
+            </ul>
+            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--principal">Reservar</a>
+        </nav>
+    </div>
 </header>
 
 {% if messages %}
-<div data-region="messages" role="status" aria-live="polite">
-    <ul>
+<div class="mdj-contenedor pt-4" data-region="messages" role="status" aria-live="polite">
+    <ul class="mdj-avisos">
         {% for message in messages %}
-        <li data-level="{{ message.tags }}">{{ message }}</li>
+        <li class="mdj-aviso" data-level="{{ message.tags }}">{{ message }}</li>
         {% endfor %}
     </ul>
 </div>
@@ -47,55 +79,61 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer data-region="site-footer">
-    <section aria-labelledby="footer-brand">
-        <h2 id="footer-brand">Hotel MDJ</h2>
-        <p data-placeholder="descripcion-hotel">
-            Descripcion breve del hotel pendiente de definir.
-        </p>
-    </section>
+<footer class="mdj-footer" data-region="site-footer">
+    <div class="mdj-contenedor">
+        <div class="row g-5">
+            <div class="col-12 col-lg-4">
+                <p class="mdj-footer__marca mb-3">Hotel MDJ</p>
+                <p data-placeholder="descripcion-hotel">Descripcion breve del hotel pendiente de definir.</p>
+                <p class="mdj-meta mb-0" data-placeholder="ubicacion">Medellin, Colombia</p>
+            </div>
 
-    <nav aria-label="Navegacion del pie de pagina">
-        <h2>Navegacion</h2>
-        <ul>
-            <li><a href="{% url 'web:home' %}">Inicio</a></li>
-            <li><a href="#" data-pending-page="habitaciones">Habitaciones</a></li>
-            <li><a href="#" data-pending-page="servicios">Servicios</a></li>
-            <li><a href="#" data-pending-page="experiencias">Experiencias y ubicacion</a></li>
-            <li><a href="#" data-pending-page="galeria">Galeria</a></li>
-            <li><a href="#" data-pending-page="contacto">Contacto</a></li>
-            <li><a href="{% url 'web:reservations' %}">Reservas</a></li>
-            <li><a href="{% url 'web:reservation-lookup' %}">Consultar mi reserva</a></li>
-        </ul>
-    </nav>
+            <div class="col-6 col-lg-3">
+                <nav aria-label="Navegacion del pie de pagina">
+                    <h2>Navegacion</h2>
+                    <ul>
+                        <li><a href="{% url 'web:home' %}">Inicio</a></li>
+                        <li><a href="#" data-pending-page="habitaciones">Habitaciones</a></li>
+                        <li><a href="#" data-pending-page="servicios">Servicios</a></li>
+                        <li><a href="#" data-pending-page="experiencias">Experiencias y ubicacion</a></li>
+                        <li><a href="#" data-pending-page="galeria">Galeria</a></li>
+                        <li><a href="#" data-pending-page="contacto">Contacto</a></li>
+                        <li><a href="{% url 'web:reservations' %}">Reservas</a></li>
+                        <li><a href="{% url 'web:reservation-lookup' %}">Consultar mi reserva</a></li>
+                    </ul>
+                </nav>
+            </div>
 
-    <section aria-labelledby="footer-contact">
-        <h2 id="footer-contact">Contacto</h2>
-        <address>
-            <p data-placeholder="direccion">Direccion pendiente de definir</p>
-            <p>Telefono: <a href="#" data-placeholder="telefono">Pendiente de definir</a></p>
-            <p>Email: <a href="#" data-placeholder="email">Pendiente de definir</a></p>
-            <p>WhatsApp: <a href="#" data-placeholder="whatsapp">Pendiente de definir</a></p>
-        </address>
-    </section>
+            <div class="col-6 col-lg-3">
+                <h2>Contacto</h2>
+                <address>
+                    <ul>
+                        <li data-placeholder="direccion">Direccion pendiente de definir</li>
+                        <li>Telefono: <a href="#" data-placeholder="telefono">pendiente</a></li>
+                        <li>Email: <a href="#" data-placeholder="email">pendiente</a></li>
+                        <li>WhatsApp: <a href="#" data-placeholder="whatsapp">pendiente</a></li>
+                    </ul>
+                </address>
+                <h2 class="mt-4">Redes sociales</h2>
+                <ul data-placeholder="redes-sociales"><li>Perfiles pendientes de definir</li></ul>
+            </div>
 
-    <section aria-labelledby="footer-social">
-        <h2 id="footer-social">Redes sociales</h2>
-        <ul data-placeholder="redes-sociales">
-            <li>Perfiles pendientes de definir</li>
-        </ul>
-    </section>
+            <div class="col-12 col-lg-2">
+                <nav aria-label="Politicas">
+                    <h2>Politicas</h2>
+                    <ul>
+                        <li><a href="#" data-placeholder="politica-privacidad">Privacidad</a></li>
+                        <li><a href="#" data-placeholder="terminos">Terminos y condiciones</a></li>
+                        <li><a href="#" data-placeholder="politica-cancelacion">Cancelacion</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
 
-    <nav aria-label="Politicas">
-        <ul>
-            <li><a href="#" data-placeholder="politica-privacidad">Politica de privacidad</a></li>
-            <li><a href="#" data-placeholder="terminos">Terminos y condiciones</a></li>
-            <li><a href="#" data-placeholder="politica-cancelacion">Politica de cancelacion</a></li>
-        </ul>
-    </nav>
-
-    <p><small>&copy; {% now "Y" %} Hotel MDJ</small></p>
+        <p class="mdj-meta mt-5 mb-0">&copy; {% now "Y" %} Hotel MDJ</p>
+    </div>
 </footer>
 
+<script src="{% static 'web/vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
