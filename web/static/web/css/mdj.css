@@ -611,9 +611,54 @@ h3 {
     color: var(--mdj-papel);
 }
 
+/* Un paso resuelto muestra una marca en lugar de su numero: el numero ya no
+   informa de nada una vez se ha pasado por el. */
+.mdj-pasos li[data-estado="completado"] { color: var(--mdj-verde-hondo); }
+.mdj-pasos li[data-estado="completado"]::before {
+    content: "\2713";
+    border-color: var(--mdj-verde-agua);
+    color: var(--mdj-verde-hondo);
+}
+.mdj-pasos a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+.mdj-pasos a:hover { border-bottom-color: currentColor; }
+
 @media (min-width: 768px) {
     .mdj-pasos { flex-direction: row; flex-wrap: wrap; gap: var(--mdj-space-3); }
 }
+
+/* Barra de contexto de los pasos 2 y 3: recuerda lo ya elegido sin obligar a
+   volver atras para comprobarlo. */
+.mdj-recap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--mdj-space-2) var(--mdj-space-4);
+    background: var(--mdj-bruma);
+    border-radius: var(--mdj-radio);
+    padding: var(--mdj-space-3);
+}
+.mdj-recap__dato { font-size: var(--mdj-size-meta); }
+.mdj-recap__cambiar { margin-left: auto; font-size: var(--mdj-size-meta); }
+
+/* Fila de acciones de un paso. En movil se apilan con la accion principal
+   arriba, que es la que casi siempre se pulsa. */
+.mdj-acciones {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--mdj-space-2);
+}
+
+@media (min-width: 576px) {
+    .mdj-acciones {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--mdj-space-3);
+    }
+}
+
+/* Dentro del resumen lateral la accion manda: no compite con nada. */
+.mdj-resumen .mdj-acciones { flex-direction: column; align-items: stretch; }
 
 .mdj-avisos { list-style: none; padding: 0; margin: 0; }
 .mdj-aviso {
