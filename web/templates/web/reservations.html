@@ -1,0 +1,276 @@
+{% extends "web/base.html" %}
+
+{% comment %}
+Booking funnel. Unlike the Home page this one is not promotional: everything
+here exists to get the guest from "I want to stay" to "I have a reservation".
+
+The three steps render on the same route and are driven by what the request
+carries: no criteria yet -> search form; criteria -> results; rooms picked ->
+summary and guest details. Search criteria live in the query string (they
+identify nobody), guest details only ever leave via POST.
+{% endcomment %}
+
+{% block title %}Reservar - Hotel MDJ{% endblock %}
+{% block meta_description %}Reserva tu estadia en Hotel MDJ.{% endblock %}
+
+{% block content %}
+
+{# 1 - Heading and expectations. #}
+<section aria-labelledby="reserva-title" data-section="booking-header">
+    <h1 id="reserva-title">Reserva tu estadia en Hotel MDJ</h1>
+    <ol data-role="booking-steps">
+        <li{% if not criteria.is_complete %} aria-current="step"{% endif %}>Elige tus fechas</li>
+        <li{% if criteria.is_complete and not selected_rooms %} aria-current="step"{% endif %}>Selecciona tu habitacion</li>
+        <li{% if selected_rooms %} aria-current="step"{% endif %}>Completa tus datos y confirma</li>
+    </ol>
+</section>
+
+{# 2 - Availability search. Always visible so dates can be changed without
+   starting the flow over. #}
+<section aria-labelledby="busqueda-title" data-section="booking-search">
+    <h2 id="busqueda-title">Buscar disponibilidad</h2>
+
+    <form action="{% url 'web:reservations' %}" method="get">
+        <div>
+            <label for="check-in">Fecha de entrada</label>
+            <input type="date" id="check-in" name="check_in" min="{{ today }}"
+                   value="{{ criteria.check_in|date:'Y-m-d' }}" required>
+        </div>
+        <div>
+            <label for="check-out">Fecha de salida</label>
+            <input type="date" id="check-out" name="check_out" min="{{ today }}"
+                   value="{{ criteria.check_out|date:'Y-m-d' }}" required>
+        </div>
+        <div>
+            <label for="adults">Adultos</label>
+            <input type="number" id="adults" name="adults" min="1"
+                   value="{{ criteria.adults }}" required>
+        </div>
+        <div>
+            <label for="children">Ninos</label>
+            <input type="number" id="children" name="children" min="0"
+                   value="{{ criteria.children }}">
+        </div>
+        <div>
+            <label for="rooms">Habitaciones</label>
+            <input type="number" id="rooms" name="rooms" min="1"
+                   value="{{ criteria.rooms_wanted }}">
+        </div>
+        <button type="submit">Buscar disponibilidad</button>
+    </form>
+</section>
+
+{% if criteria.is_complete %}
+
+{# 3 - Results. One form wrapping every option so several rooms can be picked
+   in a single submission, honouring the 1..* link between a reservation and
+   its rooms. #}
+<section aria-labelledby="resultados-title" data-section="booking-results">
+    <h2 id="resultados-title">Habitaciones disponibles</h2>
+    <p>
+        {{ criteria.check_in|date:"d M Y" }} al {{ criteria.check_out|date:"d M Y" }}
+        &middot; {{ nights }} noche{{ nights|pluralize }}
+        &middot; {{ guests }} huesped{{ guests|pluralize:"es" }}
+    </p>
+
+    <form action="{% url 'web:reservations' %}" method="get">
+        <input type="hidden" name="check_in" value="{{ criteria.check_in|date:'Y-m-d' }}">
+        <input type="hidden" name="check_out" value="{{ criteria.check_out|date:'Y-m-d' }}">
+        <input type="hidden" name="adults" value="{{ criteria.adults }}">
+        <input type="hidden" name="children" value="{{ criteria.children }}">
+
+        <ul data-role="result-list">
+            {% for room in results %}
+            <li data-role="result-card">
+                <article aria-labelledby="room-{{ room.pk }}">
+                    <figure data-placeholder="foto-habitacion">
+                        <figcaption>Fotografia pendiente de definir</figcaption>
+                    </figure>
+
+                    <h3 id="room-{{ room.pk }}">{{ room.room_type.name }} &middot; habitacion {{ room.number }}</h3>
+
+                    <dl>
+                        <dt>Capacidad</dt>
+                        <dd>Hasta {{ room.room_type.max_capacity }} huesped{{ room.room_type.max_capacity|pluralize:"es" }}</dd>
+                        {% if room.room_type.bed_type %}
+                        <dt>Tipo de cama</dt>
+                        <dd>{{ room.room_type.bed_type }}</dd>
+                        {% endif %}
+                        <dt>Piso</dt>
+                        <dd>{{ room.floor }}</dd>
+                        <dt>Precio por noche</dt>
+                        <dd>{{ room.room_type.base_price_per_night }}</dd>
+                    </dl>
+
+                    {% if room.room_type.description %}
+                    <p>{{ room.room_type.description }}</p>
+                    {% endif %}
+
+                    <p data-placeholder="servicios-incluidos">
+                        Servicios incluidos pendientes de confirmar
+                    </p>
+
+                    <label for="select-room-{{ room.pk }}">
+                        <input type="checkbox" id="select-room-{{ room.pk }}"
+                               name="room" value="{{ room.pk }}"
+                               {% if room in selected_rooms %}checked{% endif %}>
+                        Seleccionar esta habitacion
+                    </label>
+                </article>
+            </li>
+            {% empty %}
+            <li>
+                <p>No hay habitaciones disponibles para esas fechas.</p>
+                <p>Prueba con otro rango de fechas.</p>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% if results %}
+        <button type="submit">Continuar con la seleccion</button>
+        {% endif %}
+    </form>
+</section>
+
+{% endif %}
+
+{% if selected_rooms and quote %}
+
+{# 4 to 6 - Summary, guest details and confirmation. A single POST closes the
+   booking: splitting it further would leave personal data parked in the
+   session between requests for no benefit. #}
+<form action="{% url 'web:reservations' %}" method="post" data-role="booking-form">
+    {% csrf_token %}
+    <input type="hidden" name="check_in" value="{{ criteria.check_in|date:'Y-m-d' }}">
+    <input type="hidden" name="check_out" value="{{ criteria.check_out|date:'Y-m-d' }}">
+    <input type="hidden" name="adults" value="{{ criteria.adults }}">
+    <input type="hidden" name="children" value="{{ criteria.children }}">
+    <input type="hidden" name="criteria_query" value="{{ request.GET.urlencode }}">
+    {% for room in selected_rooms %}
+    <input type="hidden" name="room" value="{{ room.pk }}">
+    {% endfor %}
+
+    {# 4 - Cost summary, shown before anything is asked of the guest. #}
+    <section aria-labelledby="resumen-title" data-section="booking-summary">
+        <h2 id="resumen-title">Resumen de tu reserva</h2>
+
+        <dl>
+            <dt>Hotel</dt>
+            <dd>Hotel MDJ</dd>
+
+            <dt>Habitacion{{ selected_rooms|length|pluralize }}</dt>
+            <dd>
+                <ul>
+                    {% for room in selected_rooms %}
+                    <li>{{ room.room_type.name }} &middot; habitacion {{ room.number }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+
+            <dt>Entrada</dt>
+            <dd>{{ criteria.check_in|date:"d M Y" }}</dd>
+
+            <dt>Salida</dt>
+            <dd>{{ criteria.check_out|date:"d M Y" }}</dd>
+
+            <dt>Noches</dt>
+            <dd>{{ quote.nights }}</dd>
+
+            <dt>Huespedes</dt>
+            <dd>{{ criteria.adults }} adulto{{ criteria.adults|pluralize }}{% if criteria.children %}, {{ criteria.children }} nino{{ criteria.children|pluralize }}{% endif %}</dd>
+
+            <dt>Subtotal</dt>
+            <dd>{{ quote.subtotal }}</dd>
+
+            <dt>Impuestos</dt>
+            <dd>{{ quote.taxes }}</dd>
+
+            <dt data-role="total-label">Total</dt>
+            <dd data-role="total-value">{{ quote.total }}</dd>
+        </dl>
+    </section>
+
+    {# 5 - Guest details. Identity documents are deliberately absent: they are
+       collected at check-in, not here. #}
+    <section aria-labelledby="huesped-title" data-section="booking-guest">
+        <h2 id="huesped-title">Informacion del huesped</h2>
+
+        <div>
+            <label for="first-name">Nombre</label>
+            <input type="text" id="first-name" name="first_name" autocomplete="given-name" required>
+        </div>
+        <div>
+            <label for="last-name">Apellido</label>
+            <input type="text" id="last-name" name="last_name" autocomplete="family-name" required>
+        </div>
+        <div>
+            <label for="email">Correo electronico</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+            <small>Te enviaremos aqui la confirmacion de tu reserva.</small>
+        </div>
+        <div>
+            <label for="phone">Telefono</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+        </div>
+        <div>
+            <label for="country">Pais</label>
+            <input type="text" id="country" name="country" autocomplete="country-name">
+        </div>
+        <div>
+            <label for="special-requests">Solicitudes especiales (opcional)</label>
+            <textarea id="special-requests" name="special_requests" rows="4"></textarea>
+        </div>
+
+        {# Marketing consent is a separate, unchecked opt-in: it is never a
+           condition for completing a booking. #}
+        <div>
+            <label for="marketing-consent">
+                <input type="checkbox" id="marketing-consent" name="marketing_consent" value="1">
+                Quiero recibir ofertas y novedades de Hotel MDJ
+            </label>
+        </div>
+    </section>
+
+    {# 6 - Payment and the policies the guest is agreeing to. #}
+    <section aria-labelledby="pago-title" data-section="booking-payment">
+        <h2 id="pago-title">Pago</h2>
+
+        <div>
+            <label for="payment-method">Metodo de pago</label>
+            <select id="payment-method" name="payment_method" required>
+                {% for value, label in payment_methods %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <p data-placeholder="pasarela-pago">
+            Pasarela de pago pendiente de definir. Por ahora no se solicitan
+            datos de tarjeta.
+        </p>
+
+        <section aria-labelledby="politicas-title">
+            <h3 id="politicas-title">Politicas</h3>
+            <p data-placeholder="politica-cancelacion">
+                Politica de cancelacion pendiente de definir.
+            </p>
+        </section>
+
+        <p data-role="total-recap">
+            Total a pagar: <strong>{{ quote.total }}</strong>
+        </p>
+
+        <button type="submit" data-role="cta-primary">Confirmar reserva</button>
+    </section>
+</form>
+
+{% endif %}
+
+<section data-section="booking-help">
+    <p>
+        Ya tienes una reserva?
+        <a href="{% url 'web:reservation-lookup' %}">Consultala aqui</a>.
+    </p>
+</section>
+
+{% endblock %}
