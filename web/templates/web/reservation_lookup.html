@@ -1,0 +1,43 @@
+{% extends "web/base.html" %}
+
+{% comment %}
+Retrieval of a booking made without an account. Both the confirmation code and
+the e-mail address are required: a code on its own -- forwarded, screenshotted
+or found in a log -- must not be enough to reveal a guest's data.
+{% endcomment %}
+
+{% block title %}Consultar mi reserva - Hotel MDJ{% endblock %}
+{% block meta_description %}Consulta tu reserva en Hotel MDJ.{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="consulta-title" data-section="lookup">
+    <h1 id="consulta-title">Consultar mi reserva</h1>
+    <p>
+        Ingresa el numero de reserva que recibiste y el correo electronico con
+        el que reservaste.
+    </p>
+
+    <form action="{% url 'web:reservation-lookup' %}" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="confirmation-code">Numero de reserva</label>
+            <input type="text" id="confirmation-code" name="confirmation_code"
+                   value="{{ confirmation_code|default:'' }}" required>
+        </div>
+        <div>
+            <label for="lookup-email">Correo electronico</label>
+            <input type="email" id="lookup-email" name="email" autocomplete="email" required>
+        </div>
+        <button type="submit">Consultar reserva</button>
+    </form>
+</section>
+
+<section data-section="lookup-help">
+    <p>
+        Aun no tienes una reserva?
+        <a href="{% url 'web:reservations' %}">Reserva tu estadia</a>.
+    </p>
+</section>
+
+{% endblock %}
