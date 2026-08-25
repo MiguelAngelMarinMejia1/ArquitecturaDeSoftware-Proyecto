@@ -1,23 +1,19 @@
-"""
-URL configuration for hotelMDJ project.
+"""Root URL configuration for the Hotel MDJ project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+Two presentation layers are mounted over the same business core:
+
+* ``/``        -> server-rendered pages (``web`` app)
+* ``/api/v1/`` -> JSON REST API (``reservation.api``)
+
+The API is versioned from day one so that a future API Gateway can route
+``/api/v1/*`` to this service while a ``/api/v2/*`` is rolled out alongside it.
 """
+
 from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('reservation.urls')),
+    path("admin/", admin.site.urls),
+    path("api/v1/", include("reservation.api.urls")),
+    path("", include("web.urls")),
 ]
