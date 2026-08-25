@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "name": "Sencilla",
-      "description": "Descripcion pendiente de confirmar con el hotel.",
+      "description": "Para una persona. Cama sencilla, escritorio junto a la ventana y bano con ducha. Da al patio interior, el lado silencioso de la casa.",
       "max_capacity": 1,
       "bed_type": "Cama sencilla",
       "base_price_per_night": "180000.00"
@@ -15,7 +15,7 @@
     "pk": 2,
     "fields": {
       "name": "Doble",
-      "description": "Descripcion pendiente de confirmar con el hotel.",
+      "description": "Cama doble, zona de estar y bano con ducha de lluvia. Algunas dan al patio y otras a la carrera 43A.",
       "max_capacity": 2,
       "bed_type": "Cama doble",
       "base_price_per_night": "260000.00"
@@ -26,7 +26,7 @@
     "pk": 3,
     "fields": {
       "name": "Familiar",
-      "description": "Descripcion pendiente de confirmar con el hotel.",
+      "description": "Dos camas dobles y bano amplio con tina. Pensada para familias o grupos de hasta cuatro personas.",
       "max_capacity": 4,
       "bed_type": "Dos camas dobles",
       "base_price_per_night": "390000.00"
@@ -37,21 +37,120 @@
     "pk": 4,
     "fields": {
       "name": "Suite",
-      "description": "Descripcion pendiente de confirmar con el hotel.",
+      "description": "Cama king, sala independiente, tina y balcon privado con vista al valle de Aburra. La habitacion mas grande del hotel.",
       "max_capacity": 4,
       "bed_type": "Cama king",
       "base_price_per_night": "520000.00"
     }
   },
-
-  {"model": "reservation.room", "pk": 1, "fields": {"number": "101", "floor": 1, "status": "AVAILABLE", "room_type": 1, "is_active": true}},
-  {"model": "reservation.room", "pk": 2, "fields": {"number": "102", "floor": 1, "status": "AVAILABLE", "room_type": 1, "is_active": true}},
-  {"model": "reservation.room", "pk": 3, "fields": {"number": "103", "floor": 1, "status": "AVAILABLE", "room_type": 2, "is_active": true}},
-  {"model": "reservation.room", "pk": 4, "fields": {"number": "201", "floor": 2, "status": "AVAILABLE", "room_type": 2, "is_active": true}},
-  {"model": "reservation.room", "pk": 5, "fields": {"number": "202", "floor": 2, "status": "AVAILABLE", "room_type": 2, "is_active": true}},
-  {"model": "reservation.room", "pk": 6, "fields": {"number": "203", "floor": 2, "status": "AVAILABLE", "room_type": 3, "is_active": true}},
-  {"model": "reservation.room", "pk": 7, "fields": {"number": "301", "floor": 3, "status": "AVAILABLE", "room_type": 3, "is_active": true}},
-  {"model": "reservation.room", "pk": 8, "fields": {"number": "302", "floor": 3, "status": "AVAILABLE", "room_type": 4, "is_active": true}},
-  {"model": "reservation.room", "pk": 9, "fields": {"number": "401", "floor": 4, "status": "AVAILABLE", "room_type": 4, "is_active": true}},
-  {"model": "reservation.room", "pk": 10, "fields": {"number": "402", "floor": 4, "status": "MAINTENANCE", "room_type": 4, "is_active": true}}
+  {
+    "model": "reservation.room",
+    "pk": 1,
+    "fields": {
+      "number": "101",
+      "floor": 1,
+      "status": "AVAILABLE",
+      "room_type": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 2,
+    "fields": {
+      "number": "102",
+      "floor": 1,
+      "status": "AVAILABLE",
+      "room_type": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 3,
+    "fields": {
+      "number": "103",
+      "floor": 1,
+      "status": "AVAILABLE",
+      "room_type": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 4,
+    "fields": {
+      "number": "201",
+      "floor": 2,
+      "status": "AVAILABLE",
+      "room_type": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 5,
+    "fields": {
+      "number": "202",
+      "floor": 2,
+      "status": "AVAILABLE",
+      "room_type": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 6,
+    "fields": {
+      "number": "203",
+      "floor": 2,
+      "status": "AVAILABLE",
+      "room_type": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 7,
+    "fields": {
+      "number": "301",
+      "floor": 3,
+      "status": "AVAILABLE",
+      "room_type": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 8,
+    "fields": {
+      "number": "302",
+      "floor": 3,
+      "status": "AVAILABLE",
+      "room_type": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 9,
+    "fields": {
+      "number": "401",
+      "floor": 4,
+      "status": "AVAILABLE",
+      "room_type": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "reservation.room",
+    "pk": 10,
+    "fields": {
+      "number": "402",
+      "floor": 4,
+      "status": "MAINTENANCE",
+      "room_type": 4,
+      "is_active": true
+    }
+  }
 ]
