@@ -82,7 +82,7 @@ Todos los errores comparten un mismo contrato:
 
 ## Diagrama de clases
 
-<img width="831" height="1600" alt="Diagrama de clases de Hotel MDJ" src="https://github.com/user-attachments/assets/ac772ebb-6a25-4bf4-8fb8-18028dfd9107" />
+<img width="1872" height="3437" alt="mermaid-diagram-1787716945265" src="https://github.com/user-attachments/assets/8d097eb8-c338-4b5f-91ba-d8951c972c3f" />
 
 ## Documentación técnica
 
