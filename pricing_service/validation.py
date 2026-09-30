@@ -1,9 +1,7 @@
 """Validation of the quote request body.
 
-The endpoint must never trust the JSON it receives. This module checks every
-field and converts it into a proper Python type (``date``, ``Decimal``, ``int``).
-When something is wrong it raises one of the errors from ``errors.py`` and the
-client gets a clear 400 response instead of a crash (500).
+Checks every field, converts it to a Python type (date, Decimal, int) and
+raises an error from ``errors.py`` (-> 400) when something is wrong.
 
 Expected body:
 
@@ -16,8 +14,7 @@ Expected body:
         ]
     }
 
-Each rule is a small function, so adding or relaxing a rule means editing one
-function only.
+One small function per rule: to add or change a rule, edit only that function.
 """
 
 from datetime import date
@@ -34,8 +31,8 @@ from errors import (
 def parse_quote_request(payload, today):
     """Validate the whole body and return clean values.
 
-    ``today`` is passed in (instead of calling ``date.today()`` here) so the
-    caller decides the time zone and tests can use a fixed date.
+    ``today`` is a parameter so the caller picks the time zone and tests can
+    use a fixed date.
     """
     if not isinstance(payload, dict):
         raise InvalidPayloadError("El cuerpo de la peticion debe ser un objeto JSON.")
@@ -57,7 +54,7 @@ def parse_quote_request(payload, today):
 
 
 def parse_date(payload, field_name):
-    """Read a required date in ISO format (YYYY-MM-DD)."""
+    """Required date in ISO format (YYYY-MM-DD)."""
     value = payload.get(field_name)
 
     if value is None:
@@ -77,7 +74,7 @@ def parse_date(payload, field_name):
 
 
 def validate_date_range(check_in, check_out, today):
-    """Same date rules as the Django ReservationBuilder."""
+    """Same date rules as Django's ReservationBuilder."""
     if check_out <= check_in:
         raise InvalidDateRangeError(
             "La fecha de salida debe ser posterior a la fecha de entrada."
@@ -92,7 +89,7 @@ def validate_date_range(check_in, check_out, today):
 
 
 def parse_rooms(rooms):
-    """Read the list of rooms to quote. At least one is required."""
+    """List of rooms to quote; at least one, no repeated ids."""
     if rooms is None or rooms == []:
         raise NoRoomsSelectedError(
             "La cotizacion debe incluir al menos una habitacion."
@@ -128,7 +125,7 @@ def parse_rooms(rooms):
 
 
 def parse_room_id(room, position):
-    """``room_id`` must be a whole number (JSON true/false are rejected)."""
+    """Whole number; JSON true/false are rejected."""
     room_id = room.get("room_id")
 
     if isinstance(room_id, bool) or not isinstance(room_id, int):
@@ -139,10 +136,9 @@ def parse_room_id(room, position):
 
 
 def parse_price(room, position):
-    """``price_per_night`` may be a number or a numeric string, and must be > 0.
+    """Number or numeric string, greater than 0.
 
-    It is converted through ``str`` so that 180000.1 becomes exactly
-    Decimal("180000.1") and not a long float approximation.
+    Converted through ``str`` so 180000.1 becomes exactly Decimal("180000.1").
     """
     raw_price = room.get("price_per_night")
 

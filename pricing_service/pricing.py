@@ -1,16 +1,12 @@
-"""Pricing rules of Hotel MDJ, extracted from the Django monolith.
+"""Pricing rules of Hotel MDJ, ported from the Django monolith.
 
-These functions are a port of ``reservation/domain/policies.py``
-(``PricingPolicy``, ``SeasonalPricingPolicy`` and ``TaxPolicy``). The math is
-identical, so a quote from ``/api/v2/cotizacion/`` matches what Django charges.
+Same math as ``reservation/domain/policies.py`` (PricingPolicy,
+SeasonalPricingPolicy, TaxPolicy), so quotes match what Django charges:
+* money is always Decimal, never float
+* amounts are rounded to 2 decimals with ROUND_HALF_UP
+* nights = check-out minus check-in
 
-Rules kept from the original:
-* Money is always ``Decimal``, never ``float`` (float cannot store 0.1 exactly).
-* Amounts are rounded to 2 decimals with ROUND_HALF_UP.
-* Nights = check-out minus check-in (the check-out day is not charged).
-
-Nothing here knows about Flask or HTTP: these are plain functions that can be
-reused or tested on their own.
+Plain functions with no Flask or HTTP, easy to reuse and test.
 """
 
 from decimal import Decimal, ROUND_HALF_UP
@@ -19,36 +15,33 @@ CENTS = Decimal("0.01")
 
 
 def to_money(value):
-    """Round an amount to two decimal places (e.g. 10.005 -> 10.01)."""
+    """Round to two decimals (10.005 -> 10.01)."""
     return Decimal(value).quantize(CENTS, rounding=ROUND_HALF_UP)
 
 
 def count_nights(check_in, check_out):
-    """Billable nights between two dates. Assumes the range is already valid."""
+    """Billable nights. Assumes a valid range."""
     return (check_out - check_in).days
 
 
 def nightly_rate(base_price, on_date):
-    """Rate charged for one night.
+    """Rate for one night. No seasons yet, so the base price always applies.
 
-    The hotel has no seasons yet, so the base price applies every day. This is
-    the one place to change if high/low season prices are ever added: for
-    example, return ``base_price * Decimal("1.20")`` for December dates.
+    Add seasonal prices here, e.g. ``base_price * Decimal("1.20")`` in December.
     """
     return to_money(base_price)
 
 
 def calculate_taxes(subtotal, tax_rate):
-    """Tax owed for a subtotal (tax_rate 0.19 means 19 %)."""
+    """Tax owed for a subtotal (0.19 = 19 %)."""
     return to_money(Decimal(subtotal) * Decimal(tax_rate))
 
 
 def build_quote(rooms, check_in, check_out, tax_rate):
-    """Price a stay for a list of rooms.
+    """Price a stay.
 
-    ``rooms`` is a list of dicts: ``{"room_id": 1, "price_per_night": Decimal}``.
-    Returns a plain dict ready to be sent as JSON (amounts as strings so no
-    precision is lost on the way).
+    ``rooms``: list of ``{"room_id": int, "price_per_night": Decimal}``.
+    Returns a JSON-ready dict; amounts are strings so no precision is lost.
     """
     nights = count_nights(check_in, check_out)
 
