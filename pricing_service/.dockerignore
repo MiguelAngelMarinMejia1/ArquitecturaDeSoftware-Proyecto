@@ -1,4 +1,4 @@
-# Archivos que NO se copian a la imagen del microservicio (COPY . .).
+# Files NOT copied into the pricing service image.
 
 __pycache__/
 *.pyc

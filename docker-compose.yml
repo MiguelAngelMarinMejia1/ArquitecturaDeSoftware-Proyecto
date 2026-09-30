@@ -1,66 +1,61 @@
 # ---------------------------------------------------------------------------
-# Hotel MDJ: monolito Django + microservicio Flask detras de Nginx.
+# Hotel MDJ: Django monolith + Flask microservice behind Nginx.
 #
-# Comandos basicos (desde la carpeta del proyecto):
-#   docker compose up --build        construye las imagenes y levanta todo
-#   docker compose up -d --build     lo mismo, pero en segundo plano
-#   docker compose logs -f           ver los logs de todos los servicios
-#   docker compose down              detener y borrar los contenedores
-#   docker compose down -v           ... y ademas borrar la base de datos
+#   docker compose up --build       build the images and start everything
+#   docker compose up -d --build    same, in the background
+#   docker compose logs -f          follow the logs of every service
+#   docker compose down             stop and remove the containers
+#   docker compose down -v          ...and also delete the database volume
 #
-# Luego abre http://localhost en el navegador.
-#
-# Solo Nginx publica un puerto hacia tu PC. Django y Flask viven en la red
-# interna de Docker y solo se llega a ellos pasando por Nginx.
+# Then open http://localhost. Only Nginx publishes a port; Django and Flask
+# are reachable only through it, inside Docker's internal network.
 # ---------------------------------------------------------------------------
 
 services:
 
-  # --- Monolito legacy (Django + SQLite) -----------------------------------
+  # --- Legacy monolith (Django + SQLite) -----------------------------------
   django_web:
-    build: .                          # usa el Dockerfile de la raiz
+    build: .                          # root Dockerfile
     container_name: hotelmdj_django
     environment:
-      # Nombres con los que se puede llegar a Django (ver hotelMDJ/settings.py).
+      # Host names Django answers to (see hotelMDJ/settings.py).
       ALLOWED_HOSTS: "localhost,127.0.0.1,django_web"
-      # El archivo SQLite vive dentro del volumen montado mas abajo.
+      # The SQLite file lives inside the volume mounted below.
       SQLITE_PATH: "/app/data/db.sqlite3"
-      # Para una clave propia crea un archivo .env con SECRET_KEY=... (ver .env.example).
+      # Set your own key in a .env file (see .env.example).
       SECRET_KEY: "${SECRET_KEY:-django-insecure-docker-development-only}"
     volumes:
-      # "sqlite_data" es un volumen de Docker: los datos sobreviven aunque el
-      # contenedor se borre. Se monta en la carpeta donde Django guarda SQLite.
+      # Named volume: the data survives when the container is removed.
       - sqlite_data:/app/data
     expose:
-      - "8000"                        # visible solo dentro de la red de Docker
+      - "8000"                        # internal network only
     restart: unless-stopped
 
-  # --- Microservicio nuevo (Flask, sin base de datos) ----------------------
+  # --- New microservice (Flask, no database) -------------------------------
   pricing_service:
-    build: ./pricing_service          # usa pricing_service/Dockerfile
+    build: ./pricing_service          # pricing_service/Dockerfile
     container_name: hotelmdj_pricing
     environment:
-      # Reglas de negocio configurables sin tocar el codigo.
+      # Business settings, changeable without touching the code.
       TAX_RATE: "0.19"
       TIME_ZONE: "America/Bogota"
     expose:
-      - "5000"                        # visible solo dentro de la red de Docker
+      - "5000"                        # internal network only
     restart: unless-stopped
 
-  # --- Puerta de entrada (Nginx) --------------------------------------------
+  # --- Entry point (Nginx) --------------------------------------------------
   nginx:
     image: nginx:1.30-alpine
     container_name: hotelmdj_nginx
     ports:
-      # "PUERTO_EN_TU_PC:PUERTO_EN_EL_CONTENEDOR".
-      # Si el 80 ya esta ocupado en tu PC, cambia a "8080:80" y usa http://localhost:8080
+      # "HOST_PORT:CONTAINER_PORT". If port 80 is busy, use "8080:80"
+      # and open http://localhost:8080
       - "80:80"
     volumes:
-      # Reemplaza la configuracion por defecto de Nginx con la nuestra.
-      # ":ro" = solo lectura: el contenedor no puede modificar el archivo.
+      # Replace Nginx's default site with ours (":ro" = read-only).
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      # Nginx arranca despues de estos dos, porque su configuracion los nombra.
+      # Nginx starts after the services its config points to.
       - django_web
       - pricing_service
     restart: unless-stopped
