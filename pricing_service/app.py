@@ -13,10 +13,16 @@ Nginx sends every request under ``/api/v2/cotizacion/`` to this service, so
 all routes below keep that prefix.
 """
 
-from flask import Flask, jsonify
+from datetime import datetime
+from decimal import Decimal
+from zoneinfo import ZoneInfo
+
+from flask import Flask, jsonify, request
 
 from config import Config
 from errors import register_error_handlers
+from pricing import build_quote
+from validation import parse_quote_request
 
 # Every route of this service lives under this prefix. Change it here and in
 # nginx/nginx.conf if the public URL ever changes.
@@ -40,6 +46,31 @@ def create_app(config_class=Config):
     def health():
         """Liveness probe: answers 200 while the service is up."""
         return jsonify({"status": "ok", "service": "pricing"}), 200
+
+    @app.post(f"{URL_PREFIX}/", strict_slashes=False)
+    def create_quote():
+        """Price a stay: POST /api/v2/cotizacion/
+
+        The view only coordinates the three steps; each one lives in its own
+        module. If any step raises an error, the handlers in errors.py answer
+        with a JSON 400 (or 500) and this function simply stops.
+        """
+        # 1. Read the body. silent=True returns None instead of failing when
+        #    the body is not valid JSON; validation turns that into a 400.
+        payload = request.get_json(silent=True)
+
+        # 2. Validate and convert the input.
+        today = datetime.now(ZoneInfo(app.config["TIME_ZONE"])).date()
+        data = parse_quote_request(payload, today)
+
+        # 3. Apply the pricing rules.
+        quote = build_quote(
+            rooms=data["rooms"],
+            check_in=data["check_in"],
+            check_out=data["check_out"],
+            tax_rate=Decimal(app.config["TAX_RATE"]),
+        )
+        return jsonify(quote), 200
 
     return app
 
