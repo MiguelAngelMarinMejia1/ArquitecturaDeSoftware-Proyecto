@@ -1,0 +1,28 @@
+# Archivos que NO se copian a la imagen de Django (COPY . .).
+# Mantienen la imagen pequena y evitan meter secretos o datos locales.
+
+# Git y editores
+.git
+.gitignore
+.vscode
+.idea
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Datos y secretos locales
+db.sqlite3
+.env
+
+# Otros servicios: tienen su propia imagen o no se necesitan en Django
+pricing_service/
+nginx/
+wiki/
+
+# Archivos de Docker (no los necesita la imagen en tiempo de ejecucion)
+Dockerfile
+docker-compose.yml
+.dockerignore
