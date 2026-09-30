@@ -1,0 +1,10 @@
+# Archivos que NO se copian a la imagen del microservicio (COPY . .).
+
+__pycache__/
+*.pyc
+venv/
+.venv/
+.env
+
+Dockerfile
+.dockerignore
