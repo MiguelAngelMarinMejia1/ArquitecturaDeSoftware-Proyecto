@@ -38,7 +38,14 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Host names Django will answer to, as a comma-separated list. Left empty for
+# a local checkout (Django then accepts localhost while DEBUG is on); Docker
+# sets it because requests arrive through Nginx and between containers.
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -95,7 +102,9 @@ WSGI_APPLICATION = 'hotelMDJ.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # SQLITE_PATH lets Docker keep the database file in a volume, so the
+        # data survives when the container is rebuilt.
+        'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
