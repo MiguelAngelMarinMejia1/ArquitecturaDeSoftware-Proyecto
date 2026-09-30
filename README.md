@@ -24,6 +24,18 @@ no conoce a `web`, y solo su subpaquete `api/` sabe que existe HTTP.
 | Infraestructura | `reservation/infra/` | Factories, notificaciones, pasarela de pago |
 | Persistencia | `reservation/models.py` | Entidades sin lógica de negocio |
 
+### Migración a microservicios (Strangler Pattern)
+
+La cotización de precios (noches, tarifa por habitación, impuestos y total) se extrajo del
+monolito a un microservicio independiente en **Flask** (`pricing_service/`). No usa base de
+datos: recibe todo en el JSON. **Nginx** es la única puerta de entrada y reparte el tráfico por URL:
+
+| Ruta | Destino |
+|---|---|
+| `/api/v2/cotizacion/` | Microservicio Flask (`pricing_service`) |
+| `/api/v1/` | Monolito Django |
+| `/` (web, admin, estáticos) | Monolito Django |
+
 ## Patrones de diseño
 
 - **Builder** — `ReservationBuilder` ensambla y valida la reserva, la entidad más compleja del
@@ -36,10 +48,34 @@ no conoce a `web`, y solo su subpaquete `api/` sabe que existe HTTP.
 - Python 3.11
 - Django 5.2
 - Django Rest Framework 3.18
+- Flask 3.1 + gunicorn (microservicio de cotización)
 - SQLite
+- Nginx 1.30
+- Docker y Docker Compose
 - HTML semántico
 
-## Puesta en marcha
+## Puesta en marcha con Docker
+
+Levanta Django, Flask y Nginx juntos. Requiere Docker Desktop.
+
+```bash
+docker compose up --build
+```
+
+Abre `http://localhost`. Las migraciones y los datos de ejemplo (`seed`) se cargan solos al
+arrancar el contenedor de Django, y la base SQLite se guarda en el volumen `sqlite_data`.
+
+| Comando | Para qué |
+|---|---|
+| `docker compose up -d --build` | Levantar en segundo plano |
+| `docker compose logs -f` | Ver los logs de los tres servicios |
+| `docker compose restart nginx` | Recargar tras editar `nginx/nginx.conf` |
+| `docker compose down` | Detener y borrar contenedores |
+| `docker compose down -v` | Además, borrar la base de datos |
+
+Si el puerto 80 está ocupado, cambia `"80:80"` por `"8080:80"` en `docker-compose.yml`.
+
+## Puesta en marcha sin Docker
 
 ```bash
 python -m venv venv
@@ -49,6 +85,14 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py loaddata seed
 python manage.py runserver
+```
+
+Microservicio de cotización (en otra terminal), disponible en `http://localhost:5000/api/v2/cotizacion/`:
+
+```bash
+cd pricing_service
+pip install -r requirements.txt
+python app.py
 ```
 
 | URL | Descripción |
@@ -61,6 +105,8 @@ python manage.py runserver
 
 ## API
 
+### API v1 (monolito Django)
+
 | Método | Ruta | Códigos |
 |---|---|---|
 | `GET` | `/api/v1/health/` | 200 |
@@ -69,7 +115,42 @@ python manage.py runserver
 | `POST` | `/api/v1/reservations/` | 201, 400, 402, 404, 409 |
 | `POST` | `/api/v1/reservations/lookup/` | 200, 400, 404 |
 
-Todos los errores comparten un mismo contrato:
+### API v2 (microservicio Flask)
+
+| Método | Ruta | Códigos |
+|---|---|---|
+| `GET` | `/api/v2/cotizacion/health/` | 200 |
+| `POST` | `/api/v2/cotizacion/` | 200, 400, 405, 500 |
+
+```json
+POST /api/v2/cotizacion/
+{
+  "check_in_date": "2026-10-10",
+  "check_out_date": "2026-10-13",
+  "rooms": [
+    { "room_id": 1, "price_per_night": "180000.00" },
+    { "room_id": 5, "price_per_night": "250000.00" }
+  ]
+}
+```
+
+```json
+{
+  "check_in_date": "2026-10-10",
+  "check_out_date": "2026-10-13",
+  "nights": 3,
+  "rooms": [
+    { "room_id": 1, "price_per_night": "180000.00", "nights": 3, "line_total": "540000.00" },
+    { "room_id": 5, "price_per_night": "250000.00", "nights": 3, "line_total": "750000.00" }
+  ],
+  "subtotal": "1290000.00",
+  "tax_rate": "0.19",
+  "taxes": "245100.00",
+  "total": "1535100.00"
+}
+```
+
+Todos los errores, de ambas versiones de la API, comparten un mismo contrato:
 
 ```json
 {
@@ -94,6 +175,7 @@ La documentación detallada está en la **Wiki** del repositorio:
 4. Patrones creacionales
 5. Identidad y autenticación
 6. Seguridad de los datos personales
+7. Migración a Microservicios (Strangler Pattern)
 
 ## Equipo
 
