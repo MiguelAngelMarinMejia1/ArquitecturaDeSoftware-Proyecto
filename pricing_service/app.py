@@ -16,6 +16,7 @@ all routes below keep that prefix.
 from flask import Flask, jsonify
 
 from config import Config
+from errors import register_error_handlers
 
 # Every route of this service lives under this prefix. Change it here and in
 # nginx/nginx.conf if the public URL ever changes.
@@ -31,6 +32,9 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     app.json.sort_keys = app.config["JSON_SORT_KEYS"]
+
+    # Every error (400, 404, 405, 500...) is answered as structured JSON.
+    register_error_handlers(app)
 
     @app.get(f"{URL_PREFIX}/health/", strict_slashes=False)
     def health():
