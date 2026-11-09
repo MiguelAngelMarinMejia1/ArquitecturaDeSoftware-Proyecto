@@ -26,15 +26,39 @@ no conoce a `web`, y solo su subpaquete `api/` sabe que existe HTTP.
 
 ### Migración a microservicios (Strangler Pattern)
 
-La cotización de precios (noches, tarifa por habitación, impuestos y total) se extrajo del
-monolito a un microservicio independiente en **Flask** (`pricing_service/`). No usa base de
-datos: recibe todo en el JSON. **Nginx** es la única puerta de entrada y reparte el tráfico por URL:
+Cuatro funcionalidades se extrajeron del monolito a microservicios **Flask** independientes,
+cada uno con su propio Dockerfile. **Nginx** es la única puerta de entrada (API Gateway) y
+reparte el tráfico por URL:
+
+| Microservicio | Carpeta | Datos | Qué reemplaza en Django |
+|---|---|---|---|
+| Cotización | `pricing_service/` | Sin BD | `PricingPolicy` |
+| Catálogo y disponibilidad | `catalog_service/` | Lee la SQLite del monolito en **solo lectura** | `RoomTypeListView`, `RoomAvailabilityView` |
+| Pagos | `payment_service/` | SQLite propia (`payments_data`) | `SimulatedGateway` |
+| Notificaciones | `notification_service/` | SQLite propia (`notifications_data`) | `ConsoleNotifier` / `EmailNotifier` |
 
 | Ruta | Destino |
 |---|---|
-| `/api/v2/cotizacion/` | Microservicio Flask (`pricing_service`) |
-| `/api/v1/` | Monolito Django |
+| `/api/v1/room-types/`, `/api/v1/rooms/available/` | Flask `catalog_service` (antes Django, mismo contrato JSON) |
+| `/api/v2/catalogo/` | Flask `catalog_service` |
+| `/api/v2/cotizacion/` | Flask `pricing_service` |
+| `/api/v2/pagos/` | Flask `payment_service` |
+| `/api/v2/notificaciones/` | Flask `notification_service` |
+| Resto de `/api/v1/` | Monolito Django (crear y consultar reservas) |
 | `/` (web, admin, estáticos) | Monolito Django |
+
+Django consume pagos y notificaciones **a través de Nginx** mediante dos adapters
+(`HttpPaymentGateway` y `HttpNotifier`), registrados en las factories existentes con el
+tipo `HTTP`. Ni `services.py` ni las vistas cambiaron.
+
+- Si el servicio de pagos no responde, el cobro se trata como rechazado (402) y la
+  transacción de la reserva se revierte: nunca queda una reserva confirmada sin pago.
+- Si el servicio de notificaciones no responde, la reserva se confirma igual y el fallo
+  queda en el log.
+- Los `POST` de pagos y notificaciones exigen la cabecera `X-Internal-Token` con el secreto
+  `INTERNAL_API_TOKEN`, porque Nginx los expone públicamente.
+- Que el catálogo comparta la base del monolito es un paso transitorio del patrón: el
+  siguiente es darle su propio almacén.
 
 ## Patrones de diseño
 
@@ -48,7 +72,7 @@ datos: recibe todo en el JSON. **Nginx** es la única puerta de entrada y repart
 - Python 3.11
 - Django 5.2
 - Django Rest Framework 3.18
-- Flask 3.1 + gunicorn (microservicio de cotización)
+- Flask 3.1 + gunicorn (microservicios de cotización, catálogo, pagos y notificaciones)
 - SQLite
 - Nginx 1.30
 - Docker y Docker Compose
@@ -56,7 +80,8 @@ datos: recibe todo en el JSON. **Nginx** es la única puerta de entrada y repart
 
 ## Puesta en marcha con Docker
 
-Levanta Django, Flask y Nginx juntos. Requiere Docker Desktop.
+Levanta Django, los cuatro microservicios Flask y Nginx juntos. Requiere Docker Desktop.
+Copia `.env.example` como `.env` y define `SECRET_KEY` e `INTERNAL_API_TOKEN`.
 
 ```bash
 docker compose up --build
@@ -68,10 +93,10 @@ arrancar el contenedor de Django, y la base SQLite se guarda en el volumen `sqli
 | Comando | Para qué |
 |---|---|
 | `docker compose up -d --build` | Levantar en segundo plano |
-| `docker compose logs -f` | Ver los logs de los tres servicios |
+| `docker compose logs -f` | Ver los logs de todos los servicios |
 | `docker compose restart nginx` | Recargar tras editar `nginx/nginx.conf` |
 | `docker compose down` | Detener y borrar contenedores |
-| `docker compose down -v` | Además, borrar la base de datos |
+| `docker compose down -v` | Además, borrar las bases de datos |
 
 Si el puerto 80 está ocupado, cambia `"80:80"` por `"8080:80"` en `docker-compose.yml`.
 
@@ -87,13 +112,18 @@ python manage.py loaddata seed
 python manage.py runserver
 ```
 
-Microservicio de cotización (en otra terminal), disponible en `http://localhost:5000/api/v2/cotizacion/`:
+Cada microservicio se arranca en su propia terminal con `pip install -r requirements.txt`
+y `python app.py` dentro de su carpeta:
 
-```bash
-cd pricing_service
-pip install -r requirements.txt
-python app.py
-```
+| Carpeta | Puerto |
+|---|---|
+| `pricing_service/` | 5000 |
+| `catalog_service/` | 5001 (lee `db.sqlite3` de la raíz) |
+| `payment_service/` | 5002 |
+| `notification_service/` | 5003 |
+
+Sin Docker, Django usa por defecto la pasarela simulada y el notificador de consola. Para que
+use los microservicios, define `PAYMENT_GATEWAY_TYPE=HTTP` y `NOTIFIER_TYPE=HTTP` en `.env`.
 
 | URL | Descripción |
 |---|---|
@@ -110,17 +140,24 @@ python app.py
 | Método | Ruta | Códigos |
 |---|---|---|
 | `GET` | `/api/v1/health/` | 200 |
-| `GET` | `/api/v1/room-types/` | 200 |
-| `GET` | `/api/v1/rooms/available/` | 200, 400 |
+| `GET` | `/api/v1/room-types/` | 200 (servido por `catalog_service`) |
+| `GET` | `/api/v1/rooms/available/` | 200, 400 (servido por `catalog_service`) |
 | `POST` | `/api/v1/reservations/` | 201, 400, 402, 404, 409 |
 | `POST` | `/api/v1/reservations/lookup/` | 200, 400, 404 |
 
-### API v2 (microservicio Flask)
+### API v2 (microservicios Flask)
 
 | Método | Ruta | Códigos |
 |---|---|---|
 | `GET` | `/api/v2/cotizacion/health/` | 200 |
 | `POST` | `/api/v2/cotizacion/` | 200, 400, 405, 500 |
+| `GET` | `/api/v2/catalogo/health/` | 200 |
+| `GET` | `/api/v2/pagos/health/` | 200 |
+| `POST` | `/api/v2/pagos/` (interno) | 201, 400, 402, 403 |
+| `GET` | `/api/v2/pagos/<referencia>/` | 200, 404 |
+| `GET` | `/api/v2/notificaciones/health/` | 200 |
+| `POST` | `/api/v2/notificaciones/` (interno) | 201, 400, 403, 502 |
+| `GET` | `/api/v2/notificaciones/<codigo>/` | 200, 404 (correo enmascarado) |
 
 ```json
 POST /api/v2/cotizacion/
