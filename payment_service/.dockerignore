@@ -1,0 +1,11 @@
+# Files NOT copied into the payment service image.
+
+__pycache__/
+*.pyc
+*.sqlite3
+venv/
+.venv/
+.env
+
+Dockerfile
+.dockerignore
