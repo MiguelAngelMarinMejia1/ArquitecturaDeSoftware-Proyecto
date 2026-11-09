@@ -167,9 +167,13 @@ REST_FRAMEWORK = {
 # These values are infrastructure configuration, never hard-coded in the
 # domain layer. Policies read them through django.conf.settings.
 
-# Notification channel built by NotifierFactory: CONSOLE | EMAIL | HTTP
-# HTTP = Flask notification microservice (default in docker-compose.yml).
+# Notification channel built by NotifierFactory: CONSOLE | EMAIL | HTTP | CELERY
+#   HTTP   = calls the Flask notification microservice during the request.
+#   CELERY = queues the notification in Redis; the Celery worker delivers it
+#            through NOTIFIER_DELIVERY_TYPE, retrying if it fails.
+#            (default in docker-compose.yml)
 NOTIFIER_TYPE = os.environ.get('NOTIFIER_TYPE', 'CONSOLE')
+NOTIFIER_DELIVERY_TYPE = os.environ.get('NOTIFIER_DELIVERY_TYPE', 'HTTP')
 
 # Payment gateway built by PaymentGatewayFactory: SIMULATED | HTTP
 # HTTP = Flask payment microservice (default in docker-compose.yml).
@@ -198,3 +202,23 @@ TAX_RATE = '0.19'
 
 # Prefix prepended to every reservation confirmation code.
 CONFIRMATION_CODE_PREFIX = 'MDJ'
+
+
+# --- Asynchronous tasks (Celery + Redis) ------------------------------------
+# Redis is the message broker and also stores task results, so a client can
+# ask for the outcome of a background report.
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', CELERY_BROKER_URL)
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = TIME_ZONE
+# Results are kept one day; reports are regenerated on demand.
+CELERY_RESULT_EXPIRES = 60 * 60 * 24
+# A task is acknowledged only after it finishes, so a worker crash does not
+# lose a guest's notification.
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+# Publishing must not hang a booking request if Redis is down.
+CELERY_BROKER_TRANSPORT_OPTIONS = {'max_retries': 1, 'socket_connect_timeout': 2}

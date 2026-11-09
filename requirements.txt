@@ -3,5 +3,7 @@ Django==5.2.17
 djangorestframework==3.18.0
 python-dotenv==1.2.3
 requests==2.34.2
+celery==5.7.0
+redis==8.1.0
 sqlparse==0.6.0
 tzdata==2026.3
