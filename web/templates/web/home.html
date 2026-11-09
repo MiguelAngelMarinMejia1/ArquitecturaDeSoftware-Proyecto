@@ -1,47 +1,51 @@
 {% extends "web/base.html" %}
+{% load mdj_format %}
 
 {% comment %}
 Home page. Its job is to introduce the hotel, build trust and move the visitor
-towards a booking. Sections that depend on content the hotel has not supplied
-yet (services, reviews, gallery, benefits) are structured but left as marked
-placeholders rather than filled with invented material.
+towards a booking. Until the hotel supplies photography, image slots are
+filled with decorative compositions drawn in CSS (.mdj-art), never with
+stock photos that would misdescribe the property.
 {% endcomment %}
 
-{% block title %}Hotel MDJ{% endblock %}
-{% block meta_description %}Hotel MDJ, Medellin. Hospedaje y experiencia.{% endblock %}
+{% block title %}Hotel MDJ · Medellín{% endblock %}
+{% block meta_description %}Hotel MDJ, Medellín. Treinta y dos habitaciones en una casa restaurada de El Poblado.{% endblock %}
 
 {% block content %}
 
-{# 1 - Portada: que es este lugar y la unica accion que importa. #}
+{# 1 - Portada: qué es este lugar y la única acción que importa. #}
 <section class="mdj-hero" aria-labelledby="hero-title" data-section="hero">
     <div class="mdj-container">
         <div class="row align-items-center g-4 g-lg-5">
             <div class="col-12 col-lg-7">
-                <span class="mdj-eyebrow">Medellin, Colombia</span>
+                <span class="mdj-eyebrow">Medellín, Colombia</span>
                 <h1 class="mdj-hero__title" id="hero-title">Hotel MDJ</h1>
                 <p class="mdj-lead mb-4">
                     Treinta y dos habitaciones en una casa restaurada de El Poblado,
-                    con el valle de Aburra por ventana y la ciudad a diez minutos a pie.
+                    con el valle de Aburrá por ventana y la ciudad a diez minutos a pie.
                 </p>
                 <div class="d-flex flex-wrap gap-3">
                     <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary" data-role="cta-primary">Reservar ahora</a>
                     <a href="#about" class="mdj-btn mdj-btn--secondary" data-role="cta-secondary">Conocer el hotel</a>
                 </div>
+                <ul class="mdj-highlights list-unstyled mt-5 mb-0">
+                    <li><span class="mdj-numeric">32</span> habitaciones</li>
+                    <li>Desayuno incluido</li>
+                    <li>Cancelación gratis hasta 48 h antes</li>
+                </ul>
             </div>
             <div class="col-12 col-lg-5">
-                <figure class="mdj-frame mb-0" data-placeholder="hero-image">
-                    <figcaption>Imagen principal del hotel pendiente de definir</figcaption>
-                </figure>
+                <div class="mdj-frame mdj-art mdj-art--dusk" aria-hidden="true"></div>
             </div>
         </div>
     </div>
 </section>
 
 {% comment %} 2 - Consultar disponibilidad. Complementa el CTA de la portada para quien ya
-   sabe sus fechas; no resuelve la busqueda, la delega en la pagina de reserva. {% endcomment %}
-<section class="mdj-section mdj-reveal" aria-labelledby="availability-title" data-section="availability">
+   sabe sus fechas; no resuelve la búsqueda, la delega en la página de reserva. {% endcomment %}
+<section class="mdj-section mdj-section--tight mdj-reveal" aria-labelledby="availability-title" data-section="availability">
     <div class="mdj-container">
-        <div class="mdj-panel">
+        <div class="mdj-panel mdj-panel--raised">
             <h2 class="h5 mb-4" id="availability-title">Consultar disponibilidad</h2>
             <form action="{% url 'web:reservations' %}" method="get" class="row g-3 align-items-end">
                 <div class="col-12 col-md-6 col-lg-3">
@@ -59,13 +63,13 @@ placeholders rather than filled with invented material.
                 <div class="col-6 col-lg-2">
                     <div class="mdj-field">
                         <label for="home-adults">Adultos</label>
-                        <input type="number" id="home-adults" name="adults" min="1" value="2" required>
+                        <input type="number" id="home-adults" name="adults" min="1" max="20" value="2" required>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
                     <div class="mdj-field">
-                        <label for="home-children">Ninos</label>
-                        <input type="number" id="home-children" name="children" min="0" value="0">
+                        <label for="home-children">Niños</label>
+                        <input type="number" id="home-children" name="children" min="0" max="20" value="0">
                     </div>
                 </div>
                 <div class="col-12 col-lg-2">
@@ -76,8 +80,7 @@ placeholders rather than filled with invented material.
     </div>
 </section>
 
-{% comment %} 3 - Quien es el hotel. Breve a proposito: el detalle vive en las paginas
-   internas. {% endcomment %}
+{% comment %} 3 - Quién es el hotel. Breve a propósito. {% endcomment %}
 <section class="mdj-section mdj-reveal" id="about" aria-labelledby="about-title" data-section="about">
     <div class="mdj-container">
         <div class="row align-items-center g-4 g-lg-5">
@@ -85,49 +88,44 @@ placeholders rather than filled with invented material.
                 <span class="mdj-eyebrow">El hotel</span>
                 <h2 id="about-title">Un lugar para detenerse</h2>
                 <p class="mdj-lead mt-4">
-                    Hotel MDJ ocupa una casa de los anos sesenta en la loma de El Poblado,
-                    restaurada habitacion por habitacion. Conservamos los pisos de terrazo,
-                    los patios interiores y los arboles que ya estaban. Anadimos camas
+                    Hotel MDJ ocupa una casa de los años sesenta en la loma de El Poblado,
+                    restaurada habitación por habitación. Conservamos los pisos de terrazo,
+                    los patios interiores y los árboles que ya estaban. Añadimos camas
                     grandes, silencio y un desayuno que se sirve hasta las once.
                 </p>
-                <p class="mb-4">
+                <p class="mb-0">
                     No somos un hotel grande y no pretendemos serlo.
                 </p>
-                <a href="#" class="mdj-link" data-pending-page="about">Conocer mas</a>
             </div>
             <div class="col-12 col-lg-7 order-lg-1">
-                <figure class="mdj-frame mdj-frame--wide mb-0" data-placeholder="about-image">
-                    <figcaption>Imagen del hotel pendiente de definir</figcaption>
-                </figure>
+                <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--patio" aria-hidden="true"></div>
             </div>
         </div>
     </div>
 </section>
 
-{% comment %} 4 - Habitaciones. Alimentada con los RoomType reales, de modo que el catalogo
+{% comment %} 4 - Habitaciones. Alimentada con los RoomType reales, de modo que el catálogo
    y el flujo de reserva no puedan contradecirse. {% endcomment %}
-<section class="mdj-section mdj-reveal" aria-labelledby="rooms-title" data-section="rooms-preview">
+<section class="mdj-section mdj-reveal" id="habitaciones" aria-labelledby="rooms-title" data-section="rooms-preview">
     <div class="mdj-container">
         <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
             <div>
                 <span class="mdj-eyebrow">Alojamiento</span>
                 <h2 id="rooms-title">Habitaciones</h2>
             </div>
-            <a href="#" class="mdj-link" data-pending-page="rooms">Ver todas las habitaciones</a>
+            <a href="{% url 'web:reservations' %}" class="mdj-link">Ver disponibilidad</a>
         </div>
 
         <ul class="row row-cols-1 row-cols-md-2 row-cols-lg-4 list-unstyled g-4" data-role="room-list">
             {% for room_type in room_types %}
             <li class="col" data-role="room-card">
                 <article class="mdj-card" aria-labelledby="room-type-{{ room_type.pk }}">
-                    <figure class="mdj-frame mb-0" data-placeholder="room-photo">
-                        <figcaption>Fotografia pendiente</figcaption>
-                    </figure>
+                    <div class="mdj-frame mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}" aria-hidden="true"></div>
                     <div class="mdj-card__body">
                         <h3 id="room-type-{{ room_type.pk }}">{{ room_type.name }}</h3>
                         <dl class="mdj-specs">
                             <dt>Capacidad</dt>
-                            <dd>{{ room_type.max_capacity }} huesped{{ room_type.max_capacity|pluralize:"es" }}</dd>
+                            <dd>{{ room_type.max_capacity }} huésped{{ room_type.max_capacity|pluralize:"es" }}</dd>
                             {% if room_type.bed_type %}
                             <dt>Cama</dt>
                             <dd>{{ room_type.bed_type }}</dd>
@@ -139,109 +137,99 @@ placeholders rather than filled with invented material.
                         <div class="mdj-card__footer">
                             <p class="mb-0">
                                 <span class="mdj-meta d-block">Desde</span>
-                                <span class="mdj-numeric fs-5">{{ room_type.base_price_per_night }}</span>
+                                <span class="mdj-numeric mdj-price">{{ room_type.base_price_per_night|cop }}</span>
                                 <span class="mdj-meta">/ noche</span>
                             </p>
-                            <a href="{% url 'web:reservations' %}?room_type={{ room_type.pk }}" class="mdj-link ms-auto">Reservar</a>
+                            <a href="{% url 'web:reservations' %}" class="mdj-link ms-auto">Reservar</a>
                         </div>
                     </div>
                 </article>
             </li>
             {% empty %}
-            <li class="col"><p class="mdj-meta">Aun no hay tipos de habitacion cargados.</p></li>
+            <li class="col"><p class="mdj-meta">Aún no hay tipos de habitación cargados.</p></li>
             {% endfor %}
         </ul>
     </div>
 </section>
 
-{% comment %} 5 - Servicios. La lista queda vacia hasta que el hotel confirme lo que
-   ofrece: inventar comodidades seria describir mal la propiedad. {% endcomment %}
-<section class="mdj-section mdj-reveal" aria-labelledby="services-title" data-section="services">
+{# 5 - Servicios. #}
+<section class="mdj-section mdj-reveal" id="servicios" aria-labelledby="services-title" data-section="services">
     <div class="mdj-container">
-        <span class="mdj-eyebrow">A tu disposicion</span>
+        <span class="mdj-eyebrow">A tu disposición</span>
         <h2 id="services-title">Servicios y comodidades</h2>
-        <ul class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 list-unstyled g-3 mt-3 mb-4">
+        <ul class="mdj-services row row-cols-1 row-cols-sm-2 row-cols-lg-3 list-unstyled g-3 mt-3 mb-0">
             <li class="col">Wi-Fi de fibra en todo el hotel</li>
             <li class="col">Desayuno incluido, hasta las 11:00</li>
-            <li class="col">Recepcion abierta las 24 horas</li>
+            <li class="col">Recepción abierta las 24 horas</li>
             <li class="col">Parqueadero cubierto sin costo</li>
             <li class="col">Aire acondicionado en todas las habitaciones</li>
             <li class="col">Limpieza diaria</li>
             <li class="col">Restaurante y bar en la terraza</li>
-            <li class="col">Lavanderia en el dia</li>
+            <li class="col">Lavandería en el día</li>
             <li class="col">Traslado al aeropuerto, con reserva previa</li>
         </ul>
-        <a href="#" class="mdj-link" data-pending-page="services">Ver todos los servicios</a>
     </div>
 </section>
 
-{# 6 - Ubicacion y entorno. #}
-<section class="mdj-section mdj-reveal" aria-labelledby="location-title" data-section="location">
+{# 6 - Ubicación y entorno. #}
+<section class="mdj-section mdj-reveal" id="ubicacion" aria-labelledby="location-title" data-section="location">
     <div class="mdj-container">
         <div class="row align-items-center g-4 g-lg-5">
             <div class="col-12 col-lg-5">
                 <span class="mdj-eyebrow">Alrededores</span>
-                <h2 id="location-title">Experiencia y ubicacion</h2>
+                <h2 id="location-title">Experiencia y ubicación</h2>
                 <p class="mdj-lead mt-4">
                     Estamos sobre la carrera 43A, en la loma de El Poblado. Desde la
                     terraza se ve el valle de extremo a extremo, y de noche las luces
                     suben por las laderas.
                 </p>
-                <ul class="list-unstyled d-grid gap-2 mb-4">
+                <ul class="mdj-distances list-unstyled mb-0">
                     <li>Parque Lleras <span class="mdj-meta">8 minutos a pie</span></li>
-                    <li>Estacion Poblado del metro <span class="mdj-meta">12 minutos a pie</span></li>
+                    <li>Estación Poblado del metro <span class="mdj-meta">12 minutos a pie</span></li>
                     <li>Museo de Antioquia <span class="mdj-meta">20 minutos en carro</span></li>
                     <li>Comuna 13 <span class="mdj-meta">30 minutos en carro</span></li>
-                    <li>Aeropuerto Jose Maria Cordova <span class="mdj-meta">45 minutos en carro</span></li>
+                    <li>Aeropuerto José María Córdova <span class="mdj-meta">45 minutos en carro</span></li>
                 </ul>
-                <a href="#" class="mdj-link" data-pending-page="experiences">Ver experiencias</a>
             </div>
             <div class="col-12 col-lg-7">
-                <figure class="mdj-frame mdj-frame--wide mb-0" data-placeholder="map">
-                    <figcaption>Mapa de ubicacion pendiente de definir</figcaption>
-                </figure>
+                <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--valley" aria-hidden="true"></div>
             </div>
         </div>
     </div>
 </section>
 
-{# 7 - Galeria. #}
-<section class="mdj-section mdj-reveal" aria-labelledby="gallery-title" data-section="gallery-preview">
+{# 7 - Galería. #}
+<section class="mdj-section mdj-reveal" id="galeria" aria-labelledby="gallery-title" data-section="gallery-preview">
     <div class="mdj-container">
-        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
-            <div>
-                <span class="mdj-eyebrow">El lugar</span>
-                <h2 id="gallery-title">Galeria</h2>
-            </div>
-            <a href="#" class="mdj-link" data-pending-page="gallery">Ver galeria</a>
+        <div class="mb-5">
+            <span class="mdj-eyebrow">El lugar</span>
+            <h2 id="gallery-title">Galería</h2>
         </div>
-        <ul class="row row-cols-2 row-cols-lg-4 list-unstyled g-4" data-placeholder="gallery-images">
-            {% for _ in "1234" %}
-            <li class="col">
-                <figure class="mdj-frame mb-0"><figcaption>Fotografia pendiente</figcaption></figure>
-            </li>
-            {% endfor %}
+        <ul class="row row-cols-2 row-cols-lg-4 list-unstyled g-3 g-lg-4 mb-0" aria-hidden="true">
+            <li class="col"><div class="mdj-frame mdj-art mdj-art--room" data-variant="2"></div></li>
+            <li class="col"><div class="mdj-frame mdj-art mdj-art--patio"></div></li>
+            <li class="col"><div class="mdj-frame mdj-art mdj-art--dusk"></div></li>
+            <li class="col"><div class="mdj-frame mdj-art mdj-art--room" data-variant="4"></div></li>
         </ul>
     </div>
 </section>
 
-{% comment %} 8 - Prueba social. No se muestra ninguna calificacion ni testimonio hasta que
-   existan de verdad. {% endcomment %}
+{# 8 - Prueba social. #}
 <section class="mdj-section mdj-reveal" aria-labelledby="reviews-title" data-section="reviews">
     <div class="mdj-container">
-        <span class="mdj-eyebrow">Huespedes</span>
+        <span class="mdj-eyebrow">Huéspedes</span>
         <h2 id="reviews-title">Lo que dicen quienes ya se quedaron</h2>
         <p class="mdj-meta mt-3">
-            <span class="mdj-numeric">4,8</span> sobre 5 &middot; 214 opiniones de huespedes
+            <span class="mdj-numeric">4,8</span> sobre 5 &middot; 214 opiniones de huéspedes
         </p>
         <ul class="row row-cols-1 row-cols-md-3 list-unstyled g-4 mt-2">
             <li class="col">
-                <figure class="mdj-card h-100 mb-0">
+                <figure class="mdj-card mdj-quote h-100 mb-0">
                     <div class="mdj-card__body">
                         <blockquote class="mb-0">
                             <p class="mb-0">
                                 La vista desde la terraza al amanecer justifica el viaje.
-                                Volvimos dos veces el mismo ano.
+                                Volvimos dos veces el mismo año.
                             </p>
                         </blockquote>
                         <figcaption class="mdj-meta mt-auto">Carolina R. &middot; tres estancias</figcaption>
@@ -249,25 +237,25 @@ placeholders rather than filled with invented material.
                 </figure>
             </li>
             <li class="col">
-                <figure class="mdj-card h-100 mb-0">
+                <figure class="mdj-card mdj-quote h-100 mb-0">
                     <div class="mdj-card__body">
                         <blockquote class="mb-0">
                             <p class="mb-0">
-                                Sali a las cinco de la manana para un vuelo y me dejaron
+                                Salí a las cinco de la mañana para un vuelo y me dejaron
                                 el desayuno empacado sin que lo pidiera.
                             </p>
                         </blockquote>
-                        <figcaption class="mdj-meta mt-auto">Andres M. &middot; viaje de negocios</figcaption>
+                        <figcaption class="mdj-meta mt-auto">Andrés M. &middot; viaje de negocios</figcaption>
                     </div>
                 </figure>
             </li>
             <li class="col">
-                <figure class="mdj-card h-100 mb-0">
+                <figure class="mdj-card mdj-quote h-100 mb-0">
                     <div class="mdj-card__body">
                         <blockquote class="mb-0">
                             <p class="mb-0">
-                                Habitacion silenciosa en pleno Poblado, que no es facil.
-                                Dormi de verdad.
+                                Habitación silenciosa en pleno Poblado, que no es fácil.
+                                Dormí de verdad.
                             </p>
                         </blockquote>
                         <figcaption class="mdj-meta mt-auto">Valentina O. &middot; fin de semana</figcaption>
@@ -286,18 +274,18 @@ placeholders rather than filled with invented material.
                 <span class="mdj-eyebrow">Sin intermediarios</span>
                 <h2 id="direct-booking-title">Reserva directamente con Hotel MDJ</h2>
                 <p class="mdj-lead mt-4">
-                    Al reservar en esta pagina hablas con nosotros, no con un
+                    Al reservar en esta página hablas con nosotros, no con un
                     intermediario. Eso nos permite darte condiciones que no aparecen
-                    en ningun otro sitio.
+                    en ningún otro sitio.
                 </p>
             </div>
             <div class="col-12 col-lg-6">
-                <ul class="list-unstyled d-grid gap-3 mb-4">
-                    <li>La tarifa mas baja, garantizada</li>
-                    <li>Cancelacion sin costo hasta 48 horas antes</li>
-                    <li>Entrada anticipada y salida tardia, segun disponibilidad</li>
-                    <li>Botella de vino de bienvenida en la habitacion</li>
-                    <li>Atencion directa por WhatsApp antes y durante tu estadia</li>
+                <ul class="mdj-benefits list-unstyled d-grid gap-3 mb-4">
+                    <li>La tarifa más baja, garantizada</li>
+                    <li>Cancelación sin costo hasta 48 horas antes</li>
+                    <li>Entrada anticipada y salida tardía, según disponibilidad</li>
+                    <li>Botella de vino de bienvenida en la habitación</li>
+                    <li>Atención directa por WhatsApp antes y durante tu estadía</li>
                 </ul>
                 <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary" data-role="cta-primary">Reservar ahora</a>
             </div>
@@ -306,9 +294,9 @@ placeholders rather than filled with invented material.
 </section>
 
 {# 10 - Cierre. #}
-<section class="mdj-section mdj-reveal text-center" aria-labelledby="closing-title" data-section="final-cta">
+<section class="mdj-section mdj-closing mdj-reveal text-center" aria-labelledby="closing-title" data-section="final-cta">
     <div class="mdj-container">
-        <h2 id="closing-title">Listo para tu estadia en Hotel MDJ?</h2>
+        <h2 id="closing-title">¿Listo para tu estadía en Hotel MDJ?</h2>
         <p class="mdj-lead mx-auto mt-4 mb-4">
             Consulta disponibilidad para tus fechas y reserva en dos minutos.
             Si algo cambia, cancelas sin costo hasta 48 horas antes.

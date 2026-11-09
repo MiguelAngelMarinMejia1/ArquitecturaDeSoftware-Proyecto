@@ -222,7 +222,7 @@ class ReservationService:
         reservation = find_reservation(confirmation_code, email)
         if reservation is None:
             raise ReservationNotFoundError(
-                "No encontramos una reserva con ese codigo y correo electronico."
+                "No encontramos una reserva con ese código y correo electrónico."
             )
         return reservation
 
@@ -242,7 +242,7 @@ class ReservationService:
         )
         if reservation is None:
             raise ReservationNotFoundError(
-                "No encontramos una reserva con ese codigo."
+                "No encontramos una reserva con ese código."
             )
         return reservation
 
@@ -258,6 +258,6 @@ class ReservationService:
         missing = [str(rid) for rid in room_ids if int(rid) not in found]
         if missing:
             raise RoomNotFoundError(
-                "No existe la habitacion con id " + ", ".join(missing) + "."
+                "No existe la habitación con id " + ", ".join(missing) + "."
             )
         return rooms

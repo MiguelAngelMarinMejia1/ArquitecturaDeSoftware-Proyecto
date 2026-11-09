@@ -216,8 +216,8 @@ class ReservationConfirmationView(View):
         if request.session.get(SESSION_RECENT_RESERVATION) != code:
             messages.info(
                 request,
-                "Para ver tu reserva necesitamos el codigo de confirmacion y el "
-                "correo electronico con el que reservaste.",
+                "Para ver tu reserva necesitamos el código de confirmación y el "
+                "correo electrónico con el que reservaste.",
             )
             return redirect("web:reservation-lookup")
 

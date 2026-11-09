@@ -167,7 +167,7 @@ class ReservationBuilder:
     def _validate_rooms_selected(self):
         if not self._rooms:
             raise NoRoomsSelectedError(
-                "Una reserva debe incluir al menos una habitacion."
+                "Una reserva debe incluir al menos una habitación."
             )
 
     def _validate_date_range(self):
@@ -189,7 +189,7 @@ class ReservationBuilder:
             capacity = CapacityPolicy.total_capacity(self._rooms)
             guests = self._num_adults + self._num_children
             raise GuestCapacityExceededError(
-                f"Las habitaciones seleccionadas admiten hasta {capacity} huespedes, "
+                f"Las habitaciones seleccionadas admiten hasta {capacity} huéspedes, "
                 f"pero se solicitaron {guests}."
             )
 
@@ -197,7 +197,7 @@ class ReservationBuilder:
         for room in self._rooms:
             if not self._is_available(room, self._check_in, self._check_out):
                 raise RoomNotAvailableError(
-                    f"La habitacion {room.number} no esta disponible entre "
+                    f"La habitación {room.number} no está disponible entre "
                     f"{self._check_in} y {self._check_out}."
                 )
 

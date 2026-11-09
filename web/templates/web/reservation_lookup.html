@@ -6,7 +6,7 @@ the e-mail address are required: a code on its own -- forwarded, screenshotted
 or found in a log -- must not be enough to reveal a guest's data.
 {% endcomment %}
 
-{% block title %}Consultar mi reserva - Hotel MDJ{% endblock %}
+{% block title %}Consultar mi reserva · Hotel MDJ{% endblock %}
 {% block meta_description %}Consulta tu reserva en Hotel MDJ.{% endblock %}
 
 {% block content %}
@@ -18,7 +18,7 @@ or found in a log -- must not be enough to reveal a guest's data.
                 <span class="mdj-eyebrow">Reservas</span>
                 <h1 id="lookup-title">Consultar mi reserva</h1>
                 <p class="mdj-lead mt-4 mb-5">
-                    Ingresa el numero de reserva que recibiste y el correo electronico
+                    Ingresa el número de reserva que recibiste y el correo electrónico
                     con el que reservaste.
                 </p>
 
@@ -26,22 +26,23 @@ or found in a log -- must not be enough to reveal a guest's data.
                     {% csrf_token %}
                     <div class="d-grid gap-3">
                         <div class="mdj-field">
-                            <label for="confirmation-code">Numero de reserva</label>
+                            <label for="confirmation-code">Número de reserva</label>
                             <input type="text" id="confirmation-code" name="confirmation_code"
                                    value="{{ confirmation_code|default:'' }}"
-                                   placeholder="MDJ-XXXXXXXX" required>
+                                   placeholder="MDJ-XXXXXXXX" maxlength="20"
+                                   autocapitalize="characters" spellcheck="false" required>
                         </div>
                         <div class="mdj-field">
-                            <label for="lookup-email">Correo electronico</label>
+                            <label for="lookup-email">Correo electrónico</label>
                             <input type="email" id="lookup-email" name="email" autocomplete="email" required>
                         </div>
-                        <button type="submit" class="mdj-btn mdj-btn--primary">Consultar reserva</button>
+                        <button type="submit" class="mdj-btn mdj-btn--primary" data-busy-label="Consultando…">Consultar reserva</button>
                     </div>
                 </form>
 
                 <p class="mdj-meta mt-4 mb-0" data-section="lookup-help">
-                    Aun no tienes una reserva?
-                    <a href="{% url 'web:reservations' %}" class="mdj-link">Reserva tu estadia</a>.
+                    ¿Aún no tienes una reserva?
+                    <a href="{% url 'web:reservations' %}" class="mdj-link">Reserva tu estadía</a>.
                 </p>
             </div>
         </div>

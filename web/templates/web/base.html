@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#22382F">
     <title>{% block title %}Hotel MDJ{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Hotel MDJ{% endblock %}">
 
@@ -16,49 +17,48 @@
 <body>
 
 {% comment %} El encabezado queda fijo para que Reservar siga al alcance en cualquier
-   punto de una pagina larga. {% endcomment %}
+   punto de una pagina larga. Las secciones del menu viven por ahora en la
+   pagina de inicio; cada enlace salta a la suya. {% endcomment %}
+{% url 'web:home' as home_url %}
 <header class="mdj-header" data-region="site-header">
     <a href="#main-content" data-role="skip-link">Saltar al contenido</a>
 
     <div class="mdj-container d-flex align-items-center justify-content-between gap-3 py-3">
-        <a href="{% url 'web:home' %}" class="mdj-wordmark" data-role="brand">Hotel MDJ</a>
+        <a href="{{ home_url }}" class="mdj-wordmark" data-role="brand">Hotel MDJ</a>
 
-        <nav class="d-none d-lg-block" aria-label="Navegacion principal">
+        <nav class="d-none d-lg-block" aria-label="Navegación principal">
             <ul class="list-unstyled d-flex align-items-center gap-4 mb-0">
-                <li><a class="mdj-nav-link" href="{% url 'web:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Inicio</a></li>
-                {% comment %} Paginas aun no construidas: las entradas existen para fijar la
-                   arquitectura de informacion, y cada href aterriza cuando su
-                   pagina se publique. {% endcomment %}
-                <li><a class="mdj-nav-link" href="#" data-pending-page="rooms">Habitaciones</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="services">Servicios</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="experiences">Experiencias</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="gallery">Galeria</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="contact">Contacto</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Inicio</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#habitaciones">Habitaciones</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#servicios">Servicios</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#ubicacion">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#galeria">Galería</a></li>
+                <li><a class="mdj-nav-link" href="#contacto">Contacto</a></li>
+                <li><a class="mdj-nav-link" href="{% url 'web:reservation-lookup' %}"{% if request.resolver_match.url_name == 'reservation-lookup' %} aria-current="page"{% endif %}>Mi reserva</a></li>
             </ul>
         </nav>
 
         <div class="d-flex align-items-center gap-2">
-            {% comment %} La reserva directa es el objetivo comercial del sitio, de modo que
-               esta accion no compite con la navegacion: la encabeza. {% endcomment %}
             <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary d-none d-sm-inline-flex" data-role="cta-primary">Reservar</a>
 
             <button class="mdj-menu d-lg-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#nav-mobile" aria-controls="nav-mobile"
-                    aria-expanded="false" aria-label="Menu">
+                    aria-expanded="false" aria-label="Abrir menú">
                 <span class="mdj-menu__bars" aria-hidden="true"></span>
             </button>
         </div>
     </div>
 
     <div class="collapse d-lg-none" id="nav-mobile">
-        <nav class="mdj-container pb-3" aria-label="Navegacion principal movil">
-            <ul class="list-unstyled d-grid gap-3 mb-3">
-                <li><a class="mdj-nav-link" href="{% url 'web:home' %}">Inicio</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="rooms">Habitaciones</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="services">Servicios</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="experiences">Experiencias</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="gallery">Galeria</a></li>
-                <li><a class="mdj-nav-link" href="#" data-pending-page="contact">Contacto</a></li>
+        <nav class="mdj-container pb-4" aria-label="Navegación principal móvil">
+            <ul class="list-unstyled d-grid gap-3 mb-4">
+                <li><a class="mdj-nav-link" href="{{ home_url }}">Inicio</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#habitaciones">Habitaciones</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#servicios">Servicios</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#ubicacion">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="{{ home_url }}#galeria">Galería</a></li>
+                <li><a class="mdj-nav-link" href="#contacto">Contacto</a></li>
+                <li><a class="mdj-nav-link" href="{% url 'web:reservation-lookup' %}">Mi reserva</a></li>
             </ul>
             <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary">Reservar</a>
         </nav>
@@ -79,28 +79,27 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer class="mdj-footer" data-region="site-footer">
+<footer class="mdj-footer" id="contacto" data-region="site-footer">
     <div class="mdj-container">
         <div class="row g-4 g-lg-5">
             <div class="col-12 col-lg-4">
                 <p class="mdj-footer__wordmark mb-3">Hotel MDJ</p>
                 <p>
                     Treinta y dos habitaciones en una casa restaurada de El Poblado,
-                    con el valle de Aburra por ventana. Abierto todo el ano.
+                    con el valle de Aburrá por ventana. Abierto todo el año.
                 </p>
-                <p class="mdj-meta mb-0">Medellin, Colombia</p>
+                <p class="mdj-footer__meta mb-0">Medellín, Colombia</p>
             </div>
 
             <div class="col-6 col-lg-3">
-                <nav aria-label="Navegacion del pie de pagina">
-                    <h2>Navegacion</h2>
+                <nav aria-label="Navegación del pie de página">
+                    <h2>Navegación</h2>
                     <ul>
-                        <li><a href="{% url 'web:home' %}">Inicio</a></li>
-                        <li><a href="#" data-pending-page="rooms">Habitaciones</a></li>
-                        <li><a href="#" data-pending-page="services">Servicios</a></li>
-                        <li><a href="#" data-pending-page="experiences">Experiencias y ubicacion</a></li>
-                        <li><a href="#" data-pending-page="gallery">Galeria</a></li>
-                        <li><a href="#" data-pending-page="contact">Contacto</a></li>
+                        <li><a href="{{ home_url }}">Inicio</a></li>
+                        <li><a href="{{ home_url }}#habitaciones">Habitaciones</a></li>
+                        <li><a href="{{ home_url }}#servicios">Servicios</a></li>
+                        <li><a href="{{ home_url }}#ubicacion">Experiencias y ubicación</a></li>
+                        <li><a href="{{ home_url }}#galeria">Galería</a></li>
                         <li><a href="{% url 'web:reservations' %}">Reservas</a></li>
                         <li><a href="{% url 'web:reservation-lookup' %}">Consultar mi reserva</a></li>
                     </ul>
@@ -111,10 +110,10 @@
                 <h2>Contacto</h2>
                 <address>
                     <ul>
-                        <li>Carrera 43A # 11-25<br>El Poblado, Medellin</li>
-                        <li>Telefono: <a href="tel:+576041234567">+57 604 123 4567</a></li>
+                        <li>Carrera 43A # 11-25<br>El Poblado, Medellín</li>
+                        <li>Teléfono: <a href="tel:+576041234567">+57 604 123 4567</a></li>
                         <li>Email: <a href="mailto:reservas@hotelmdj.co">reservas@hotelmdj.co</a></li>
-                        <li>WhatsApp: <a href="https://wa.me/573001234567">+57 300 123 4567</a></li>
+                        <li>WhatsApp: <a href="https://wa.me/573001234567" rel="noopener" target="_blank">+57 300 123 4567</a></li>
                     </ul>
                 </address>
                 <h2 class="mt-4">Redes sociales</h2>
@@ -126,21 +125,22 @@
             </div>
 
             <div class="col-12 col-lg-2">
-                <nav aria-label="Politicas">
-                    <h2>Politicas</h2>
+                <nav aria-label="Políticas">
+                    <h2>Políticas</h2>
                     <ul>
                         <li><a href="#">Privacidad</a></li>
-                        <li><a href="#">Terminos y condiciones</a></li>
-                        <li><a href="#">Cancelacion</a></li>
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Cancelación</a></li>
                     </ul>
                 </nav>
             </div>
         </div>
 
-        <p class="mdj-meta mt-5 mb-0">&copy; {% now "Y" %} Hotel MDJ</p>
+        <p class="mdj-footer__meta mdj-footer__legal mb-0">&copy; {% now "Y" %} Hotel MDJ</p>
     </div>
 </footer>
 
 <script src="{% static 'web/vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'web/js/mdj.js' %}" defer></script>
 </body>
 </html>
