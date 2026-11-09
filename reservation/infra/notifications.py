@@ -119,3 +119,32 @@ class HttpNotifier(BaseNotifier):
             )
             return False
         return True
+
+
+class CeleryNotifier(BaseNotifier):
+    """Queues the confirmation in Redis for the Celery worker.
+
+    The request only pays for publishing a message. The worker delivers it
+    later through ``settings.NOTIFIER_DELIVERY_TYPE`` (the Flask service by
+    default) and retries while delivery fails.
+
+    If the broker itself is unreachable the notification is delivered
+    synchronously instead, so the guest is never left without one.
+    """
+
+    def send_confirmation(self, reservation) -> bool:
+        from reservation.tasks import send_reservation_confirmation
+
+        try:
+            send_reservation_confirmation.delay(reservation.pk)
+            return True
+        except Exception as exc:  # kombu raises several connection errors
+            logger.error(
+                "Broker unavailable, notifying %s synchronously: %s",
+                reservation.confirmation_code,
+                exc,
+            )
+            from reservation.infra.factories import NotifierFactory
+
+            fallback = NotifierFactory.create(settings.NOTIFIER_DELIVERY_TYPE)
+            return fallback.send_confirmation(reservation)

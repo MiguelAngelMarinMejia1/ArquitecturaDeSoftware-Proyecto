@@ -15,6 +15,7 @@ from django.conf import settings
 
 from reservation.infra.notifications import (
     BaseNotifier,
+    CeleryNotifier,
     ConsoleNotifier,
     EmailNotifier,
     HttpNotifier,
@@ -32,16 +33,21 @@ class NotifierFactory:
     CONSOLE = "CONSOLE"
     EMAIL = "EMAIL"
     HTTP = "HTTP"  # Flask notification microservice
+    CELERY = "CELERY"  # queued in Redis, delivered by the Celery worker
 
     _REGISTRY = {
         CONSOLE: ConsoleNotifier,
         EMAIL: EmailNotifier,
         HTTP: HttpNotifier,
+        CELERY: CeleryNotifier,
     }
 
     @classmethod
     def create(cls, notifier_type: str | None = None) -> BaseNotifier:
         key = (notifier_type or getattr(settings, "NOTIFIER_TYPE", cls.CONSOLE)).upper()
+        if notifier_type and key == cls.CELERY:
+            # Delivery channel of the worker: CELERY would enqueue forever.
+            key = cls.HTTP
         # Falls back to the console channel: an unknown value must never leave
         # the guest without any notification at all.
         notifier_class = cls._REGISTRY.get(key, ConsoleNotifier)
