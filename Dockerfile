@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the project (except what .dockerignore excludes).
 COPY . .
 
-# Folder for the SQLite file; docker-compose.yml mounts a volume here.
+# Folder for a local SQLite file (only used when POSTGRES_HOST is not set).
 RUN mkdir -p /app/data
 
 EXPOSE 8000

@@ -99,14 +99,30 @@ WSGI_APPLICATION = 'hotelMDJ.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        # SQLITE_PATH lets Docker keep the database file in a volume, so the
-        # data survives when the container is rebuilt.
-        'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
+# PostgreSQL when POSTGRES_HOST is set (always inside Docker); otherwise a
+# local SQLite file, so the project still runs with just ``runserver``.
+if os.environ.get('POSTGRES_HOST'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'hotelmdj'),
+            'USER': os.environ.get('POSTGRES_USER', 'hotelmdj'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ['POSTGRES_HOST'],
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            # Reuse connections for a minute instead of opening one per request.
+            'CONN_MAX_AGE': 60,
+            'CONN_HEALTH_CHECKS': True,
+            'OPTIONS': {'connect_timeout': 5},
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation
