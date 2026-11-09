@@ -2,13 +2,19 @@
 
 Infrastructure detail: the application layer depends on the ``BaseNotifier``
 abstraction and never on a concrete class, which is what allows the notifier to
-be swapped per environment (console in development, e-mail in production)
-without a single change in ``services.py``.
+be swapped per environment (console in development, e-mail in production,
+the Flask notification microservice inside Docker) without a single change in
+``services.py``.
 """
 
+import logging
 from abc import ABC, abstractmethod
 
+import requests
+from django.conf import settings
 from django.core.mail import send_mail
+
+logger = logging.getLogger(__name__)
 
 
 class BaseNotifier(ABC):
@@ -67,3 +73,44 @@ class EmailNotifier(BaseNotifier):
         except Exception as exc:  # pragma: no cover - depends on SMTP backend
             print(f"[EMAIL] No se pudo enviar la confirmacion: {exc}")
             return False
+
+
+class HttpNotifier(BaseNotifier):
+    """Adapter to the Flask notification microservice (``notification_service/``).
+
+    Publishes a ``RESERVATION_CONFIRMED`` event. Like ``EmailNotifier``, it
+    never raises: the booking is already committed when this runs, so a
+    service outage is logged and reported through the return value only.
+    """
+
+    EVENT = "RESERVATION_CONFIRMED"
+
+    def __init__(self, base_url: str | None = None, timeout: float | None = None):
+        self._url = (base_url or settings.NOTIFICATION_SERVICE_URL).rstrip("/") + "/"
+        self._timeout = timeout or settings.MICROSERVICE_TIMEOUT
+
+    def send_confirmation(self, reservation) -> bool:
+        payload = {
+            "event": self.EVENT,
+            "confirmation_code": reservation.confirmation_code,
+            "recipient_email": reservation.customer.email,
+            "recipient_name": reservation.customer.first_name,
+            "check_in_date": reservation.check_in_date.isoformat(),
+            "check_out_date": reservation.check_out_date.isoformat(),
+            "total_amount": str(reservation.total_amount),
+        }
+        try:
+            response = requests.post(self._url, json=payload, timeout=self._timeout)
+        except requests.RequestException as exc:
+            logger.error("Notification service unreachable at %s: %s", self._url, exc)
+            return False
+
+        if response.status_code != 201:
+            logger.error(
+                "Notification for %s not sent (%s): %s",
+                reservation.confirmation_code,
+                response.status_code,
+                response.text[:300],
+            )
+            return False
+        return True

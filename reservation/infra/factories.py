@@ -17,6 +17,7 @@ from reservation.infra.notifications import (
     BaseNotifier,
     ConsoleNotifier,
     EmailNotifier,
+    HttpNotifier,
 )
 from reservation.infra.payments import (
     BaseGateway,
@@ -30,10 +31,12 @@ class NotifierFactory:
 
     CONSOLE = "CONSOLE"
     EMAIL = "EMAIL"
+    HTTP = "HTTP"  # Flask notification microservice
 
     _REGISTRY = {
         CONSOLE: ConsoleNotifier,
         EMAIL: EmailNotifier,
+        HTTP: HttpNotifier,
     }
 
     @classmethod

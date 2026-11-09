@@ -167,8 +167,9 @@ REST_FRAMEWORK = {
 # These values are infrastructure configuration, never hard-coded in the
 # domain layer. Policies read them through django.conf.settings.
 
-# Notification channel built by NotifierFactory: CONSOLE | EMAIL
-NOTIFIER_TYPE = 'CONSOLE'
+# Notification channel built by NotifierFactory: CONSOLE | EMAIL | HTTP
+# HTTP = Flask notification microservice (default in docker-compose.yml).
+NOTIFIER_TYPE = os.environ.get('NOTIFIER_TYPE', 'CONSOLE')
 
 # Payment gateway built by PaymentGatewayFactory: SIMULATED | HTTP
 # HTTP = Flask payment microservice (default in docker-compose.yml).
@@ -179,6 +180,9 @@ PAYMENT_GATEWAY_TYPE = os.environ.get('PAYMENT_GATEWAY_TYPE', 'SIMULATED')
 # point to each service running locally with ``python app.py``.
 PAYMENT_SERVICE_URL = os.environ.get(
     'PAYMENT_SERVICE_URL', 'http://localhost:5002/api/v2/pagos/'
+)
+NOTIFICATION_SERVICE_URL = os.environ.get(
+    'NOTIFICATION_SERVICE_URL', 'http://localhost:5003/api/v2/notificaciones/'
 )
 
 # Seconds to wait for a microservice before treating it as down.
