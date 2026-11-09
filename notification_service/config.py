@@ -1,14 +1,14 @@
 """Configuration of the notification microservice (environment variables)."""
 
 import os
-from pathlib import Path
-
-_DEFAULT_DB = Path(__file__).resolve().parent / "notifications.sqlite3"
 
 
 class Config:
-    # Own database: log of every notification sent.
-    SQLITE_PATH = os.environ.get("SQLITE_PATH", str(_DEFAULT_DB))
+    # Own PostgreSQL database: log of every notification sent.
+    DATABASE_URL = os.environ.get(
+        "DATABASE_URL",
+        "postgresql://notifications:notifications@localhost:5432/notifications",
+    )
 
     # Delivery channel: CONSOLE (prints, for development) | EMAIL (SMTP).
     CHANNEL = os.environ.get("NOTIFICATION_CHANNEL", "CONSOLE")

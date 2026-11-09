@@ -13,8 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Its own SQLite file lives here (a named volume in docker-compose.yml).
-RUN mkdir -p /app/data
 
 EXPOSE 5003
 

@@ -1,14 +1,14 @@
 """Configuration of the payment microservice (environment variables)."""
 
 import os
-from pathlib import Path
-
-_DEFAULT_DB = Path(__file__).resolve().parent / "payments.sqlite3"
 
 
 class Config:
-    # Own database: payment transactions are no longer the monolith's data.
-    SQLITE_PATH = os.environ.get("SQLITE_PATH", str(_DEFAULT_DB))
+    # Own PostgreSQL database: payment transactions are no longer the
+    # monolith's data.
+    DATABASE_URL = os.environ.get(
+        "DATABASE_URL", "postgresql://payments:payments@localhost:5432/payments"
+    )
 
     # Name of the provider this service simulates. A real one (Wompi, PayU,
     # Stripe) would replace SimulatedProvider in providers.py.

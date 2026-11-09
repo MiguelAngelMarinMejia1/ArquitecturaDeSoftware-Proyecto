@@ -30,7 +30,7 @@ def create_app(config_class=Config):
     register_error_handlers(app)
 
     channel = build_channel(app.config)
-    repository = NotificationRepository(app.config["SQLITE_PATH"])
+    repository = NotificationRepository(app.config["DATABASE_URL"])
 
     @app.get(f"{URL_PREFIX}/health/", strict_slashes=False)
     def health():

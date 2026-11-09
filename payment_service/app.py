@@ -28,7 +28,7 @@ def create_app(config_class=Config):
     register_error_handlers(app)
 
     provider = build_provider(app.config["PROVIDER"])
-    repository = PaymentRepository(app.config["SQLITE_PATH"])
+    repository = PaymentRepository(app.config["DATABASE_URL"])
 
     @app.get(f"{URL_PREFIX}/health/", strict_slashes=False)
     def health():

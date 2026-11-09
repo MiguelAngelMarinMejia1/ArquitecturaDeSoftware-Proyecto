@@ -1,19 +1,23 @@
-"""Log of notifications in the service's own SQLite database."""
+"""Log of notifications in the service's own PostgreSQL database.
 
-import sqlite3
+The ``notifications`` database and role belong to this service alone (see
+postgres/init/01-databases.sh).
+"""
+
 from datetime import datetime, timezone
-from pathlib import Path
+
+import psycopg
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS notification (
-    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
-    event              TEXT NOT NULL,
-    confirmation_code  TEXT NOT NULL,
-    recipient_email    TEXT NOT NULL,
-    channel            TEXT NOT NULL,
-    status             TEXT NOT NULL,
-    error              TEXT NOT NULL DEFAULT '',
-    created_at         TEXT NOT NULL
+    id                 BIGSERIAL    PRIMARY KEY,
+    event              VARCHAR(40)  NOT NULL,
+    confirmation_code  VARCHAR(20)  NOT NULL,
+    recipient_email    VARCHAR(254) NOT NULL,
+    channel            VARCHAR(20)  NOT NULL,
+    status             VARCHAR(10)  NOT NULL,
+    error              TEXT         NOT NULL DEFAULT '',
+    created_at         TIMESTAMPTZ  NOT NULL
 )
 """
 
@@ -34,31 +38,32 @@ def _public(row):
         "recipient": mask_email(row[3]),
         "channel": row[4],
         "status": row[5],
-        "created_at": row[6],
+        "created_at": row[6].isoformat(timespec="seconds"),
     }
 
 
 class NotificationRepository:
-    def __init__(self, sqlite_path):
-        self._path = sqlite_path
-        Path(sqlite_path).parent.mkdir(parents=True, exist_ok=True)
+    def __init__(self, database_url):
+        self._url = database_url
         with self._connect() as conn:
+            # Serialises schema creation across gunicorn workers.
+            conn.execute("SELECT pg_advisory_xact_lock(hashtext('notification_schema'))")
             conn.execute(_SCHEMA)
             conn.execute(_INDEX)
 
     def _connect(self):
-        return sqlite3.connect(self._path, timeout=5)
+        return psycopg.connect(self._url, connect_timeout=5)
 
     def save(self, *, event, confirmation_code, recipient_email, channel, sent, error):
-        created_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        created_at = datetime.now(timezone.utc).replace(microsecond=0)
         status = "SENT" if sent else "FAILED"
         with self._connect() as conn:
-            cursor = conn.execute(
+            row_id = conn.execute(
                 "INSERT INTO notification (event, confirmation_code, recipient_email, "
-                "channel, status, error, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "channel, status, error, created_at) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
                 (event, confirmation_code, recipient_email, channel, status, error, created_at),
-            )
-            row_id = cursor.lastrowid
+            ).fetchone()[0]
         return _public(
             (row_id, event, confirmation_code, recipient_email, channel, status, created_at)
         )
@@ -67,7 +72,7 @@ class NotificationRepository:
         with self._connect() as conn:
             rows = conn.execute(
                 "SELECT id, event, confirmation_code, recipient_email, channel, status, "
-                "created_at FROM notification WHERE confirmation_code = ? ORDER BY id",
+                "created_at FROM notification WHERE confirmation_code = %s ORDER BY id",
                 (confirmation_code,),
             ).fetchall()
         return [_public(row) for row in rows]
