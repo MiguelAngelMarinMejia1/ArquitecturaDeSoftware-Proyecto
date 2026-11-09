@@ -33,9 +33,9 @@ reparte el tráfico por URL:
 | Microservicio | Carpeta | Datos | Qué reemplaza en Django |
 |---|---|---|---|
 | Cotización | `pricing_service/` | Sin BD | `PricingPolicy` |
-| Catálogo y disponibilidad | `catalog_service/` | Lee la SQLite del monolito en **solo lectura** | `RoomTypeListView`, `RoomAvailabilityView` |
-| Pagos | `payment_service/` | SQLite propia (`payments_data`) | `SimulatedGateway` |
-| Notificaciones | `notification_service/` | SQLite propia (`notifications_data`) | `ConsoleNotifier` / `EmailNotifier` |
+| Catálogo y disponibilidad | `catalog_service/` | Lee la base `hotelmdj` del monolito con un rol de **solo lectura** | `RoomTypeListView`, `RoomAvailabilityView` |
+| Pagos | `payment_service/` | Base propia `payments` | `SimulatedGateway` |
+| Notificaciones | `notification_service/` | Base propia `notifications` | `ConsoleNotifier` / `EmailNotifier` |
 
 | Ruta | Destino |
 |---|---|
@@ -59,6 +59,21 @@ tipo `HTTP`. Ni `services.py` ni las vistas cambiaron.
   `INTERNAL_API_TOKEN`, porque Nginx los expone públicamente.
 - Que el catálogo comparta la base del monolito es un paso transitorio del patrón: el
   siguiente es darle su propio almacén.
+
+### Base de datos (PostgreSQL)
+
+Un contenedor `postgres` con una base y un rol por dueño de los datos, creados por
+`postgres/init/01-databases.sh` la primera vez que arranca:
+
+| Base | Rol | Quién la usa |
+|---|---|---|
+| `hotelmdj` | `hotelmdj` | Django y el worker de Celery |
+| `hotelmdj` | `catalog_reader` (solo `SELECT`, transacciones de solo lectura) | `catalog_service` |
+| `payments` | `payments` | `payment_service` |
+| `notifications` | `notifications` | `notification_service` |
+
+Ningún servicio puede conectarse a la base de otro. Sin Docker, Django sigue usando
+`db.sqlite3` mientras no se defina `POSTGRES_HOST`.
 
 ### Comunicación asíncrona (Redis + Celery)
 
@@ -88,7 +103,7 @@ tipo `HTTP`. Ni `services.py` ni las vistas cambiaron.
 - Django 5.2
 - Django Rest Framework 3.18
 - Flask 3.1 + gunicorn (microservicios de cotización, catálogo, pagos y notificaciones)
-- SQLite
+- PostgreSQL 17 (SQLite solo para correr Django sin Docker)
 - Nginx 1.30
 - Redis 8 + Celery 5.7 (tareas asíncronas)
 - Docker y Docker Compose
@@ -104,7 +119,7 @@ docker compose up --build
 ```
 
 Abre `http://localhost`. Las migraciones y los datos de ejemplo (`seed`) se cargan solos al
-arrancar el contenedor de Django, y la base SQLite se guarda en el volumen `sqlite_data`.
+arrancar el contenedor de Django, y los datos de PostgreSQL se guardan en el volumen `postgres_data`.
 
 | Comando | Para qué |
 |---|---|
@@ -134,9 +149,13 @@ y `python app.py` dentro de su carpeta:
 | Carpeta | Puerto |
 |---|---|
 | `pricing_service/` | 5000 |
-| `catalog_service/` | 5001 (lee `db.sqlite3` de la raíz) |
+| `catalog_service/` | 5001 |
 | `payment_service/` | 5002 |
 | `notification_service/` | 5003 |
+
+Los tres últimos necesitan PostgreSQL. Lo más simple es levantar solo la base con
+`docker compose up -d postgres` y apuntar cada servicio con la variable `DATABASE_URL`
+(ver el `config.py` de cada uno).
 
 Sin Docker, Django usa por defecto la pasarela simulada y el notificador de consola. Para probar Celery
 en local necesitas un Redis en `localhost:6379`, `NOTIFIER_TYPE=CELERY` y un worker:
