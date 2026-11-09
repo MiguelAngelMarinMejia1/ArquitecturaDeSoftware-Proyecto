@@ -170,8 +170,19 @@ REST_FRAMEWORK = {
 # Notification channel built by NotifierFactory: CONSOLE | EMAIL
 NOTIFIER_TYPE = 'CONSOLE'
 
-# Payment gateway built by PaymentGatewayFactory: SIMULATED
-PAYMENT_GATEWAY_TYPE = 'SIMULATED'
+# Payment gateway built by PaymentGatewayFactory: SIMULATED | HTTP
+# HTTP = Flask payment microservice (default in docker-compose.yml).
+PAYMENT_GATEWAY_TYPE = os.environ.get('PAYMENT_GATEWAY_TYPE', 'SIMULATED')
+
+# --- Strangled microservices (Flask) ---------------------------------------
+# Django reaches them through the Nginx gateway inside Docker. The defaults
+# point to each service running locally with ``python app.py``.
+PAYMENT_SERVICE_URL = os.environ.get(
+    'PAYMENT_SERVICE_URL', 'http://localhost:5002/api/v2/pagos/'
+)
+
+# Seconds to wait for a microservice before treating it as down.
+MICROSERVICE_TIMEOUT = float(os.environ.get('MICROSERVICE_TIMEOUT', '5'))
 
 # Tax rate applied on top of the room subtotal. Provisional value pending the
 # rate that actually applies to the hotel.

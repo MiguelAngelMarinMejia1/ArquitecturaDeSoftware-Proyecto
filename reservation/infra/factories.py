@@ -18,7 +18,11 @@ from reservation.infra.notifications import (
     ConsoleNotifier,
     EmailNotifier,
 )
-from reservation.infra.payments import BaseGateway, SimulatedGateway
+from reservation.infra.payments import (
+    BaseGateway,
+    HttpPaymentGateway,
+    SimulatedGateway,
+)
 
 
 class NotifierFactory:
@@ -45,9 +49,11 @@ class PaymentGatewayFactory:
     """Builds the payment gateway configured for this environment."""
 
     SIMULATED = "SIMULATED"
+    HTTP = "HTTP"  # Flask payment microservice
 
     _REGISTRY = {
         SIMULATED: SimulatedGateway,
+        HTTP: HttpPaymentGateway,
     }
 
     @classmethod
