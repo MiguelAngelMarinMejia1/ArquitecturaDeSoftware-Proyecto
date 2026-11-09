@@ -60,6 +60,21 @@ tipo `HTTP`. Ni `services.py` ni las vistas cambiaron.
 - Que el catálogo comparta la base del monolito es un paso transitorio del patrón: el
   siguiente es darle su propio almacén.
 
+### Comunicación asíncrona (Redis + Celery)
+
+**Redis** es el message broker y **Celery** el worker de tareas en segundo plano
+(contenedores `redis` y `celery_worker`).
+
+- **Notificaciones.** Al confirmar una reserva, Django solo publica la tarea
+  `send_reservation_confirmation` en Redis (`CeleryNotifier`) y responde de inmediato. El
+  worker la entrega al microservicio de notificaciones y, si este está caído, reintenta con
+  espera exponencial (5 s, 10 s, 20 s... hasta 6 intentos). Si Redis no responde, la
+  notificación se envía en el momento para que el huésped no se quede sin ella.
+- **Reportes.** `POST /api/v1/reports/occupancy/` encola `generate_occupancy_report`
+  (ocupación e ingresos de un rango de fechas) y responde 202 con un `task_id`. El
+  resultado se consulta en `GET /api/v1/reports/<task_id>/`. Solo para usuarios staff:
+  inicia sesión en `/admin/` y usa la API navegable.
+
 ## Patrones de diseño
 
 - **Builder** — `ReservationBuilder` ensambla y valida la reserva, la entidad más compleja del
@@ -75,12 +90,13 @@ tipo `HTTP`. Ni `services.py` ni las vistas cambiaron.
 - Flask 3.1 + gunicorn (microservicios de cotización, catálogo, pagos y notificaciones)
 - SQLite
 - Nginx 1.30
+- Redis 8 + Celery 5.7 (tareas asíncronas)
 - Docker y Docker Compose
 - HTML semántico
 
 ## Puesta en marcha con Docker
 
-Levanta Django, los cuatro microservicios Flask y Nginx juntos. Requiere Docker Desktop.
+Levanta Django, los cuatro microservicios Flask, Nginx, Redis y el worker de Celery juntos. Requiere Docker Desktop.
 Copia `.env.example` como `.env` y define `SECRET_KEY` e `INTERNAL_API_TOKEN`.
 
 ```bash
@@ -122,7 +138,9 @@ y `python app.py` dentro de su carpeta:
 | `payment_service/` | 5002 |
 | `notification_service/` | 5003 |
 
-Sin Docker, Django usa por defecto la pasarela simulada y el notificador de consola. Para que
+Sin Docker, Django usa por defecto la pasarela simulada y el notificador de consola. Para probar Celery
+en local necesitas un Redis en `localhost:6379`, `NOTIFIER_TYPE=CELERY` y un worker:
+`celery -A hotelMDJ worker -l info --pool=solo` (`--pool=solo` en Windows). Para que
 use los microservicios, define `PAYMENT_GATEWAY_TYPE=HTTP` y `NOTIFIER_TYPE=HTTP` en `.env`.
 
 | URL | Descripción |
@@ -144,6 +162,8 @@ use los microservicios, define `PAYMENT_GATEWAY_TYPE=HTTP` y `NOTIFIER_TYPE=HTTP
 | `GET` | `/api/v1/rooms/available/` | 200, 400 (servido por `catalog_service`) |
 | `POST` | `/api/v1/reservations/` | 201, 400, 402, 404, 409 |
 | `POST` | `/api/v1/reservations/lookup/` | 200, 400, 404 |
+| `POST` | `/api/v1/reports/occupancy/` (staff) | 202, 400, 403, 503 |
+| `GET` | `/api/v1/reports/<task_id>/` (staff) | 200, 403 |
 
 ### API v2 (microservicios Flask)
 

@@ -1,5 +1,6 @@
 # ---------------------------------------------------------------------------
-# Hotel MDJ: Django monolith + Flask microservices behind Nginx.
+# Hotel MDJ: Django monolith + Flask microservices behind Nginx, with
+# Redis as message broker and a Celery worker for background tasks.
 #
 #   docker compose up --build       build the images and start everything
 #   docker compose up -d --build    same, in the background
@@ -30,14 +31,54 @@ services:
       # Strangled features: Django calls the Flask services through Nginx.
       PAYMENT_GATEWAY_TYPE: "HTTP"
       PAYMENT_SERVICE_URL: "http://nginx/api/v2/pagos/"
-      NOTIFIER_TYPE: "HTTP"
+      # Confirmations are queued in Redis; the Celery worker delivers them
+      # to the notification microservice (NOTIFIER_DELIVERY_TYPE=HTTP).
+      NOTIFIER_TYPE: "CELERY"
+      NOTIFIER_DELIVERY_TYPE: "HTTP"
       NOTIFICATION_SERVICE_URL: "http://nginx/api/v2/notificaciones/"
       INTERNAL_API_TOKEN: "${INTERNAL_API_TOKEN:-docker-development-internal-token}"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
     volumes:
       # Named volume: the data survives when the container is removed.
       - sqlite_data:/app/data
     expose:
       - "8000"                        # internal network only
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # --- Message broker (Redis) -------------------------------------------------
+  # Queue between Django and the Celery worker; also stores task results.
+  redis:
+    image: redis:8-alpine
+    container_name: hotelmdj_redis
+    # Append-only file: queued tasks survive a Redis restart.
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    expose:
+      - "6379"
+    restart: unless-stopped
+
+  # --- Background worker (Celery) ---------------------------------------------
+  # Same image and settings as Django; consumes the tasks queued in Redis
+  # (notifications with retries, occupancy reports).
+  celery_worker:
+    build: .
+    container_name: hotelmdj_celery
+    command: ["celery", "-A", "hotelMDJ", "worker", "--loglevel=info", "--concurrency=2"]
+    environment:
+      SQLITE_PATH: "/app/data/db.sqlite3"
+      SECRET_KEY: "${SECRET_KEY:-django-insecure-docker-development-only}"
+      NOTIFIER_DELIVERY_TYPE: "HTTP"
+      NOTIFICATION_SERVICE_URL: "http://nginx/api/v2/notificaciones/"
+      INTERNAL_API_TOKEN: "${INTERNAL_API_TOKEN:-docker-development-internal-token}"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+    volumes:
+      - sqlite_data:/app/data
+    depends_on:
+      - redis
+      - django_web
     restart: unless-stopped
 
   # --- Microservice: pricing (Flask, no database) --------------------------
@@ -117,3 +158,4 @@ volumes:
   sqlite_data:
   payments_data:
   notifications_data:
+  redis_data:
