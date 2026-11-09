@@ -5,17 +5,17 @@ same code runs with ``python app.py`` and inside Docker.
 """
 
 import os
-from pathlib import Path
-
-# Without Docker, read the monolith's SQLite file at the project root.
-_DEFAULT_DB = Path(__file__).resolve().parent.parent / "db.sqlite3"
 
 
 class Config:
-    # SQLite file written by the Django monolith. This service only reads it
-    # (opened in read-only mode). Shared database = transitional step of the
-    # Strangler Pattern until the catalog gets its own store.
-    SQLITE_PATH = os.environ.get("SQLITE_PATH", str(_DEFAULT_DB))
+    # The monolith's PostgreSQL database, reached with the read-only role
+    # catalog_reader (see postgres/init/01-databases.sh). Sharing it is the
+    # transitional step of the Strangler Pattern until the catalog gets its
+    # own store.
+    DATABASE_URL = os.environ.get(
+        "DATABASE_URL",
+        "postgresql://catalog_reader:catalog_reader@localhost:5432/hotelmdj",
+    )
 
     # Only used by ``python app.py``; in Docker, gunicorn sets the port.
     PORT = int(os.environ.get("PORT", "5001"))

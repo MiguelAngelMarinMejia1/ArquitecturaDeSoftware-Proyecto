@@ -43,7 +43,7 @@ class InvalidDateRangeError(CatalogError):
 
 
 class DataSourceUnavailableError(CatalogError):
-    """The database is missing or not migrated yet."""
+    """The database is unreachable or not migrated yet."""
 
     status_code = 503
     code = "SERVICEUNAVAILABLE"

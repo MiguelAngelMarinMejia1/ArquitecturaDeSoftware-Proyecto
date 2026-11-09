@@ -25,7 +25,7 @@ def create_app(config_class=Config):
     app.json.sort_keys = app.config["JSON_SORT_KEYS"]
     register_error_handlers(app)
 
-    repository = CatalogRepository(app.config["SQLITE_PATH"])
+    repository = CatalogRepository(app.config["DATABASE_URL"])
 
     @app.get("/api/v2/catalogo/health/", strict_slashes=False)
     def health():
