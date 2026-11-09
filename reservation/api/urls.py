@@ -9,6 +9,8 @@ from django.urls import path
 
 from reservation.api.views import (
     HealthView,
+    OccupancyReportView,
+    ReportResultView,
     ReservationCreateView,
     ReservationLookupView,
     RoomAvailabilityView,
@@ -27,4 +29,7 @@ urlpatterns = [
         ReservationLookupView.as_view(),
         name="reservation-lookup",
     ),
+    # Background reports (Celery + Redis), staff only.
+    path("reports/occupancy/", OccupancyReportView.as_view(), name="report-occupancy"),
+    path("reports/<str:task_id>/", ReportResultView.as_view(), name="report-result"),
 ]

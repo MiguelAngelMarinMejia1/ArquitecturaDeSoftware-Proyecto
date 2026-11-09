@@ -159,3 +159,30 @@ class ReservationLookupSerializer(serializers.Serializer):
 
     confirmation_code = serializers.CharField(max_length=20)
     email = serializers.EmailField()
+
+
+class ReportRequestSerializer(serializers.Serializer):
+    """Range of a background occupancy report. Both dates optional: the
+    current month is used when they are missing. ``date_to`` is exclusive."""
+
+    date_from = serializers.DateField(required=False)
+    date_to = serializers.DateField(required=False)
+
+    MAX_DAYS = 366
+
+    def validate(self, attrs):
+        start, end = attrs.get("date_from"), attrs.get("date_to")
+        if (start is None) != (end is None):
+            raise serializers.ValidationError(
+                "Envía date_from y date_to juntos, o ninguno para el mes actual."
+            )
+        if start and end:
+            if end <= start:
+                raise serializers.ValidationError(
+                    {"date_to": "Debe ser posterior a date_from."}
+                )
+            if (end - start).days > self.MAX_DAYS:
+                raise serializers.ValidationError(
+                    {"date_to": f"El rango no puede superar {self.MAX_DAYS} días."}
+                )
+        return attrs
