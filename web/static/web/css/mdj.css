@@ -403,6 +403,7 @@ h3 {
 
 @media (min-width: 768px) {
     .mdj-frame { aspect-ratio: 4 / 5; }
+    .mdj-frame--wide { aspect-ratio: 16 / 10; }
 }
 
 /* --------------------------------------------------------------------------
@@ -738,3 +739,262 @@ h3 {
     .mdj-card:hover,
     .mdj-btn--primary:hover { transform: none; }
 }
+
+/* --------------------------------------------------------------------------
+   12. Decorative compositions (stand-ins for photography)
+   --------------------------------------------------------------------------
+   Until the hotel supplies its own photos, image slots show abstract scenes
+   drawn only with gradients from the palette: no extra requests, no stock
+   images misdescribing the property. Every scene carries the same diagonal
+   band of light at 115deg, the direction of the system's long shadows.
+   -------------------------------------------------------------------------- */
+
+:root {
+    --mdj-sand:       #E6D9C3;
+    --mdj-sand-deep:  #CDB894;
+    --mdj-light-band: linear-gradient(115deg, transparent 0 34%,
+                        rgba(255, 255, 255, 0.38) 34% 52%, transparent 52%);
+}
+
+.mdj-art { isolation: isolate; }
+.mdj-art::after {
+    /* The shared band of afternoon light. */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--mdj-light-band);
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+/* Valley at dusk: sun low over two ridges. */
+.mdj-art--dusk {
+    background:
+        radial-gradient(circle at 70% 36%, rgba(251, 250, 247, 0.95) 0 7%, transparent 7.4%),
+        radial-gradient(130% 58% at 18% 104%, var(--mdj-deep-green) 0 44%, transparent 44.4%),
+        radial-gradient(150% 56% at 88% 108%, var(--mdj-night-green) 0 46%, transparent 46.4%),
+        radial-gradient(160% 60% at 50% 112%, var(--mdj-sage) 0 52%, transparent 52.4%),
+        linear-gradient(180deg, #EFE4D2 0%, var(--mdj-sand) 42%, #B9C3B5 100%);
+}
+
+/* Interior patio: terrazzo floor and the shadow of a lattice. */
+.mdj-art--patio {
+    background:
+        radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--mdj-sage) 70%, transparent) 0 12%, transparent 12.4%),
+        repeating-linear-gradient(115deg, transparent 0 46px, rgba(35, 40, 42, 0.035) 46px 70px),
+        linear-gradient(to top, var(--mdj-sand-deep) 0 26%, transparent 26%),
+        linear-gradient(160deg, var(--mdj-paper) 0%, var(--mdj-mist) 100%);
+}
+
+/* Room: wall, floor and window light. Four tones so neighbours differ. */
+.mdj-art--room {
+    --mdj-wall: var(--mdj-mist);
+    background:
+        linear-gradient(to top, color-mix(in srgb, var(--mdj-deep-green) 82%, var(--mdj-ink)) 0 20%, transparent 20%),
+        linear-gradient(to top, transparent 20%, color-mix(in srgb, var(--mdj-paper) 85%, transparent) 20% 31%, transparent 31%),
+        linear-gradient(115deg, transparent 0 44%, rgba(255, 255, 255, 0.55) 44% 60%, transparent 60%),
+        var(--mdj-wall);
+}
+.mdj-art--room[data-variant="2"] { --mdj-wall: var(--mdj-sand); }
+.mdj-art--room[data-variant="3"] { --mdj-wall: color-mix(in srgb, var(--mdj-sage) 45%, var(--mdj-paper)); }
+.mdj-art--room[data-variant="4"] { --mdj-wall: color-mix(in srgb, var(--mdj-stone) 30%, var(--mdj-paper)); }
+
+/* Location: contour lines of the valley and the hotel's pin. */
+.mdj-art--valley {
+    background:
+        radial-gradient(circle at 58% 52%, var(--mdj-deep-green) 0 2.2%, var(--mdj-paper) 2.3% 3.3%, transparent 3.4%),
+        repeating-radial-gradient(ellipse at 58% 52%, transparent 0 22px,
+            color-mix(in srgb, var(--mdj-deep-green) 22%, transparent) 22px 23px),
+        linear-gradient(135deg, var(--mdj-mist) 0%, color-mix(in srgb, var(--mdj-sage) 25%, var(--mdj-paper)) 100%);
+}
+
+/* --------------------------------------------------------------------------
+   13. Home retouches
+   -------------------------------------------------------------------------- */
+
+/* Key facts under the hero, separated by hairlines rather than bullets. */
+.mdj-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mdj-space-1) var(--mdj-space-3);
+    font-size: var(--mdj-size-meta);
+    color: var(--mdj-stone);
+}
+.mdj-highlights li { display: inline-flex; align-items: center; gap: var(--mdj-space-1); }
+.mdj-highlights li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--mdj-sage);
+}
+
+/* The availability panel sits right under the hero: less air before it. */
+.mdj-section--tight { padding-block: var(--mdj-space-3) var(--mdj-space-5); }
+.mdj-section--tight + .mdj-section { border-top: 0; }
+.mdj-panel--raised { background: var(--mdj-paper); border: var(--mdj-hairline); box-shadow: var(--mdj-light-far); }
+
+.mdj-price {
+    font-family: var(--mdj-font-display);
+    font-size: 1.5rem;
+    line-height: 1.1;
+    color: var(--mdj-ink);
+}
+
+/* Lists of amenities, distances and benefits: a short sage rule instead of
+   a bullet, aligned with the first line of text. */
+.mdj-services li,
+.mdj-benefits li {
+    position: relative;
+    padding-left: 1.4rem;
+}
+/* Services are Bootstrap columns: keep their half-gutter and add ours. */
+.mdj-services li { padding-left: calc(var(--bs-gutter-x) * 0.5 + 1.4rem); }
+.mdj-services li::before,
+.mdj-benefits li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.82em;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--mdj-sage);
+}
+.mdj-services li::before { left: calc(var(--bs-gutter-x) * 0.5); }
+
+.mdj-distances { display: grid; gap: 0; margin-top: var(--mdj-space-3); }
+.mdj-distances li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--mdj-space-2);
+    padding-block: 0.6rem;
+    border-bottom: var(--mdj-hairline);
+}
+.mdj-distances li .mdj-meta { text-align: right; flex: none; }
+
+/* Reviews: an opening quote mark in the display face. */
+.mdj-quote .mdj-card__body::before {
+    content: "\201C";
+    font-family: var(--mdj-font-display);
+    font-size: 3.5rem;
+    line-height: 0.6;
+    color: var(--mdj-sage);
+    margin-top: 0.4rem;
+}
+.mdj-quote blockquote p { font-size: var(--mdj-size-lead); line-height: 1.5; }
+
+/* Closing call to action on mist, crossed by the band of light, running
+   straight into the footer. */
+.mdj-closing {
+    background-color: var(--mdj-mist);
+    background-image: var(--mdj-light-band);
+}
+body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
+
+/* --------------------------------------------------------------------------
+   14. Booking and receipt retouches
+   -------------------------------------------------------------------------- */
+
+/* The whole "Seleccionar" control is the target, not just the tiny box. */
+.mdj-check--select {
+    align-items: center;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--mdj-stone) 40%, transparent);
+    border-radius: var(--mdj-radius);
+    cursor: pointer;
+    transition: border-color 200ms ease, background-color 200ms ease;
+}
+.mdj-check--select input { margin-top: 0; }
+.mdj-check--select label { cursor: pointer; font-size: var(--mdj-size-meta); }
+.mdj-check--select:hover { border-color: var(--mdj-deep-green); }
+.mdj-check--select:has(input:checked) {
+    background: var(--mdj-deep-green);
+    border-color: var(--mdj-deep-green);
+}
+.mdj-check--select:has(input:checked) label { color: var(--mdj-paper); }
+.mdj-check--select:has(input:checked) input { accent-color: var(--mdj-paper); }
+
+/* The card follows its checkbox even before the page reloads. */
+.mdj-card:has(.mdj-check--select input:checked) {
+    border-color: var(--mdj-deep-green);
+    box-shadow: var(--mdj-light-near);
+}
+
+.mdj-currency {
+    font-family: var(--mdj-font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--mdj-stone);
+}
+
+/* Booking code: large, spaced, easy to read aloud over the phone. */
+.mdj-code {
+    font-family: var(--mdj-font-body);
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+    color: var(--mdj-deep-green);
+    user-select: all;
+}
+
+/* Check mark above "Reserva confirmada". */
+.mdj-success {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: var(--mdj-space-2);
+    border-radius: 50%;
+    background: var(--mdj-deep-green);
+    box-shadow: var(--mdj-light-near);
+}
+.mdj-success::before {
+    content: "";
+    width: 0.8rem;
+    height: 1.4rem;
+    margin-top: -0.25rem;
+    border: solid var(--mdj-paper);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Disabled while a form is being sent (see js/mdj.js). */
+.mdj-btn:disabled,
+.mdj-btn[aria-busy="true"] {
+    opacity: 0.7;
+    cursor: progress;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Error alerts get a tinted ground, not only a coloured edge, so they are
+   noticed without reading the colour of a 3px line. */
+.mdj-alert[data-level~="error"] {
+    background: color-mix(in srgb, #8C3A32 8%, var(--mdj-paper));
+    color: #5E2621;
+}
+
+/* Fields the browser already knows are invalid, once the guest touched them. */
+.mdj-field input:user-invalid,
+.mdj-field select:user-invalid,
+.mdj-field textarea:user-invalid {
+    border-color: #8C3A32;
+}
+
+/* --------------------------------------------------------------------------
+   15. Footer retouches
+   -------------------------------------------------------------------------- */
+
+/* Stone on night green failed contrast; secondary footer text uses a
+   translucent paper instead. */
+.mdj-footer__meta { font-size: var(--mdj-size-meta); color: color-mix(in srgb, var(--mdj-paper) 62%, transparent); }
+.mdj-footer__legal {
+    margin-top: var(--mdj-space-4);
+    padding-top: var(--mdj-space-3);
+    border-top: 1px solid color-mix(in srgb, var(--mdj-paper) 14%, transparent);
+}
+
+/* Anchor jumps land below the sticky header instead of under it. */
+[id] { scroll-margin-top: 6rem; }
+html { scroll-behavior: smooth; }
