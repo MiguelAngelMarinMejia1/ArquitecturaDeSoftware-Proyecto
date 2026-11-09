@@ -1,0 +1,10 @@
+# Files NOT copied into the catalog service image.
+
+__pycache__/
+*.pyc
+venv/
+.venv/
+.env
+
+Dockerfile
+.dockerignore
