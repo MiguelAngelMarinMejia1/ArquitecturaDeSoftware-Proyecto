@@ -13,6 +13,7 @@ in-process (``ConsoleNotifier`` / ``EmailNotifier``). Now Django posts a
 
 from flask import Flask, jsonify, request
 
+from auth import internal_only
 from channels import build_channel, render_confirmation
 from config import Config
 from errors import NotificationNotFoundError, register_error_handlers
@@ -36,6 +37,7 @@ def create_app(config_class=Config):
         return jsonify({"status": "ok", "service": "notifications"}), 200
 
     @app.post(f"{URL_PREFIX}/", strict_slashes=False)
+    @internal_only
     def notify():
         data = parse_notification_request(request.get_json(silent=True))
         subject, body = render_confirmation(data)

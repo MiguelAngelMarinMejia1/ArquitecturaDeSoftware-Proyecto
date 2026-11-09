@@ -11,6 +11,7 @@ Nginx gateway with its ``HttpPaymentGateway`` adapter.
 
 from flask import Flask, jsonify, request
 
+from auth import internal_only
 from config import Config
 from errors import PaymentNotFoundError, register_error_handlers
 from providers import build_provider
@@ -34,6 +35,7 @@ def create_app(config_class=Config):
         return jsonify({"status": "ok", "service": "payments"}), 200
 
     @app.post(f"{URL_PREFIX}/", strict_slashes=False)
+    @internal_only
     def charge():
         data = parse_charge_request(request.get_json(silent=True))
         approved, reference, message = provider.charge(

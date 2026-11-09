@@ -83,6 +83,7 @@ class HttpPaymentGateway(BaseGateway):
                     "method": method,
                     "reference_hint": reference_hint,
                 },
+                headers={"X-Internal-Token": settings.INTERNAL_API_TOKEN},
                 timeout=self._timeout,
             )
             body = response.json()
@@ -104,6 +105,14 @@ class HttpPaymentGateway(BaseGateway):
                 message=body.get("message", ""),
             )
 
-        detail = (body.get("error") or {}).get("detail", "Respuesta inesperada.")
+        # 4xx/5xx: a contract or configuration problem on our side. The guest
+        # gets a generic message; the details go to the logs.
         logger.error("Payment service answered %s: %s", response.status_code, body)
-        return ChargeResult(approved=False, reference="", message=str(detail))
+        return ChargeResult(
+            approved=False,
+            reference="",
+            message=(
+                "No pudimos procesar el pago en este momento. "
+                "No se realizó ningún cobro, intenta de nuevo en unos minutos."
+            ),
+        )

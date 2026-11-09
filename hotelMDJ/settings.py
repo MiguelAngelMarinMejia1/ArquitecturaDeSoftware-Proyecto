@@ -185,6 +185,10 @@ NOTIFICATION_SERVICE_URL = os.environ.get(
     'NOTIFICATION_SERVICE_URL', 'http://localhost:5003/api/v2/notificaciones/'
 )
 
+# Shared secret sent in X-Internal-Token to the payment and notification
+# services, whose POST endpoints refuse calls without it. Set it in .env.
+INTERNAL_API_TOKEN = os.environ.get('INTERNAL_API_TOKEN', '')
+
 # Seconds to wait for a microservice before treating it as down.
 MICROSERVICE_TIMEOUT = float(os.environ.get('MICROSERVICE_TIMEOUT', '5'))
 

@@ -100,7 +100,12 @@ class HttpNotifier(BaseNotifier):
             "total_amount": str(reservation.total_amount),
         }
         try:
-            response = requests.post(self._url, json=payload, timeout=self._timeout)
+            response = requests.post(
+                self._url,
+                json=payload,
+                headers={"X-Internal-Token": settings.INTERNAL_API_TOKEN},
+                timeout=self._timeout,
+            )
         except requests.RequestException as exc:
             logger.error("Notification service unreachable at %s: %s", self._url, exc)
             return False
