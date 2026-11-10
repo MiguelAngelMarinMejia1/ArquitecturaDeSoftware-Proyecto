@@ -33,8 +33,10 @@ from django.urls import reverse
 from django.views import View
 
 from reservation.domain.exceptions import ReservationDomainError
+from reservation.infra.catalog import CatalogClient, CatalogServiceError
+from reservation.infra.experiences import ExperiencesClient, ExperiencesServiceError
+from reservation.infra.tourism import TourismClient, TourismServiceError
 from reservation.models import Payment, Room
-from reservation.selectors import available_rooms, room_types_catalog
 from reservation.services import ReservationService
 
 SESSION_RECENT_RESERVATION = "recent_reservation_code"
@@ -78,12 +80,63 @@ class HomeView(SearchCriteriaMixin, View):
     template_name = "web/home.html"
 
     def get(self, request):
+        try:
+            rooms_page = CatalogClient().rooms()
+        except CatalogServiceError as exc:
+            messages.error(request, str(exc))
+            rooms_page = {"rooms": []}
         return render(
             request,
             self.template_name,
             {
-                "room_types": room_types_catalog(),
+                "rooms": rooms_page["rooms"],
                 "today": date.today().isoformat(),
+            },
+        )
+
+
+class ExperiencesView(View):
+    """Display public experiences supplied by the allied MeetU2 platform."""
+
+    template_name = "web/experiences.html"
+
+    def get(self, request):
+        try:
+            experiences = ExperiencesClient().list_public_experiences()
+            experiences_available = True
+        except ExperiencesServiceError:
+            experiences = []
+            experiences_available = False
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "experiences": experiences,
+                "experiences_available": experiences_available,
+            },
+        )
+
+
+class TouristAttractionsView(View):
+    """Display Colombian tourist attractions independently of hotel bookings."""
+
+    template_name = "web/tourist_attractions.html"
+
+    def get(self, request):
+        try:
+            attractions = TourismClient().list_attractions(limit=6)
+            attractions_available = True
+        except TourismServiceError:
+            attractions = []
+            attractions_available = False
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "attractions": attractions,
+                "attractions_available": attractions_available,
             },
         )
 
@@ -125,11 +178,16 @@ class ReservationPageView(SearchCriteriaMixin, View):
             context["nights"] = (criteria["check_out"] - criteria["check_in"]).days
 
         if step == self.STEP_ROOMS:
-            context["results"] = available_rooms(
-                check_in=criteria["check_in"],
-                check_out=criteria["check_out"],
-                guests=None,
-            )
+            try:
+                context["results"] = CatalogClient().available_rooms(
+                    check_in=criteria["check_in"],
+                    check_out=criteria["check_out"],
+                    adults=criteria["adults"],
+                    children=criteria["children"],
+                )
+            except CatalogServiceError as exc:
+                messages.error(request, str(exc))
+                context["results"] = []
             context["selected_ids"] = selected_ids
 
         if step == self.STEP_DETAILS:

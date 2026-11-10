@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'web/vendor/bootstrap/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}">
+    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}?v=20261110-tourism">
 </head>
 <body>
 
@@ -31,7 +31,8 @@
                 <li><a class="mdj-nav-link" href="{{ home_url }}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Inicio</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#habitaciones">Habitaciones</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#servicios">Servicios</a></li>
-                <li><a class="mdj-nav-link" href="{{ home_url }}#ubicacion">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="{% url 'web:experiences' %}"{% if request.resolver_match.url_name == 'experiences' %} aria-current="page"{% endif %}>Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="{% url 'web:tourist-attractions' %}"{% if request.resolver_match.url_name == 'tourist-attractions' %} aria-current="page"{% endif %}>Lugares turísticos</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#galeria">Galería</a></li>
                 <li><a class="mdj-nav-link" href="#contacto">Contacto</a></li>
                 <li><a class="mdj-nav-link" href="{% url 'web:reservation-lookup' %}"{% if request.resolver_match.url_name == 'reservation-lookup' %} aria-current="page"{% endif %}>Mi reserva</a></li>
@@ -55,7 +56,8 @@
                 <li><a class="mdj-nav-link" href="{{ home_url }}">Inicio</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#habitaciones">Habitaciones</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#servicios">Servicios</a></li>
-                <li><a class="mdj-nav-link" href="{{ home_url }}#ubicacion">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="{% url 'web:experiences' %}">Experiencias</a></li>
+                <li><a class="mdj-nav-link" href="{% url 'web:tourist-attractions' %}">Lugares turísticos</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#galeria">Galería</a></li>
                 <li><a class="mdj-nav-link" href="#contacto">Contacto</a></li>
                 <li><a class="mdj-nav-link" href="{% url 'web:reservation-lookup' %}">Mi reserva</a></li>
@@ -98,7 +100,8 @@
                         <li><a href="{{ home_url }}">Inicio</a></li>
                         <li><a href="{{ home_url }}#habitaciones">Habitaciones</a></li>
                         <li><a href="{{ home_url }}#servicios">Servicios</a></li>
-                        <li><a href="{{ home_url }}#ubicacion">Experiencias y ubicación</a></li>
+                        <li><a href="{% url 'web:experiences' %}">Experiencias</a></li>
+                        <li><a href="{% url 'web:tourist-attractions' %}">Lugares turísticos</a></li>
                         <li><a href="{{ home_url }}#galeria">Galería</a></li>
                         <li><a href="{% url 'web:reservations' %}">Reservas</a></li>
                         <li><a href="{% url 'web:reservation-lookup' %}">Consultar mi reserva</a></li>
