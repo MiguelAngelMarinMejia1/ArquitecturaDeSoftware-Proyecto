@@ -117,27 +117,31 @@ stock photos that would misdescribe the property.
         </div>
 
         <ul class="row row-cols-1 row-cols-md-2 row-cols-lg-4 list-unstyled g-4" data-role="room-list">
-            {% for room_type in room_types %}
+            {% for room in rooms %}
             <li class="col" data-role="room-card">
-                <article class="mdj-card" aria-labelledby="room-type-{{ room_type.pk }}">
-                    <div class="mdj-frame mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}" aria-hidden="true"></div>
+                <article class="mdj-card" aria-labelledby="room-{{ room.pk }}">
+                    <div class="mdj-frame mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}">
+                        {% if room.image_urls %}
+                        <img src="{{ room.image_urls.0 }}" alt="Habitación {{ room.room_type.name }}" loading="lazy">
+                        {% endif %}
+                    </div>
                     <div class="mdj-card__body">
-                        <h3 id="room-type-{{ room_type.pk }}">{{ room_type.name }}</h3>
+                        <h3 id="room-{{ room.pk }}">Habitación {{ room.number }}</h3>
                         <dl class="mdj-specs">
                             <dt>Capacidad</dt>
-                            <dd>{{ room_type.max_capacity }} huésped{{ room_type.max_capacity|pluralize:"es" }}</dd>
-                            {% if room_type.bed_type %}
+                            <dd>{{ room.room_type.max_capacity }} huésped{{ room.room_type.max_capacity|pluralize:"es" }}</dd>
+                            {% if room.room_type.bed_type %}
                             <dt>Cama</dt>
-                            <dd>{{ room_type.bed_type }}</dd>
+                            <dd>{{ room.room_type.bed_type }}</dd>
                             {% endif %}
                         </dl>
-                        {% if room_type.description %}
-                        <p class="mdj-meta mb-0">{{ room_type.description }}</p>
+                        {% if room.room_type.description %}
+                        <p class="mdj-meta mb-0">{{ room.room_type.description }}</p>
                         {% endif %}
                         <div class="mdj-card__footer">
                             <p class="mb-0">
                                 <span class="mdj-meta d-block">Desde</span>
-                                <span class="mdj-numeric mdj-price">{{ room_type.base_price_per_night|cop }}</span>
+                                <span class="mdj-numeric mdj-price">{{ room.room_type.base_price_per_night|cop }}</span>
                                 <span class="mdj-meta">/ noche</span>
                             </p>
                             <a href="{% url 'web:reservations' %}" class="mdj-link ms-auto">Reservar</a>
@@ -146,7 +150,7 @@ stock photos that would misdescribe the property.
                 </article>
             </li>
             {% empty %}
-            <li class="col"><p class="mdj-meta">Aún no hay tipos de habitación cargados.</p></li>
+            <li class="col"><p class="mdj-meta">Aún no hay habitaciones cargadas.</p></li>
             {% endfor %}
         </ul>
     </div>

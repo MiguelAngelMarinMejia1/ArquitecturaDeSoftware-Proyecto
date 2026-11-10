@@ -146,7 +146,11 @@ habitacion.
                 <li class="col" data-role="result-card">
                     <article class="mdj-card {% if room.pk in selected_ids %}mdj-card--selected{% endif %}"
                              aria-labelledby="room-{{ room.pk }}">
-                        <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}" aria-hidden="true"></div>
+                        <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}">
+                            {% if room.image_urls %}
+                            <img src="{{ room.image_urls.0 }}" alt="Habitación {{ room.room_type.name }}" loading="lazy">
+                            {% endif %}
+                        </div>
                         <div class="mdj-card__body">
                             <div>
                                 <span class="mdj-eyebrow mb-1">Habitación {{ room.number }}</span>
