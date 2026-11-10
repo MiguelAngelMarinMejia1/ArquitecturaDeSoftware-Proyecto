@@ -89,11 +89,17 @@ services:
       # Strangled features: Django calls the Flask services through Nginx.
       PAYMENT_GATEWAY_TYPE: "HTTP"
       PAYMENT_SERVICE_URL: "http://nginx/api/v2/pagos/"
+      CATALOG_SERVICE_URL: "http://nginx/api/v1/"
+      MEETU2_API_URL: "${MEETU2_API_URL:-http://184.193.170.74/api/v1/integracion/experiencias-publicas/}"
+      API_COLOMBIA_URL: "${API_COLOMBIA_URL:-https://api-colombia.com/api/v1/TouristicAttraction}"
+      MEDIA_ROOT: "/app/media"
       # Confirmations are queued in Redis; the Celery worker delivers them
       # to the notification microservice.
       NOTIFIER_TYPE: "CELERY"
     expose:
       - "8000"                        # internal network only
+    volumes:
+      - media_data:/app/media
     depends_on:
       postgres:
         condition: service_healthy
@@ -136,6 +142,7 @@ services:
     container_name: hotelmdj_catalog
     environment:
       DATABASE_URL: "postgresql://catalog_reader:${CATALOG_DB_PASSWORD:-catalog-dev-password}@postgres:5432/hotelmdj"
+      MEDIA_BASE_URL: "http://nginx/media/"
     expose:
       - "5001"
     depends_on:
@@ -195,3 +202,4 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  media_data:

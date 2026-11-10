@@ -160,6 +160,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -211,6 +213,17 @@ INTERNAL_API_TOKEN = os.environ.get('INTERNAL_API_TOKEN', '')
 
 # Seconds to wait for a microservice before treating it as down.
 MICROSERVICE_TIMEOUT = float(os.environ.get('MICROSERVICE_TIMEOUT', '5'))
+CATALOG_SERVICE_URL = os.environ.get(
+    'CATALOG_SERVICE_URL', 'http://localhost/api/v1/'
+)
+MEETU2_API_URL = os.environ.get(
+    'MEETU2_API_URL',
+    'http://184.193.170.74/api/v1/integracion/experiencias-publicas/',
+)
+API_COLOMBIA_URL = os.environ.get(
+    'API_COLOMBIA_URL',
+    'https://api-colombia.com/api/v1/TouristicAttraction',
+)
 
 # Tax rate applied on top of the room subtotal. Provisional value pending the
 # rate that actually applies to the hotel.
