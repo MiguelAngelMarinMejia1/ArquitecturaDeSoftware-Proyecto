@@ -1,0 +1,56 @@
+{% extends "web/base.html" %}
+
+{% block title %}Lugares turísticos · Hotel MDJ{% endblock %}
+{% block meta_description %}Lugares turísticos de Colombia recomendados para huéspedes de Hotel MDJ.{% endblock %}
+
+{% block content %}
+<section class="mdj-section" aria-labelledby="tourism-title">
+    <div class="mdj-container">
+        <div class="mdj-tourism-hero">
+            <div>
+                <span class="mdj-eyebrow">Una pausa para salir</span>
+                <h1 id="tourism-title">Colombia, a tu ritmo.</h1>
+                <p class="mdj-lead mt-4">
+                    Seis lugares para empezar a explorar el país desde la calma de Hotel MDJ.
+                </p>
+            </div>
+            <p class="mdj-tourism-hero__note">Selección de API-Colombia<br>Datos públicos de Colombia</p>
+        </div>
+
+        {% if attractions_available and attractions %}
+        <div class="mdj-tourism-grid mt-5">
+            {% for attraction in attractions %}
+            <article class="mdj-tourism-card">
+                <div class="mdj-tourism-card__image">
+                    {% if attraction.image_url %}
+                    <img src="{{ attraction.image_url }}" alt="" loading="lazy"
+                         onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+                    {% endif %}
+                    <div class="mdj-tourism-card__image-fallback" {% if attraction.image_url %}hidden{% endif %} aria-hidden="true">
+                        <span>Hotel MDJ</span>
+                    </div>
+                    <span class="mdj-tourism-card__place">{{ forloop.counter|stringformat:"02d" }}</span>
+                </div>
+                <div class="mdj-tourism-card__body">
+                    <p class="mdj-eyebrow mb-2">Para descubrir</p>
+                    <h2>{{ attraction.name|title }}</h2>
+                    {% if attraction.description %}<p class="mt-3">{{ attraction.description|truncatechars:220 }}</p>{% endif %}
+                    {% if attraction.city or attraction.department %}
+                    <p class="mdj-meta mb-0">{{ attraction.city }}{% if attraction.city and attraction.department %}, {% endif %}{{ attraction.department }}</p>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% elif not attractions_available %}
+        <div class="mdj-panel mt-4" role="status">
+            <p class="mb-0">Lo sentimos, no pudimos cargar los lugares turísticos.</p>
+        </div>
+        {% else %}
+        <div class="mdj-panel mt-4" role="status">
+            <p class="mb-0">No hay lugares turísticos disponibles en este momento.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

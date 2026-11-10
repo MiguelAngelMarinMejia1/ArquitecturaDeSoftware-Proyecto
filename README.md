@@ -24,6 +24,45 @@ no conoce a `web`, y solo su subpaquete `api/` sabe que existe HTTP.
 | Infraestructura | `reservation/infra/` | Factories, notificaciones, pasarela de pago |
 | Persistencia | `reservation/models.py` | Entidades sin lógica de negocio |
 
+Each `Room` stores its image URLs in `image_urls`, separated by commas in the
+admin, and the room catalog API returns them as a JSON list. This lets each
+physical room have its own gallery while `RoomType` keeps shared catalogue
+data such as capacity and price. In production, use S3/CloudFront for those
+URLs. The web templates use the first image and keep the existing CSS artwork
+as a fallback when the list is empty.
+
+The public room catalog is `GET /api/v1/rooms/?page=1&page_size=12`. It does
+not calculate date availability and returns at most 12 rooms per page:
+
+```json
+{"page": 1, "page_size": 12, "total": 9, "total_pages": 1, "rooms": []}
+```
+
+The booking flow uses `GET /api/v1/rooms/available/` with dates and guest
+counts, because only that endpoint performs availability filtering.
+
+### Integración con MeetU2
+
+El menú **Experiencias** abre `/experiencias/`, una página independiente del
+flujo de reservas. Django consume la API aliada de MeetU2 mediante
+`reservation/infra/experiences.py` y transforma su contrato externo en objetos
+de lectura antes de entregarlos a la plantilla. La URL se configura con
+`MEETU2_API_URL` y por defecto es:
+
+`http://184.193.170.74/api/v1/integracion/experiencias-publicas/`
+
+La integración no modifica habitaciones, disponibilidad ni reservas. Si AWS
+Academy está apagada o MeetU2 devuelve un error, la página muestra un mensaje
+no bloqueante en lugar de afectar el resto del sitio. Esta API aliada es
+independiente de cualquier futura API de terceros.
+
+La API de terceros seleccionada es **API-Colombia**, una API pública sin
+autenticación que ofrece atracciones turísticas del país. Se consume mediante
+el adapter independiente `reservation/infra/tourism.py` y se presenta en
+`/lugares/`, sin compartir modelos ni lógica con MeetU2. Su URL se configura
+con `API_COLOMBIA_URL`; el valor predeterminado es
+`https://api-colombia.com/api/v1/TouristicAttraction`.
+
 ### Migración a microservicios (Strangler Pattern)
 
 Cuatro funcionalidades se extrajeron del monolito a microservicios **Flask** independientes,
@@ -33,13 +72,13 @@ reparte el tráfico por URL:
 | Microservicio | Carpeta | Datos | Qué reemplaza en Django |
 |---|---|---|---|
 | Cotización | `pricing_service/` | Sin BD | `PricingPolicy` |
-| Catálogo y disponibilidad | `catalog_service/` | Lee la base `hotelmdj` del monolito con un rol de **solo lectura** | `RoomTypeListView`, `RoomAvailabilityView` |
+| Catálogo y disponibilidad | `catalog_service/` | Lee la base `hotelmdj` del monolito con un rol de **solo lectura** | `RoomAvailabilityView` |
 | Pagos | `payment_service/` | Base propia `payments` | `SimulatedGateway` |
 | Notificaciones | `notification_service/` | Base propia `notifications` | `ConsoleNotifier` / `EmailNotifier` |
 
 | Ruta | Destino |
 |---|---|
-| `/api/v1/room-types/`, `/api/v1/rooms/available/` | Flask `catalog_service` (antes Django, mismo contrato JSON) |
+| `/api/v1/rooms/`, `/api/v1/rooms/available/` | Flask `catalog_service` (catálogo público y disponibilidad) |
 | `/api/v2/catalogo/` | Flask `catalog_service` |
 | `/api/v2/cotizacion/` | Flask `pricing_service` |
 | `/api/v2/pagos/` | Flask `payment_service` |
@@ -49,7 +88,10 @@ reparte el tráfico por URL:
 
 Django consume pagos y notificaciones **a través de Nginx** mediante dos adapters
 (`HttpPaymentGateway` y `HttpNotifier`), registrados en las factories existentes con el
-tipo `HTTP`. Ni `services.py` ni las vistas cambiaron.
+tipo `HTTP`. La web también consume el catálogo y la disponibilidad mediante
+`reservation/infra/catalog.py` (`CatalogClient`), que llama a `/api/v1/rooms/` para el
+catálogo y a `/api/v1/rooms/available/` con un timeout configurable. La creación de reservas conserva
+la validación final y las escrituras en la base de Django para mantener su transacción.
 
 - Si el servicio de pagos no responde, el cobro se trata como rechazado (402) y la
   transacción de la reserva se revierte: nunca queda una reserva confirmada sin pago.
@@ -120,6 +162,15 @@ docker compose up --build
 
 Abre `http://localhost`. Las migraciones y los datos de ejemplo (`seed`) se cargan solos al
 arrancar el contenedor de Django, y los datos de PostgreSQL se guardan en el volumen `postgres_data`.
+Para entrar al administrador, crea el superusuario dentro del contenedor (no ejecutes este
+comando solamente en tu Python local, porque eso usa otra base de datos):
+
+```bash
+docker compose exec django_web python manage.py createsuperuser
+```
+
+Después abre `http://localhost/admin/`. El usuario debe tener `is_staff` e `is_superuser`;
+crear un usuario en el host no lo crea automáticamente en PostgreSQL.
 
 | Comando | Para qué |
 |---|---|
@@ -177,7 +228,7 @@ use los microservicios, define `PAYMENT_GATEWAY_TYPE=HTTP` y `NOTIFIER_TYPE=HTTP
 | Método | Ruta | Códigos |
 |---|---|---|
 | `GET` | `/api/v1/health/` | 200 |
-| `GET` | `/api/v1/room-types/` | 200 (servido por `catalog_service`) |
+| `GET` | `/api/v1/rooms/?page=1&page_size=12` | 200 (catálogo público paginado, máximo 12 por página) |
 | `GET` | `/api/v1/rooms/available/` | 200, 400 (servido por `catalog_service`) |
 | `POST` | `/api/v1/reservations/` | 201, 400, 402, 404, 409 |
 | `POST` | `/api/v1/reservations/lookup/` | 200, 400, 404 |

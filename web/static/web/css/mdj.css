@@ -417,6 +417,93 @@ h3 {
     box-shadow: var(--mdj-light-near);
 }
 
+.mdj-tourism-hero {
+    display: grid;
+    gap: var(--mdj-space-4);
+    align-items: end;
+    border-bottom: var(--mdj-hairline);
+    padding-bottom: var(--mdj-space-4);
+}
+
+.mdj-tourism-hero__note {
+    margin: 0;
+    color: var(--mdj-stone);
+    font-size: var(--mdj-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.mdj-tourism-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--mdj-space-4);
+}
+
+.mdj-tourism-card {
+    overflow: hidden;
+    background: var(--mdj-mist);
+    box-shadow: var(--mdj-light-near);
+}
+
+.mdj-tourism-card__image {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--mdj-night-green);
+}
+
+.mdj-tourism-card__image img,
+.mdj-tourism-card__image-fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mdj-tourism-card__image img {
+    display: block;
+    transition: transform var(--mdj-transition);
+}
+
+.mdj-tourism-card:hover .mdj-tourism-card__image img { transform: scale(1.035); }
+
+.mdj-tourism-card__image-fallback {
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 70% 30%, color-mix(in srgb, var(--mdj-sage) 55%, transparent), transparent 34%),
+        linear-gradient(135deg, var(--mdj-night-green), var(--mdj-deep-green));
+    color: var(--mdj-paper);
+    font-family: var(--mdj-font-display);
+    font-size: 2rem;
+}
+
+.mdj-tourism-card__image-fallback[hidden] { display: none; }
+
+.mdj-tourism-card__place {
+    position: absolute;
+    right: var(--mdj-space-2);
+    bottom: var(--mdj-space-2);
+    color: var(--mdj-paper);
+    font-size: var(--mdj-size-meta);
+    letter-spacing: 0.12em;
+}
+
+.mdj-tourism-card__body { padding: var(--mdj-space-3); }
+.mdj-tourism-card__body h2 { font-size: clamp(1.45rem, 3vw, 2rem); }
+.mdj-tourism-card__body > p:not(.mdj-eyebrow):not(.mdj-meta) {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    color: color-mix(in srgb, var(--mdj-ink) 82%, var(--mdj-paper));
+}
+
+@media (min-width: 700px) {
+    .mdj-tourism-hero { grid-template-columns: 1fr auto; }
+    .mdj-tourism-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mdj-tourism-card__body { padding: var(--mdj-space-4); }
+}
+
 @media (min-width: 992px) {
     .mdj-panel { padding: var(--mdj-space-4); }
 }
