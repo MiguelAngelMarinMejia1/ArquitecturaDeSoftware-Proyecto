@@ -124,6 +124,11 @@ class Room(models.Model):
         related_name="rooms",
         verbose_name="tipo de habitacion",
     )
+    image_urls = models.TextField(
+        "URLs de imagenes",
+        blank=True,
+        help_text="URLs separadas por comas, en el orden de la galeria.",
+    )
     is_active = models.BooleanField("activa", default=True)
 
     class Meta:

@@ -34,10 +34,18 @@ class RoomTypeSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     room_type = RoomTypeSerializer(read_only=True)
+    image_urls = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
-        fields = ["id", "number", "floor", "status", "room_type"]
+        fields = ["id", "number", "floor", "status", "image_urls", "room_type"]
+
+    def get_image_urls(self, obj):
+        return [
+            url.strip()
+            for url in obj.image_urls.split(",")
+            if url.strip()
+        ]
 
 
 class AvailabilityQuerySerializer(serializers.Serializer):
