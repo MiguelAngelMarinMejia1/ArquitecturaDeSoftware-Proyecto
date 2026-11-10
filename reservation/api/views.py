@@ -26,21 +26,12 @@ from reservation.api.serializers import (
     ReservationLookupSerializer,
     ReservationReadSerializer,
     RoomSerializer,
-    RoomTypeSerializer,
 )
-from reservation.selectors import available_rooms, room_types_catalog
+from reservation.selectors import available_rooms
 from reservation.services import ReservationService
 from reservation.tasks import default_report_range, generate_occupancy_report
 
 logger = logging.getLogger(__name__)
-
-
-class RoomTypeListView(APIView):
-    """Catalogue of room categories offered by the hotel."""
-
-    def get(self, request):
-        serializer = RoomTypeSerializer(room_types_catalog(), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RoomAvailabilityView(APIView):

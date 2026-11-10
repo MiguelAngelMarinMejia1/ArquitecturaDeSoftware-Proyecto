@@ -1,9 +1,9 @@
-"""Catalog microservice (Flask): room types and room availability.
+"""Catalog microservice (Flask): rooms and room availability.
 
 Strangled from the Django monolith. Nginx now sends these legacy URLs here
 instead of to Django, keeping the exact same JSON contract:
 
-    GET /api/v1/room-types/
+    GET /api/v1/rooms/?page=1&page_size=12
     GET /api/v1/rooms/available/?check_in=...&check_out=...&adults=&children=&room_type=
 
 Plus its own probe:
@@ -11,12 +11,14 @@ Plus its own probe:
     GET /api/v2/catalogo/health/
 """
 
+import os
+
 from flask import Flask, jsonify, request
 
 from config import Config
 from errors import InvalidQueryError, register_error_handlers
 from repository import CatalogRepository
-from validation import parse_availability_query
+from validation import parse_availability_query, parse_pagination_query
 
 
 def create_app(config_class=Config):
@@ -25,15 +27,19 @@ def create_app(config_class=Config):
     app.json.sort_keys = app.config["JSON_SORT_KEYS"]
     register_error_handlers(app)
 
-    repository = CatalogRepository(app.config["DATABASE_URL"])
+    repository = CatalogRepository(
+        app.config["DATABASE_URL"],
+        os.environ.get("MEDIA_BASE_URL", "http://localhost/media/"),
+    )
 
     @app.get("/api/v2/catalogo/health/", strict_slashes=False)
     def health():
         return jsonify({"status": "ok", "service": "catalog"}), 200
 
-    @app.get("/api/v1/room-types/", strict_slashes=False)
-    def room_types():
-        return jsonify(repository.room_types()), 200
+    @app.get("/api/v1/rooms/", strict_slashes=False)
+    def rooms():
+        page, page_size = parse_pagination_query(request.args)
+        return jsonify(repository.rooms_page(page, page_size)), 200
 
     @app.get("/api/v1/rooms/available/", strict_slashes=False)
     def available_rooms():

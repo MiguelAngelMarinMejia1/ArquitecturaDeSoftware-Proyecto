@@ -58,3 +58,9 @@ def parse_availability_query(args):
         "guests": adults + children,
         "room_type_id": room_type_id,
     }
+
+
+def parse_pagination_query(args, max_page_size=12):
+    page = _parse_int(args, "page", default=1, minimum=1)
+    page_size = _parse_int(args, "page_size", default=max_page_size, minimum=1)
+    return page, min(page_size, max_page_size)
