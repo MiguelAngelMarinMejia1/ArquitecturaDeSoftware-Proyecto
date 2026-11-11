@@ -10,10 +10,15 @@ from decimal import Decimal, InvalidOperation
 
 import requests
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 
 class CatalogServiceError(Exception):
     """The catalog service could not provide a valid response."""
+
+
+def _invalid_field(name):
+    return _("El catálogo no contiene '%(field)s' válido.") % {"field": name}
 
 
 @dataclass(frozen=True)
@@ -59,7 +64,7 @@ class CatalogClient:
             params={"page": page, "page_size": page_size},
         )
         if not isinstance(payload, dict) or not isinstance(payload.get("rooms"), list):
-            raise CatalogServiceError("El catálogo devolvió un formato inválido.")
+            raise CatalogServiceError(_("El catálogo devolvió un formato inválido."))
         return {
             "page": self._required_int(payload, "page"),
             "page_size": self._required_int(payload, "page_size"),
@@ -79,7 +84,7 @@ class CatalogClient:
             },
         )
         if not isinstance(payload, list):
-            raise CatalogServiceError("El catálogo devolvió un formato inválido.")
+            raise CatalogServiceError(_("El catálogo devolvió un formato inválido."))
         return [self._parse_room(item) for item in payload]
 
     def _get(self, path, params=None):
@@ -93,13 +98,13 @@ class CatalogClient:
             return response.json()
         except (requests.RequestException, ValueError) as exc:
             raise CatalogServiceError(
-                "El catálogo no está disponible en este momento."
+                _("El catálogo no está disponible en este momento.")
             ) from exc
 
     @classmethod
     def _parse_room_type(cls, payload):
         if not isinstance(payload, dict):
-            raise CatalogServiceError("El catálogo devolvió una habitación inválida.")
+            raise CatalogServiceError(_("El catálogo devolvió una habitación inválida."))
         return CatalogRoomType(
             id=cls._required_int(payload, "id"),
             name=cls._required_text(payload, "name"),
@@ -114,7 +119,7 @@ class CatalogClient:
     @classmethod
     def _parse_room(cls, payload):
         if not isinstance(payload, dict):
-            raise CatalogServiceError("El catálogo devolvió una habitación inválida.")
+            raise CatalogServiceError(_("El catálogo devolvió una habitación inválida."))
         return CatalogRoom(
             id=cls._required_int(payload, "id"),
             number=cls._required_text(payload, "number"),
@@ -128,7 +133,7 @@ class CatalogClient:
     def _required_text(payload, name, allow_empty=False):
         value = payload.get(name)
         if not isinstance(value, str) or (not allow_empty and not value.strip()):
-            raise CatalogServiceError(f"El catálogo no contiene '{name}' válido.")
+            raise CatalogServiceError(_invalid_field(name))
         return value
 
     @staticmethod
@@ -137,7 +142,7 @@ class CatalogClient:
         if value in (None, ""):
             return []
         if not isinstance(value, list):
-            raise CatalogServiceError(f"El catálogo no contiene '{name}' válido.")
+            raise CatalogServiceError(_invalid_field(name))
         return [
             CatalogClient._optional_url({"url": item}, "url")
             for item in value
@@ -147,7 +152,7 @@ class CatalogClient:
     def _required_int(payload, name):
         value = payload.get(name)
         if isinstance(value, bool) or not isinstance(value, int):
-            raise CatalogServiceError(f"El catálogo no contiene '{name}' válido.")
+            raise CatalogServiceError(_invalid_field(name))
         return value
 
     @staticmethod
@@ -157,10 +162,10 @@ class CatalogClient:
             decimal_value = Decimal(str(value))
         except (InvalidOperation, TypeError, ValueError) as exc:
             raise CatalogServiceError(
-                f"El catálogo no contiene '{name}' válido."
+                _invalid_field(name)
             ) from exc
         if not decimal_value.is_finite():
-            raise CatalogServiceError(f"El catálogo no contiene '{name}' válido.")
+            raise CatalogServiceError(_invalid_field(name))
         return decimal_value
 
     @staticmethod
@@ -169,5 +174,5 @@ class CatalogClient:
         if value in (None, ""):
             return None
         if not isinstance(value, str) or len(value) > 500:
-            raise CatalogServiceError(f"El catálogo no contiene '{name}' válido.")
+            raise CatalogServiceError(_invalid_field(name))
         return value

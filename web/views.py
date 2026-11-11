@@ -30,6 +30,7 @@ from datetime import date, datetime
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views import View
 
 from reservation.domain.exceptions import ReservationDomainError
@@ -274,8 +275,10 @@ class ReservationConfirmationView(View):
         if request.session.get(SESSION_RECENT_RESERVATION) != code:
             messages.info(
                 request,
-                "Para ver tu reserva necesitamos el código de confirmación y el "
-                "correo electrónico con el que reservaste.",
+                _(
+                    "Para ver tu reserva necesitamos el código de confirmación y el "
+                    "correo electrónico con el que reservaste."
+                ),
             )
             return redirect("web:reservation-lookup")
 

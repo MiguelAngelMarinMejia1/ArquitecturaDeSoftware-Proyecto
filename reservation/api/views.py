@@ -14,6 +14,7 @@ import logging
 
 from celery.result import AsyncResult
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -122,7 +123,9 @@ class OccupancyReportView(APIView):
                 {
                     "error": {
                         "code": "SERVICEUNAVAILABLE",
-                        "detail": "La cola de tareas no está disponible, intenta más tarde.",
+                        "detail": _(
+                            "La cola de tareas no está disponible, intenta más tarde."
+                        ),
                     }
                 },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -150,7 +153,7 @@ class ReportResultView(APIView):
         if result.successful():
             body["report"] = result.result
         elif result.failed():
-            body["error"] = "El reporte no se pudo generar."
+            body["error"] = _("El reporte no se pudo generar.")
         return Response(body, status=status.HTTP_200_OK)
 
 

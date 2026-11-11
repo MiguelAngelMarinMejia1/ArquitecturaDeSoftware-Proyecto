@@ -1,5 +1,5 @@
 {% extends "web/base.html" %}
-{% load mdj_format %}
+{% load i18n mdj_format %}
 
 {% comment %}
 Confirmation page, reached either right after booking or through the lookup
@@ -7,8 +7,8 @@ form. It is the guest's receipt, so it repeats every detail they agreed to
 rather than making them trust that it was recorded correctly.
 {% endcomment %}
 
-{% block title %}Reserva {{ reservation.confirmation_code }} · Hotel MDJ{% endblock %}
-{% block meta_description %}Detalle de tu reserva en Hotel MDJ.{% endblock %}
+{% block title %}{% blocktranslate with code=reservation.confirmation_code %}Reserva {{ code }} · Hotel MDJ{% endblocktranslate %}{% endblock %}
+{% block meta_description %}{% translate "Detalle de tu reserva en Hotel MDJ." %}{% endblock %}
 
 {% block content %}
 
@@ -17,99 +17,107 @@ rather than making them trust that it was recorded correctly.
         <div class="row g-4 g-lg-5">
             <div class="col-12 col-lg-7">
                 {% if not from_lookup %}<span class="mdj-success" aria-hidden="true"></span>{% endif %}
-                <span class="mdj-eyebrow">{% if from_lookup %}Tu reserva{% else %}Todo listo{% endif %}</span>
+                <span class="mdj-eyebrow">{% if from_lookup %}{% translate "Tu reserva" %}{% else %}{% translate "Todo listo" %}{% endif %}</span>
                 <h1 id="confirmation-title">
-                    {% if from_lookup %}Reserva {{ reservation.confirmation_code }}{% else %}Reserva confirmada{% endif %}
+                    {% if from_lookup %}{% blocktranslate with code=reservation.confirmation_code %}Reserva {{ code }}{% endblocktranslate %}{% else %}{% translate "Reserva confirmada" %}{% endif %}
                 </h1>
 
                 {% if not from_lookup %}
                 <p class="mdj-lead mt-4">
+                    {% blocktranslate trimmed with email=reservation.customer.email %}
                     Gracias por reservar con Hotel MDJ. Enviaremos la confirmación a
-                    <strong>{{ reservation.customer.email }}</strong>.
+                    <strong>{{ email }}</strong>.
+                    {% endblocktranslate %}
                 </p>
                 {% endif %}
 
                 <div class="mdj-panel mt-4" data-role="confirmation-code">
-                    <span class="mdj-label d-block mb-2">Número de reserva</span>
+                    <span class="mdj-label d-block mb-2">{% translate "Número de reserva" %}</span>
                     <p class="mdj-code mb-2">{{ reservation.confirmation_code }}</p>
                     <p class="mdj-meta mb-0">
-                        Guárdalo: lo necesitarás junto con tu correo para consultar esta reserva.
+                        {% translate "Guárdalo: lo necesitarás junto con tu correo para consultar esta reserva." %}
                     </p>
                 </div>
 
                 <section class="mt-5" aria-labelledby="arrival-title" data-section="arrival-info">
-                    <h2 id="arrival-title">Información para tu llegada</h2>
+                    <h2 id="arrival-title">{% translate "Información para tu llegada" %}</h2>
                     <p class="mt-3 mb-2">
+                        {% blocktranslate trimmed %}
                         La entrada es desde las 15:00 y la salida hasta las 12:00.
                         Si llegas antes, guardamos tu equipaje sin costo.
+                        {% endblocktranslate %}
                     </p>
                     <p class="mdj-meta mb-0">
+                        {% blocktranslate trimmed %}
                         Presenta tu documento de identidad al registrarte. La recepción
                         atiende las 24 horas.
+                        {% endblocktranslate %}
                     </p>
                 </section>
 
                 <section class="mt-5" aria-labelledby="contact-title" data-section="hotel-contact">
-                    <h2 id="contact-title">Contacto Hotel MDJ</h2>
+                    <h2 id="contact-title">{% translate "Contacto Hotel MDJ" %}</h2>
                     <address class="mt-3 mb-0">
                         <p class="mb-1">Carrera 43A # 11-25, El Poblado, Medellín</p>
-                        <p class="mb-1">Teléfono: <a href="tel:+576041234567" class="mdj-link">+57 604 123 4567</a></p>
-                        <p class="mb-0">Email: <a href="mailto:reservas@hotelmdj.co" class="mdj-link">reservas@hotelmdj.co</a></p>
+                        <p class="mb-1">{% translate "Teléfono" %}: <a href="tel:+576041234567" class="mdj-link">+57 604 123 4567</a></p>
+                        <p class="mb-0">{% translate "Correo" %}: <a href="mailto:reservas@hotelmdj.co" class="mdj-link">reservas@hotelmdj.co</a></p>
                     </address>
                 </section>
 
-                <nav class="mt-5" aria-label="Acciones sobre la reserva" data-section="confirmation-actions">
+                <nav class="mt-5" aria-label="{% translate 'Acciones sobre la reserva' %}" data-section="confirmation-actions">
                     <ul class="list-unstyled d-flex flex-wrap gap-4 mb-0">
-                        <li><a href="{% url 'web:reservation-lookup' %}" class="mdj-link">Consultar reserva</a></li>
-                        <li><a href="#contacto" class="mdj-link">Contactar Hotel MDJ</a></li>
-                        <li><a href="{% url 'web:home' %}" class="mdj-link">Volver al inicio</a></li>
+                        <li><a href="{% url 'web:reservation-lookup' %}" class="mdj-link">{% translate "Consultar reserva" %}</a></li>
+                        <li><a href="#contacto" class="mdj-link">{% translate "Contactar Hotel MDJ" %}</a></li>
+                        <li><a href="{% url 'web:home' %}" class="mdj-link">{% translate "Volver al inicio" %}</a></li>
                     </ul>
                 </nav>
             </div>
 
             <div class="col-12 col-lg-5">
                 <div class="mdj-summary mdj-sticky">
-                    <h2 class="h5 mb-4">Detalle de la estadía</h2>
+                    <h2 class="h5 mb-4">{% translate "Detalle de la estadía" %}</h2>
                     <dl class="mb-0" data-role="reservation-detail">
                         <div class="mdj-summary__row">
-                            <dt>Estado</dt><dd>{{ reservation.get_status_display }}</dd>
+                            <dt>{% translate "Estado" %}</dt><dd>{{ reservation.get_status_display }}</dd>
                         </div>
                         <div class="mdj-summary__row">
-                            <dt>Huésped</dt><dd>{{ reservation.customer }}</dd>
+                            <dt>{% translate "Huésped" %}</dt><dd>{{ reservation.customer }}</dd>
                         </div>
                         <div class="mdj-summary__row">
-                            <dt>Habitaci{{ reservation.reservation_rooms.count|pluralize:"ón,ones" }}</dt>
+                            {% with lines=reservation.reservation_rooms.all %}
+                            <dt>{% blocktranslate count rooms=lines|length context "etiqueta" trimmed %}Habitación{% plural %}Habitaciones{% endblocktranslate %}</dt>
                             <dd>
-                                {% for line in reservation.reservation_rooms.all %}
+                                {% for line in lines %}
                                 {{ line.room.room_type.name }} &middot; {{ line.room.number }}<br>
-                                <span class="mdj-meta mdj-numeric">{{ line.price_per_night|cop }} / noche</span>
+                                <span class="mdj-meta mdj-numeric">{{ line.price_per_night|cop }} {% translate "/ noche" %}</span>
                                 {% if not forloop.last %}<br>{% endif %}
                                 {% endfor %}
                             </dd>
+                            {% endwith %}
                         </div>
                         <div class="mdj-summary__row">
-                            <dt>Entrada</dt><dd>{{ reservation.check_in_date|date:"d M Y" }}</dd>
+                            <dt>{% translate "Entrada" %}</dt><dd>{{ reservation.check_in_date|date:"d M Y" }}</dd>
                         </div>
                         <div class="mdj-summary__row">
-                            <dt>Salida</dt><dd>{{ reservation.check_out_date|date:"d M Y" }}</dd>
+                            <dt>{% translate "Salida" %}</dt><dd>{{ reservation.check_out_date|date:"d M Y" }}</dd>
                         </div>
                         <div class="mdj-summary__row">
-                            <dt>Huéspedes</dt>
-                            <dd>{{ reservation.num_adults }} adulto{{ reservation.num_adults|pluralize }}{% if reservation.num_children %}, {{ reservation.num_children }} niño{{ reservation.num_children|pluralize }}{% endif %}</dd>
+                            <dt>{% translate "Huéspedes" %}</dt>
+                            <dd>{% include "web/includes/guest_count.html" with adults=reservation.num_adults children=reservation.num_children %}</dd>
                         </div>
                         {% if reservation.special_requests %}
                         <div class="mdj-summary__row">
-                            <dt>Solicitudes</dt><dd>{{ reservation.special_requests }}</dd>
+                            <dt>{% translate "Solicitudes" %}</dt><dd>{{ reservation.special_requests }}</dd>
                         </div>
                         {% endif %}
                         <div class="mdj-summary__row">
-                            <dt>Subtotal</dt><dd class="mdj-numeric">{{ reservation.subtotal|cop }}</dd>
+                            <dt>{% translate "Subtotal" %}</dt><dd class="mdj-numeric">{{ reservation.subtotal|cop }}</dd>
                         </div>
                         <div class="mdj-summary__row">
-                            <dt>Impuestos (IVA)</dt><dd class="mdj-numeric">{{ reservation.taxes|cop }}</dd>
+                            <dt>{% translate "Impuestos (IVA)" %}</dt><dd class="mdj-numeric">{{ reservation.taxes|cop }}</dd>
                         </div>
                         <div class="mdj-summary__row mdj-summary__total">
-                            <dt data-role="total-label">Total</dt>
+                            <dt data-role="total-label">{% translate "Total" %}</dt>
                             <dd class="mdj-numeric" data-role="total-value">{{ reservation.total_amount|cop }} <small class="mdj-currency">COP</small></dd>
                         </div>
                     </dl>

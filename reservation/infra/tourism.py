@@ -5,10 +5,15 @@ from urllib.parse import urlparse
 
 import requests
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 
 class TourismServiceError(Exception):
     """The public tourism API could not provide valid attractions."""
+
+
+def _invalid_field(name):
+    return _("API-Colombia no contiene '%(field)s' válido.") % {"field": name}
 
 
 @dataclass(frozen=True)
@@ -37,11 +42,11 @@ class TourismClient:
             payload = response.json()
         except (requests.RequestException, ValueError) as exc:
             raise TourismServiceError(
-                "Los lugares turísticos no están disponibles en este momento."
+                _("Los lugares turísticos no están disponibles en este momento.")
             ) from exc
 
         if not isinstance(payload, list):
-            raise TourismServiceError("API-Colombia devolvió un formato inválido.")
+            raise TourismServiceError(_("API-Colombia devolvió un formato inválido."))
         if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
             raise ValueError("limit must be a positive integer")
         return [self._parse_attraction(item) for item in payload[:limit]]
@@ -49,7 +54,7 @@ class TourismClient:
     @classmethod
     def _parse_attraction(cls, payload):
         if not isinstance(payload, dict):
-            raise TourismServiceError("API-Colombia devolvió un lugar inválido.")
+            raise TourismServiceError(_("API-Colombia devolvió un lugar inválido."))
         return TouristAttraction(
             id=cls._required_int(payload, "id"),
             name=cls._required_text(payload, "name"),
@@ -63,14 +68,14 @@ class TourismClient:
     def _required_int(payload, name):
         value = payload.get(name)
         if isinstance(value, bool) or not isinstance(value, int):
-            raise TourismServiceError(f"API-Colombia no contiene '{name}' válido.")
+            raise TourismServiceError(_invalid_field(name))
         return value
 
     @staticmethod
     def _required_text(payload, name):
         value = payload.get(name)
         if not isinstance(value, str) or not value.strip():
-            raise TourismServiceError(f"API-Colombia no contiene '{name}' válido.")
+            raise TourismServiceError(_invalid_field(name))
         return value
 
     @staticmethod

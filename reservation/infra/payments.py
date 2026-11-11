@@ -17,6 +17,7 @@ from decimal import Decimal
 
 import requests
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
 
@@ -54,10 +55,15 @@ class SimulatedGateway(BaseGateway):
         return ChargeResult(
             approved=True,
             reference=reference,
-            message=(
-                f"Cobro simulado de {amount} aprobado "
-                f"(metodo {method}, referencia {reference_hint or 'n/a'})."
-            ),
+            message=_(
+                "Cobro simulado de %(amount)s aprobado "
+                "(método %(method)s, referencia %(reference)s)."
+            )
+            % {
+                "amount": amount,
+                "method": method,
+                "reference": reference_hint or "n/a",
+            },
         )
 
 
@@ -92,7 +98,7 @@ class HttpPaymentGateway(BaseGateway):
             return ChargeResult(
                 approved=False,
                 reference="",
-                message=(
+                message=_(
                     "El servicio de pagos no está disponible en este momento. "
                     "No se realizó ningún cobro, intenta de nuevo en unos minutos."
                 ),
@@ -111,7 +117,7 @@ class HttpPaymentGateway(BaseGateway):
         return ChargeResult(
             approved=False,
             reference="",
-            message=(
+            message=_(
                 "No pudimos procesar el pago en este momento. "
                 "No se realizó ningún cobro, intenta de nuevo en unos minutos."
             ),

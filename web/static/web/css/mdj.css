@@ -295,6 +295,37 @@ h3 {
     .mdj-wordmark { font-size: 1.5rem; }
 }
 
+/* Language switcher (ES / EN). Two submit buttons of one set_language form;
+   aria-pressed marks the active language, and the look follows from it. */
+.mdj-lang fieldset {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--mdj-stone) 45%, transparent);
+    border-radius: var(--mdj-radius);
+}
+.mdj-lang__option {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 var(--mdj-space-1);
+    background: transparent;
+    border: 0;
+    color: var(--mdj-stone);
+    font-size: var(--mdj-size-meta);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 160ms ease, background-color 160ms ease;
+}
+.mdj-lang__option + .mdj-lang__option {
+    border-left: 1px solid color-mix(in srgb, var(--mdj-stone) 45%, transparent);
+}
+.mdj-lang__option:hover { color: var(--mdj-ink); }
+.mdj-lang__option[aria-pressed="true"] {
+    background: var(--mdj-deep-green);
+    color: var(--mdj-paper);
+}
+
 /* --------------------------------------------------------------------------
    4. Actions
    -------------------------------------------------------------------------- */

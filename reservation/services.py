@@ -12,6 +12,8 @@ implementation never requires editing these classes (Dependency Inversion).
 """
 
 from django.db import transaction
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 
 from reservation.domain.builders import ReservationBuilder
 from reservation.domain.codes import ConfirmationCodeGenerator
@@ -112,7 +114,7 @@ class PaymentService:
         )
 
         if not result.approved:
-            raise PaymentDeclinedError(result.message or "El pago fue rechazado.")
+            raise PaymentDeclinedError(result.message or _("El pago fue rechazado."))
 
         return payment
 
@@ -222,7 +224,7 @@ class ReservationService:
         reservation = find_reservation(confirmation_code, email)
         if reservation is None:
             raise ReservationNotFoundError(
-                "No encontramos una reserva con ese código y correo electrónico."
+                _("No encontramos una reserva con ese código y correo electrónico.")
             )
         return reservation
 
@@ -242,7 +244,7 @@ class ReservationService:
         )
         if reservation is None:
             raise ReservationNotFoundError(
-                "No encontramos una reserva con ese código."
+                _("No encontramos una reserva con ese código.")
             )
         return reservation
 
@@ -258,6 +260,11 @@ class ReservationService:
         missing = [str(rid) for rid in room_ids if int(rid) not in found]
         if missing:
             raise RoomNotFoundError(
-                "No existe la habitación con id " + ", ".join(missing) + "."
+                ngettext(
+                    "No existe la habitación con id %(ids)s.",
+                    "No existen las habitaciones con id %(ids)s.",
+                    len(missing),
+                )
+                % {"ids": ", ".join(missing)}
             )
         return rooms

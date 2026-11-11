@@ -1,0 +1,4 @@
+{% load i18n %}{% comment %}
+"2 adultos, 1 niño". Shared by the booking summary and the confirmation so the
+plural rules live in one place. Expects ``adults`` and ``children``.
+{% endcomment %}{% blocktranslate count adults=adults trimmed %}{{ adults }} adulto{% plural %}{{ adults }} adultos{% endblocktranslate %}{% if children %}, {% blocktranslate count children=children trimmed %}{{ children }} niño{% plural %}{{ children }} niños{% endblocktranslate %}{% endif %}

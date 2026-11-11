@@ -7,6 +7,8 @@ belongs in the domain layer. Output serializers shape what leaves the system,
 including how much personal data a given endpoint is allowed to reveal.
 """
 
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from rest_framework import serializers
 
 from reservation.models import (
@@ -66,7 +68,7 @@ class AvailabilityQuerySerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs["check_out"] <= attrs["check_in"]:
             raise serializers.ValidationError(
-                {"check_out": "La fecha de salida debe ser posterior a la de entrada."}
+                {"check_out": _("La fecha de salida debe ser posterior a la de entrada.")}
             )
         return attrs
 
@@ -182,15 +184,22 @@ class ReportRequestSerializer(serializers.Serializer):
         start, end = attrs.get("date_from"), attrs.get("date_to")
         if (start is None) != (end is None):
             raise serializers.ValidationError(
-                "Envía date_from y date_to juntos, o ninguno para el mes actual."
+                _("Envía date_from y date_to juntos, o ninguno para el mes actual.")
             )
         if start and end:
             if end <= start:
                 raise serializers.ValidationError(
-                    {"date_to": "Debe ser posterior a date_from."}
+                    {"date_to": _("Debe ser posterior a date_from.")}
                 )
             if (end - start).days > self.MAX_DAYS:
                 raise serializers.ValidationError(
-                    {"date_to": f"El rango no puede superar {self.MAX_DAYS} días."}
+                    {
+                        "date_to": ngettext(
+                            "El rango no puede superar %(days)d día.",
+                            "El rango no puede superar %(days)d días.",
+                            self.MAX_DAYS,
+                        )
+                        % {"days": self.MAX_DAYS}
+                    }
                 )
         return attrs

@@ -23,6 +23,9 @@ from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
+
 from reservation.domain.exceptions import (
     GuestCapacityExceededError,
     IncompleteReservationDataError,
@@ -149,56 +152,74 @@ class ReservationBuilder:
         missing = [
             name
             for name, value in (
-                ("cliente", self._customer),
-                ("fecha de entrada", self._check_in),
-                ("fecha de salida", self._check_out),
-                ("numero de adultos", self._num_adults),
-                ("codigo de confirmacion", self._confirmation_code),
+                (_("cliente"), self._customer),
+                (_("fecha de entrada"), self._check_in),
+                (_("fecha de salida"), self._check_out),
+                (_("número de adultos"), self._num_adults),
+                (_("código de confirmación"), self._confirmation_code),
             )
             if value is None
         ]
         if missing:
             raise IncompleteReservationDataError(
-                "Faltan datos requeridos para crear la reserva: "
-                + ", ".join(missing)
-                + "."
+                _("Faltan datos requeridos para crear la reserva: %(fields)s.")
+                % {"fields": ", ".join(missing)}
             )
 
     def _validate_rooms_selected(self):
         if not self._rooms:
             raise NoRoomsSelectedError(
-                "Una reserva debe incluir al menos una habitación."
+                _("Una reserva debe incluir al menos una habitación.")
             )
 
     def _validate_date_range(self):
         if self._check_out <= self._check_in:
             raise InvalidDateRangeError(
-                "La fecha de salida debe ser posterior a la fecha de entrada."
+                _("La fecha de salida debe ser posterior a la fecha de entrada.")
             )
         if self._check_in < date.today():
             raise InvalidDateRangeError(
-                "La fecha de entrada no puede estar en el pasado."
+                _("La fecha de entrada no puede estar en el pasado.")
             )
 
     def _validate_guest_capacity(self):
         if self._num_adults < 1:
             raise GuestCapacityExceededError(
-                "La reserva debe incluir al menos un adulto."
+                _("La reserva debe incluir al menos un adulto.")
             )
         if not CapacityPolicy.fits(self._rooms, self._num_adults, self._num_children):
             capacity = CapacityPolicy.total_capacity(self._rooms)
             guests = self._num_adults + self._num_children
+            # Two plurals in one sentence: the capacity part and the requested
+            # part are translated separately so each follows its own number.
+            capacity_text = ngettext(
+                "Las habitaciones seleccionadas admiten hasta %(capacity)d huésped",
+                "Las habitaciones seleccionadas admiten hasta %(capacity)d huéspedes",
+                capacity,
+            ) % {"capacity": capacity}
+            requested_text = ngettext(
+                "se solicitó %(guests)d",
+                "se solicitaron %(guests)d",
+                guests,
+            ) % {"guests": guests}
             raise GuestCapacityExceededError(
-                f"Las habitaciones seleccionadas admiten hasta {capacity} huéspedes, "
-                f"pero se solicitaron {guests}."
+                _("%(capacity_text)s, pero %(requested_text)s.")
+                % {"capacity_text": capacity_text, "requested_text": requested_text}
             )
 
     def _validate_room_availability(self):
         for room in self._rooms:
             if not self._is_available(room, self._check_in, self._check_out):
                 raise RoomNotAvailableError(
-                    f"La habitación {room.number} no está disponible entre "
-                    f"{self._check_in} y {self._check_out}."
+                    _(
+                        "La habitación %(number)s no está disponible entre "
+                        "%(check_in)s y %(check_out)s."
+                    )
+                    % {
+                        "number": room.number,
+                        "check_in": self._check_in,
+                        "check_out": self._check_out,
+                    }
                 )
 
     @staticmethod

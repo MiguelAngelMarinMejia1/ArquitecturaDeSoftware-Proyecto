@@ -23,6 +23,8 @@ Factura.generarFactura()         services.InvoiceService
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 
 class Customer(models.Model):
@@ -43,22 +45,22 @@ class Customer(models.Model):
     at physical check-in, not during online booking (data minimisation).
     """
 
-    first_name = models.CharField("nombres", max_length=100)
-    last_name = models.CharField("apellidos", max_length=100)
-    email = models.EmailField("correo electronico", unique=True)
-    phone = models.CharField("telefono", max_length=30)
-    country = models.CharField("pais", max_length=60, blank=True)
+    first_name = models.CharField(_("nombres"), max_length=100)
+    last_name = models.CharField(_("apellidos"), max_length=100)
+    email = models.EmailField(_("correo electronico"), unique=True)
+    phone = models.CharField(_("telefono"), max_length=30)
+    country = models.CharField(_("pais"), max_length=60, blank=True)
     document_id = models.CharField(
-        "documento de identidad",
+        _("documento de identidad"),
         max_length=30,
         null=True,
         blank=True,
-        help_text="Se captura en el check-in presencial, no al reservar.",
+        help_text=_("Se captura en el check-in presencial, no al reservar."),
     )
     marketing_consent = models.BooleanField(
-        "acepta comunicaciones comerciales",
+        _("acepta comunicaciones comerciales"),
         default=False,
-        help_text="Opt-in explicito e independiente de la reserva.",
+        help_text=_("Opt-in explicito e independiente de la reserva."),
     )
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -66,14 +68,14 @@ class Customer(models.Model):
         null=True,
         blank=True,
         related_name="customer_profile",
-        verbose_name="cuenta de usuario",
-        help_text="Vacio mientras el huesped no tenga cuenta registrada.",
+        verbose_name=_("cuenta de usuario"),
+        help_text=_("Vacio mientras el huesped no tenga cuenta registrada."),
     )
-    created_at = models.DateTimeField("fecha de registro", auto_now_add=True)
+    created_at = models.DateTimeField(_("fecha de registro"), auto_now_add=True)
 
     class Meta:
-        verbose_name = "cliente"
-        verbose_name_plural = "clientes"
+        verbose_name = _("cliente")
+        verbose_name_plural = _("clientes")
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
@@ -83,17 +85,17 @@ class Customer(models.Model):
 class RoomType(models.Model):
     """A category of room (Standard, Suite, ...) with its base rate."""
 
-    name = models.CharField("nombre", max_length=60, unique=True)
-    description = models.TextField("descripcion", blank=True)
-    max_capacity = models.PositiveSmallIntegerField("capacidad maxima")
-    bed_type = models.CharField("tipo de cama", max_length=60, blank=True)
+    name = models.CharField(_("nombre"), max_length=60, unique=True)
+    description = models.TextField(_("descripcion"), blank=True)
+    max_capacity = models.PositiveSmallIntegerField(_("capacidad maxima"))
+    bed_type = models.CharField(_("tipo de cama"), max_length=60, blank=True)
     base_price_per_night = models.DecimalField(
-        "precio base por noche", max_digits=12, decimal_places=2
+        _("precio base por noche"), max_digits=12, decimal_places=2
     )
 
     class Meta:
-        verbose_name = "tipo de habitacion"
-        verbose_name_plural = "tipos de habitacion"
+        verbose_name = _("tipo de habitacion")
+        verbose_name_plural = _("tipos de habitacion")
         ordering = ["base_price_per_night"]
 
     def __str__(self):
@@ -109,35 +111,38 @@ class Room(models.Model):
     """
 
     class Status(models.TextChoices):
-        AVAILABLE = "AVAILABLE", "Disponible"
-        OCCUPIED = "OCCUPIED", "Ocupada"
-        MAINTENANCE = "MAINTENANCE", "En mantenimiento"
+        AVAILABLE = "AVAILABLE", _("Disponible")
+        OCCUPIED = "OCCUPIED", _("Ocupada")
+        MAINTENANCE = "MAINTENANCE", _("En mantenimiento")
 
-    number = models.CharField("numero", max_length=10, unique=True)
-    floor = models.PositiveSmallIntegerField("piso")
+    number = models.CharField(_("numero"), max_length=10, unique=True)
+    floor = models.PositiveSmallIntegerField(_("piso"))
     status = models.CharField(
-        "estado", max_length=20, choices=Status.choices, default=Status.AVAILABLE
+        _("estado"), max_length=20, choices=Status.choices, default=Status.AVAILABLE
     )
     room_type = models.ForeignKey(
         RoomType,
         on_delete=models.PROTECT,
         related_name="rooms",
-        verbose_name="tipo de habitacion",
+        verbose_name=_("tipo de habitacion"),
     )
     image_urls = models.TextField(
-        "URLs de imagenes",
+        _("URLs de imagenes"),
         blank=True,
-        help_text="URLs separadas por comas, en el orden de la galeria.",
+        help_text=_("URLs separadas por comas, en el orden de la galeria."),
     )
-    is_active = models.BooleanField("activa", default=True)
+    is_active = models.BooleanField(_("activa"), default=True)
 
     class Meta:
-        verbose_name = "habitacion"
-        verbose_name_plural = "habitaciones"
+        verbose_name = _("habitacion")
+        verbose_name_plural = _("habitaciones")
         ordering = ["floor", "number"]
 
     def __str__(self):
-        return f"Habitacion {self.number} - {self.room_type.name}"
+        return gettext("Habitación %(number)s - %(room_type)s") % {
+            "number": self.number,
+            "room_type": self.room_type.name,
+        }
 
 
 class Reservation(models.Model):
@@ -149,41 +154,41 @@ class Reservation(models.Model):
     """
 
     class Status(models.TextChoices):
-        PENDING = "PENDING", "Pendiente"
-        CONFIRMED = "CONFIRMED", "Confirmada"
-        CANCELLED = "CANCELLED", "Cancelada"
+        PENDING = "PENDING", _("Pendiente")
+        CONFIRMED = "CONFIRMED", _("Confirmada")
+        CANCELLED = "CANCELLED", _("Cancelada")
 
     customer = models.ForeignKey(
         Customer,
         on_delete=models.PROTECT,
         related_name="reservations",
-        verbose_name="cliente",
+        verbose_name=_("cliente"),
     )
     rooms = models.ManyToManyField(
         Room,
         through="ReservationRoom",
         related_name="reservations",
-        verbose_name="habitaciones",
+        verbose_name=_("habitaciones"),
     )
-    check_in_date = models.DateField("fecha de entrada")
-    check_out_date = models.DateField("fecha de salida")
-    num_adults = models.PositiveSmallIntegerField("adultos", default=1)
-    num_children = models.PositiveSmallIntegerField("ninos", default=0)
-    special_requests = models.TextField("solicitudes especiales", blank=True)
+    check_in_date = models.DateField(_("fecha de entrada"))
+    check_out_date = models.DateField(_("fecha de salida"))
+    num_adults = models.PositiveSmallIntegerField(_("adultos"), default=1)
+    num_children = models.PositiveSmallIntegerField(_("ninos"), default=0)
+    special_requests = models.TextField(_("solicitudes especiales"), blank=True)
     status = models.CharField(
-        "estado", max_length=20, choices=Status.choices, default=Status.PENDING
+        _("estado"), max_length=20, choices=Status.choices, default=Status.PENDING
     )
     confirmation_code = models.CharField(
-        "codigo de confirmacion", max_length=20, unique=True, db_index=True
+        _("codigo de confirmacion"), max_length=20, unique=True, db_index=True
     )
-    subtotal = models.DecimalField("subtotal", max_digits=12, decimal_places=2)
-    taxes = models.DecimalField("impuestos", max_digits=12, decimal_places=2)
-    total_amount = models.DecimalField("total", max_digits=12, decimal_places=2)
-    created_at = models.DateTimeField("fecha de creacion", auto_now_add=True)
+    subtotal = models.DecimalField(_("subtotal"), max_digits=12, decimal_places=2)
+    taxes = models.DecimalField(_("impuestos"), max_digits=12, decimal_places=2)
+    total_amount = models.DecimalField(_("total"), max_digits=12, decimal_places=2)
+    created_at = models.DateTimeField(_("fecha de creacion"), auto_now_add=True)
 
     class Meta:
-        verbose_name = "reserva"
-        verbose_name_plural = "reservas"
+        verbose_name = _("reserva")
+        verbose_name_plural = _("reservas")
         ordering = ["-created_at"]
         constraints = [
             models.CheckConstraint(
@@ -193,7 +198,7 @@ class Reservation(models.Model):
         ]
 
     def __str__(self):
-        return f"Reserva {self.confirmation_code}"
+        return gettext("Reserva %(code)s") % {"code": self.confirmation_code}
 
 
 class ReservationRoom(models.Model):
@@ -207,21 +212,21 @@ class ReservationRoom(models.Model):
         Reservation,
         on_delete=models.CASCADE,
         related_name="reservation_rooms",
-        verbose_name="reserva",
+        verbose_name=_("reserva"),
     )
     room = models.ForeignKey(
         Room,
         on_delete=models.PROTECT,
         related_name="reservation_rooms",
-        verbose_name="habitacion",
+        verbose_name=_("habitacion"),
     )
     price_per_night = models.DecimalField(
-        "precio por noche", max_digits=12, decimal_places=2
+        _("precio por noche"), max_digits=12, decimal_places=2
     )
 
     class Meta:
-        verbose_name = "habitacion reservada"
-        verbose_name_plural = "habitaciones reservadas"
+        verbose_name = _("habitacion reservada")
+        verbose_name_plural = _("habitaciones reservadas")
         constraints = [
             models.UniqueConstraint(
                 fields=["reservation", "room"],
@@ -230,52 +235,55 @@ class ReservationRoom(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.room} en {self.reservation}"
+        return gettext("%(room)s en %(reservation)s") % {
+            "room": self.room,
+            "reservation": self.reservation,
+        }
 
 
 class Payment(models.Model):
     """A payment associated with a single reservation."""
 
     class Method(models.TextChoices):
-        CREDIT_CARD = "CREDIT_CARD", "Tarjeta de credito"
-        DEBIT_CARD = "DEBIT_CARD", "Tarjeta debito"
-        CASH = "CASH", "Efectivo"
-        TRANSFER = "TRANSFER", "Transferencia bancaria"
+        CREDIT_CARD = "CREDIT_CARD", _("Tarjeta de credito")
+        DEBIT_CARD = "DEBIT_CARD", _("Tarjeta debito")
+        CASH = "CASH", _("Efectivo")
+        TRANSFER = "TRANSFER", _("Transferencia bancaria")
 
     class Status(models.TextChoices):
-        PENDING = "PENDING", "Pendiente"
-        COMPLETED = "COMPLETED", "Completado"
-        FAILED = "FAILED", "Fallido"
-        REFUNDED = "REFUNDED", "Reembolsado"
+        PENDING = "PENDING", _("Pendiente")
+        COMPLETED = "COMPLETED", _("Completado")
+        FAILED = "FAILED", _("Fallido")
+        REFUNDED = "REFUNDED", _("Reembolsado")
 
     reservation = models.OneToOneField(
         Reservation,
         on_delete=models.CASCADE,
         related_name="payment",
-        verbose_name="reserva",
+        verbose_name=_("reserva"),
     )
-    amount = models.DecimalField("monto", max_digits=12, decimal_places=2)
-    date = models.DateTimeField("fecha", auto_now_add=True)
+    amount = models.DecimalField(_("monto"), max_digits=12, decimal_places=2)
+    date = models.DateTimeField(_("fecha"), auto_now_add=True)
     payment_method = models.CharField(
-        "metodo de pago", max_length=20, choices=Method.choices
+        _("metodo de pago"), max_length=20, choices=Method.choices
     )
     status = models.CharField(
-        "estado", max_length=20, choices=Status.choices, default=Status.PENDING
+        _("estado"), max_length=20, choices=Status.choices, default=Status.PENDING
     )
     gateway_reference = models.CharField(
-        "referencia de la pasarela",
+        _("referencia de la pasarela"),
         max_length=60,
         blank=True,
-        help_text="Identificador devuelto por la pasarela de pago.",
+        help_text=_("Identificador devuelto por la pasarela de pago."),
     )
 
     class Meta:
-        verbose_name = "pago"
-        verbose_name_plural = "pagos"
+        verbose_name = _("pago")
+        verbose_name_plural = _("pagos")
         ordering = ["-date"]
 
     def __str__(self):
-        return f"Pago de {self.reservation}"
+        return gettext("Pago de %(reservation)s") % {"reservation": self.reservation}
 
 
 class Invoice(models.Model):
@@ -285,17 +293,19 @@ class Invoice(models.Model):
         Payment,
         on_delete=models.CASCADE,
         related_name="invoice",
-        verbose_name="pago",
+        verbose_name=_("pago"),
     )
-    issue_date = models.DateTimeField("fecha de emision", auto_now_add=True)
-    subtotal = models.DecimalField("subtotal", max_digits=12, decimal_places=2)
-    taxes = models.DecimalField("impuestos", max_digits=12, decimal_places=2)
-    total = models.DecimalField("total", max_digits=12, decimal_places=2)
+    issue_date = models.DateTimeField(_("fecha de emision"), auto_now_add=True)
+    subtotal = models.DecimalField(_("subtotal"), max_digits=12, decimal_places=2)
+    taxes = models.DecimalField(_("impuestos"), max_digits=12, decimal_places=2)
+    total = models.DecimalField(_("total"), max_digits=12, decimal_places=2)
 
     class Meta:
-        verbose_name = "factura"
-        verbose_name_plural = "facturas"
+        verbose_name = _("factura")
+        verbose_name_plural = _("facturas")
         ordering = ["-issue_date"]
 
     def __str__(self):
-        return f"Factura de {self.payment.reservation}"
+        return gettext("Factura de %(reservation)s") % {
+            "reservation": self.payment.reservation
+        }

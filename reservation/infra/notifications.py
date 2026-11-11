@@ -13,6 +13,7 @@ from abc import ABC, abstractmethod
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
 
@@ -52,15 +53,23 @@ class EmailNotifier(BaseNotifier):
     """
 
     def send_confirmation(self, reservation) -> bool:
-        subject = f"Hotel MDJ - Reserva {reservation.confirmation_code}"
-        body = (
-            f"Hola {reservation.customer.first_name},\n\n"
-            f"Tu reserva {reservation.confirmation_code} quedo registrada.\n"
-            f"Entrada: {reservation.check_in_date}\n"
-            f"Salida: {reservation.check_out_date}\n"
-            f"Total: {reservation.total_amount}\n\n"
+        subject = _("Hotel MDJ - Reserva %(code)s") % {
+            "code": reservation.confirmation_code
+        }
+        body = _(
+            "Hola %(name)s,\n\n"
+            "Tu reserva %(code)s quedó registrada.\n"
+            "Entrada: %(check_in)s\n"
+            "Salida: %(check_out)s\n"
+            "Total: %(total)s\n\n"
             "Hotel MDJ"
-        )
+        ) % {
+            "name": reservation.customer.first_name,
+            "code": reservation.confirmation_code,
+            "check_in": reservation.check_in_date,
+            "check_out": reservation.check_out_date,
+            "total": reservation.total_amount,
+        }
         try:
             send_mail(
                 subject=subject,

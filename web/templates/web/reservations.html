@@ -1,5 +1,5 @@
 {% extends "web/base.html" %}
-{% load mdj_format %}
+{% load i18n mdj_format %}
 
 {% comment %}
 Booking wizard. Unlike the Home page this one is not promotional: everything
@@ -13,32 +13,32 @@ Search criteria live in the query string (they identify nobody); guest details
 only ever leave via POST.
 {% endcomment %}
 
-{% block title %}Reservar · Hotel MDJ{% endblock %}
-{% block meta_description %}Reserva tu estadía en Hotel MDJ, Medellín.{% endblock %}
+{% block title %}{% translate "Reservar · Hotel MDJ" %}{% endblock %}
+{% block meta_description %}{% translate "Reserva tu estadía en Hotel MDJ, Medellín." %}{% endblock %}
 
 {% block content %}
 
 <section class="mdj-section pb-0" aria-labelledby="booking-title" data-section="booking-header">
     <div class="mdj-container">
-        <span class="mdj-eyebrow">Reservas</span>
-        <h1 id="booking-title">Reserva tu estadía</h1>
+        <span class="mdj-eyebrow">{% translate "Reservas" %}</span>
+        <h1 id="booking-title">{% translate "Reserva tu estadía" %}</h1>
 
         {% comment %}
         Los pasos ya recorridos son enlaces: la forma mas corta de volver a
         corregir algo es pulsar sobre el paso al que se quiere regresar.
         {% endcomment %}
-        <ol class="mdj-steps mt-4" data-role="booking-steps">
+        <ol class="mdj-steps mt-4" data-role="booking-steps" aria-label="{% translate 'Pasos de la reserva' %}">
             <li{% if step == 1 %} aria-current="step"{% elif step > 1 %} data-state="complete"{% endif %}>
                 {% if step > 1 %}
-                <a href="{{ url_step_dates }}">Fechas</a>
-                {% else %}Fechas{% endif %}
+                <a href="{{ url_step_dates }}">{% translate "Fechas" %}</a>
+                {% else %}{% translate "Fechas" %}{% endif %}
             </li>
             <li{% if step == 2 %} aria-current="step"{% elif step > 2 %} data-state="complete"{% endif %}>
                 {% if step > 2 %}
-                <a href="{{ url_step_rooms }}">Habitación</a>
-                {% else %}Habitación{% endif %}
+                <a href="{{ url_step_rooms }}">{% translate "Habitación" %}</a>
+                {% else %}{% translate "Habitación" %}{% endif %}
             </li>
-            <li{% if step == 3 %} aria-current="step"{% endif %}>Datos y confirmación</li>
+            <li{% if step == 3 %} aria-current="step"{% endif %}>{% translate "Datos y confirmación" %}</li>
         </ol>
     </div>
 </section>
@@ -48,26 +48,28 @@ only ever leave via POST.
 Barra de contexto. Sin ella, volver atras seria un salto a ciegas: el huesped
 tiene que poder ver que fechas eligio sin abandonar el paso en el que esta.
 {% endcomment %}
-<section class="mdj-section pb-0" aria-label="Resumen de tu búsqueda" data-section="booking-recap">
+<section class="mdj-section pb-0" aria-label="{% translate 'Resumen de tu búsqueda' %}" data-section="booking-recap">
     <div class="mdj-container">
         <div class="mdj-recap">
             <p class="mdj-recap__item mb-0">
-                <span class="mdj-label d-block">Estadía</span>
-                {{ criteria.check_in|date:"d M" }} al {{ criteria.check_out|date:"d M Y" }}
-                <span class="mdj-meta">({{ nights }} noche{{ nights|pluralize }})</span>
+                <span class="mdj-label d-block">{% translate "Estadía" %}</span>
+                {% with start=criteria.check_in|date:"d M" end=criteria.check_out|date:"d M Y" %}
+                {% blocktranslate trimmed %}{{ start }} al {{ end }}{% endblocktranslate %}
+                {% endwith %}
+                <span class="mdj-meta">({% blocktranslate count nights=nights trimmed %}{{ nights }} noche{% plural %}{{ nights }} noches{% endblocktranslate %})</span>
             </p>
             <p class="mdj-recap__item mb-0">
-                <span class="mdj-label d-block">Huéspedes</span>
-                {{ criteria.adults }} adulto{{ criteria.adults|pluralize }}{% if criteria.children %}, {{ criteria.children }} niño{{ criteria.children|pluralize }}{% endif %}
+                <span class="mdj-label d-block">{% translate "Huéspedes" %}</span>
+                {% include "web/includes/guest_count.html" with adults=criteria.adults children=criteria.children %}
             </p>
             {% if step > 2 %}
             <p class="mdj-recap__item mb-0">
-                <span class="mdj-label d-block">Habitaci{{ selected_rooms|length|pluralize:"ón,ones" }}</span>
+                <span class="mdj-label d-block">{% blocktranslate count rooms=selected_rooms|length context "etiqueta" trimmed %}Habitación{% plural %}Habitaciones{% endblocktranslate %}</span>
                 {% for room in selected_rooms %}{{ room.room_type.name }} {{ room.number }}{% if not forloop.last %}, {% endif %}{% endfor %}
             </p>
             {% endif %}
             <a href="{% if step > 2 %}{{ url_step_rooms }}{% else %}{{ url_step_dates }}{% endif %}"
-               class="mdj-link mdj-recap__change">Cambiar</a>
+               class="mdj-link mdj-recap__change">{% translate "Cambiar" %}</a>
         </div>
     </div>
 </section>
@@ -79,38 +81,38 @@ tiene que poder ver que fechas eligio sin abandonar el paso en el que esta.
 <section class="mdj-section" aria-labelledby="search-title" data-section="booking-search">
     <div class="mdj-container">
         <div class="mdj-panel">
-            <h2 class="h5 mb-2" id="search-title">¿Cuándo quieres venir?</h2>
-            <p class="mdj-meta mb-4">Elige tus fechas y cuántos son. Después escoges la habitación.</p>
+            <h2 class="h5 mb-2" id="search-title">{% translate "¿Cuándo quieres venir?" %}</h2>
+            <p class="mdj-meta mb-4">{% translate "Elige tus fechas y cuántos son. Después escoges la habitación." %}</p>
 
             <form action="{% url 'web:reservations' %}" method="get" class="row g-3 align-items-end">
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="mdj-field">
-                        <label for="check-in">Entrada</label>
+                        <label for="check-in">{% translate "Entrada" %}</label>
                         <input type="date" id="check-in" name="check_in" min="{{ today }}"
                                value="{{ criteria.check_in|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="mdj-field">
-                        <label for="check-out">Salida</label>
+                        <label for="check-out">{% translate "Salida" %}</label>
                         <input type="date" id="check-out" name="check_out" min="{{ today }}"
                                value="{{ criteria.check_out|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
                     <div class="mdj-field">
-                        <label for="adults">Adultos</label>
+                        <label for="adults">{% translate "Adultos" %}</label>
                         <input type="number" id="adults" name="adults" min="1" value="{{ criteria.adults }}" required>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
                     <div class="mdj-field">
-                        <label for="children">Niños</label>
+                        <label for="children">{% translate "Niños" %}</label>
                         <input type="number" id="children" name="children" min="0" value="{{ criteria.children }}">
                     </div>
                 </div>
                 <div class="col-12 col-lg-2">
-                    <button type="submit" class="mdj-btn mdj-btn--primary w-100">Buscar</button>
+                    <button type="submit" class="mdj-btn mdj-btn--primary w-100">{% translate "Buscar" %}</button>
                 </div>
             </form>
         </div>
@@ -127,11 +129,14 @@ habitacion.
 {% endcomment %}
 <section class="mdj-section" aria-labelledby="results-title" data-section="booking-results">
     <div class="mdj-container">
-        <h2 id="results-title">Elige tu habitación</h2>
+        <h2 id="results-title">{% translate "Elige tu habitación" %}</h2>
         <p class="mdj-meta mt-2 mb-5">
             {% if results %}
-            {{ results|length }} habitaci{{ results|length|pluralize:"ón,ones" }} disponible{{ results|length|pluralize:"s" }}
-            para tus fechas.
+            {% blocktranslate count counter=results|length trimmed %}
+            {{ counter }} habitación disponible para tus fechas.
+            {% plural %}
+            {{ counter }} habitaciones disponibles para tus fechas.
+            {% endblocktranslate %}
             {% endif %}
         </p>
 
@@ -148,23 +153,23 @@ habitacion.
                              aria-labelledby="room-{{ room.pk }}">
                         <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}">
                             {% if room.image_urls %}
-                            <img src="{{ room.image_urls.0 }}" alt="Habitación {{ room.room_type.name }}" loading="lazy">
+                            <img src="{{ room.image_urls.0 }}" alt="{% blocktranslate with name=room.room_type.name %}Habitación {{ name }}{% endblocktranslate %}" loading="lazy">
                             {% endif %}
                         </div>
                         <div class="mdj-card__body">
                             <div>
-                                <span class="mdj-eyebrow mb-1">Habitación {{ room.number }}</span>
+                                <span class="mdj-eyebrow mb-1">{% blocktranslate with number=room.number %}Habitación {{ number }}{% endblocktranslate %}</span>
                                 <h3 id="room-{{ room.pk }}">{{ room.room_type.name }}</h3>
                             </div>
 
                             <dl class="mdj-specs">
-                                <dt>Capacidad</dt>
-                                <dd>{{ room.room_type.max_capacity }} huésped{{ room.room_type.max_capacity|pluralize:"es" }}</dd>
+                                <dt>{% translate "Capacidad" %}</dt>
+                                <dd>{% blocktranslate count capacity=room.room_type.max_capacity trimmed %}{{ capacity }} huésped{% plural %}{{ capacity }} huéspedes{% endblocktranslate %}</dd>
                                 {% if room.room_type.bed_type %}
-                                <dt>Cama</dt>
+                                <dt>{% translate "Cama" %}</dt>
                                 <dd>{{ room.room_type.bed_type }}</dd>
                                 {% endif %}
-                                <dt>Piso</dt>
+                                <dt>{% translate "Piso" %}</dt>
                                 <dd>{{ room.floor }}</dd>
                             </dl>
 
@@ -173,19 +178,19 @@ habitacion.
                             {% endif %}
 
                             <p class="mdj-meta mb-0">
-                                Incluye desayuno, Wi-Fi, aire acondicionado y limpieza diaria.
+                                {% translate "Incluye desayuno, Wi-Fi, aire acondicionado y limpieza diaria." %}
                             </p>
 
                             <div class="mdj-card__footer">
                                 <p class="mb-0">
                                     <span class="mdj-numeric mdj-price">{{ room.room_type.base_price_per_night|cop }}</span>
-                                    <span class="mdj-meta">/ noche</span>
+                                    <span class="mdj-meta">{% translate "/ noche" %}</span>
                                 </p>
                                 <div class="mdj-check mdj-check--select ms-auto">
                                     <input type="checkbox" id="select-room-{{ room.pk }}"
                                            name="room" value="{{ room.pk }}"
                                            {% if room.pk in selected_ids %}checked{% endif %}>
-                                    <label for="select-room-{{ room.pk }}">Seleccionar</label>
+                                    <label for="select-room-{{ room.pk }}">{% translate "Seleccionar" %}</label>
                                 </div>
                             </div>
                         </div>
@@ -194,8 +199,8 @@ habitacion.
                 {% empty %}
                 <li class="col-12">
                     <div class="mdj-panel">
-                        <p class="mb-2">No hay habitaciones disponibles para esas fechas.</p>
-                        <a href="{{ url_step_dates }}" class="mdj-link">Probar con otras fechas</a>
+                        <p class="mb-2">{% translate "No hay habitaciones disponibles para esas fechas." %}</p>
+                        <a href="{{ url_step_dates }}" class="mdj-link">{% translate "Probar con otras fechas" %}</a>
                     </div>
                 </li>
                 {% endfor %}
@@ -203,8 +208,8 @@ habitacion.
 
             {% if results %}
             <div class="mdj-actions mt-5">
-                <a href="{{ url_step_dates }}" class="mdj-btn mdj-btn--secondary">Cambiar fechas</a>
-                <button type="submit" class="mdj-btn mdj-btn--primary">Continuar</button>
+                <a href="{{ url_step_dates }}" class="mdj-btn mdj-btn--secondary">{% translate "Cambiar fechas" %}</a>
+                <button type="submit" class="mdj-btn mdj-btn--primary">{% translate "Continuar" %}</button>
             </div>
             {% endif %}
         </form>
@@ -235,46 +240,52 @@ peticiones sin ninguna ventaja.
             <div class="row g-4 g-lg-5">
                 <div class="col-12 col-lg-7">
                     <section aria-labelledby="guest-title" data-section="booking-guest">
-                        <h2 id="guest-title">Tus datos</h2>
-                        <p class="mdj-meta mt-2 mb-4">Solo lo necesario para tu llegada.</p>
+                        <h2 id="guest-title">{% translate "Tus datos" %}</h2>
+                        <p class="mdj-meta mt-2 mb-4">{% translate "Solo lo necesario para tu llegada." %}</p>
 
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <div class="mdj-field">
-                                    <label for="first-name">Nombre</label>
-                                    <input type="text" id="first-name" name="first_name" autocomplete="given-name" maxlength="100" required>
+                                    <label for="first-name">{% translate "Nombre" %}</label>
+                                    <input type="text" id="first-name" name="first_name" autocomplete="given-name" maxlength="100"
+                                           placeholder="{% translate 'Ej.: Laura' %}" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="mdj-field">
-                                    <label for="last-name">Apellido</label>
-                                    <input type="text" id="last-name" name="last_name" autocomplete="family-name" maxlength="100" required>
+                                    <label for="last-name">{% translate "Apellido" %}</label>
+                                    <input type="text" id="last-name" name="last_name" autocomplete="family-name" maxlength="100"
+                                           placeholder="{% translate 'Ej.: Gómez' %}" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="mdj-field">
-                                    <label for="email">Correo electrónico</label>
+                                    <label for="email">{% translate "Correo electrónico" %}</label>
                                     <input type="email" id="email" name="email" autocomplete="email"
+                                           placeholder="{% translate 'nombre@correo.com' %}"
                                            aria-describedby="email-help" required>
-                                    <small class="mdj-meta" id="email-help">Te enviaremos aquí la confirmación.</small>
+                                    <small class="mdj-meta" id="email-help">{% translate "Te enviaremos aquí la confirmación." %}</small>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="mdj-field">
-                                    <label for="phone">Teléfono</label>
-                                    <input type="tel" id="phone" name="phone" autocomplete="tel" maxlength="30" required>
+                                    <label for="phone">{% translate "Teléfono" %}</label>
+                                    <input type="tel" id="phone" name="phone" autocomplete="tel" maxlength="30"
+                                           placeholder="+57 300 123 4567" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="mdj-field">
-                                    <label for="country">País</label>
-                                    <input type="text" id="country" name="country" autocomplete="country-name" maxlength="60">
+                                    <label for="country">{% translate "País" %}</label>
+                                    <input type="text" id="country" name="country" autocomplete="country-name" maxlength="60"
+                                           placeholder="{% translate 'Colombia' %}">
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="mdj-field">
-                                    <label for="special-requests">Solicitudes especiales (opcional)</label>
-                                    <textarea id="special-requests" name="special_requests" rows="4"></textarea>
+                                    <label for="special-requests">{% translate "Solicitudes especiales (opcional)" %}</label>
+                                    <textarea id="special-requests" name="special_requests" rows="4"
+                                              placeholder="{% translate 'Hora estimada de llegada, cama adicional, alergias…' %}"></textarea>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -284,18 +295,18 @@ peticiones sin ninguna ventaja.
                                 {% endcomment %}
                                 <div class="mdj-check">
                                     <input type="checkbox" id="marketing-consent" name="marketing_consent" value="1">
-                                    <label for="marketing-consent">Quiero recibir ofertas y novedades de Hotel MDJ</label>
+                                    <label for="marketing-consent">{% translate "Quiero recibir ofertas y novedades de Hotel MDJ" %}</label>
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     <section class="mt-5" aria-labelledby="payment-title" data-section="booking-payment">
-                        <h2 id="payment-title">Pago</h2>
+                        <h2 id="payment-title">{% translate "Pago" %}</h2>
                         <div class="row g-3 mt-3">
                             <div class="col-12 col-md-6">
                                 <div class="mdj-field">
-                                    <label for="payment-method">Método de pago</label>
+                                    <label for="payment-method">{% translate "Método de pago" %}</label>
                                     <select id="payment-method" name="payment_method" required>
                                         {% for value, label in payment_methods %}
                                         <option value="{{ value }}">{{ label }}</option>
@@ -305,16 +316,18 @@ peticiones sin ninguna ventaja.
                             </div>
                             <div class="col-12">
                                 <p class="mdj-meta mb-0">
+                                    {% blocktranslate trimmed %}
                                     El cobro se realiza al confirmar la reserva. No pedimos
                                     datos de tarjeta en esta página.
+                                    {% endblocktranslate %}
                                 </p>
                             </div>
                             <div class="col-12">
-                                <h3 class="mt-3">Antes de confirmar</h3>
+                                <h3 class="mt-3">{% translate "Antes de confirmar" %}</h3>
                                 <ul class="mdj-meta list-unstyled d-grid gap-2 mb-0">
-                                    <li>Cancela sin costo hasta 48 horas antes de tu llegada. Después de ese plazo se cobra la primera noche.</li>
-                                    <li>La entrada es desde las 15:00 y la salida hasta las 12:00.</li>
-                                    <li>Al confirmar aceptas los términos y la política de cancelación de Hotel MDJ.</li>
+                                    <li>{% translate "Cancela sin costo hasta 48 horas antes de tu llegada. Después de ese plazo se cobra la primera noche." %}</li>
+                                    <li>{% translate "La entrada es desde las 15:00 y la salida hasta las 12:00." %}</li>
+                                    <li>{% translate "Al confirmar aceptas los términos y la política de cancelación de Hotel MDJ." %}</li>
                                 </ul>
                             </div>
                         </div>
@@ -323,11 +336,11 @@ peticiones sin ninguna ventaja.
 
                 <div class="col-12 col-lg-5">
                     <section class="mdj-summary mdj-sticky" aria-labelledby="summary-title" data-section="booking-summary">
-                        <h2 class="h5 mb-4" id="summary-title">Resumen de tu reserva</h2>
+                        <h2 class="h5 mb-4" id="summary-title">{% translate "Resumen de tu reserva" %}</h2>
 
                         <dl class="mb-0">
                             <div class="mdj-summary__row">
-                                <dt>Habitaci{{ selected_rooms|length|pluralize:"ón,ones" }}</dt>
+                                <dt>{% blocktranslate count rooms=selected_rooms|length context "etiqueta" trimmed %}Habitación{% plural %}Habitaciones{% endblocktranslate %}</dt>
                                 <dd>
                                     {% for room in selected_rooms %}
                                     {{ room.room_type.name }} &middot; {{ room.number }}{% if not forloop.last %}<br>{% endif %}
@@ -335,35 +348,35 @@ peticiones sin ninguna ventaja.
                                 </dd>
                             </div>
                             <div class="mdj-summary__row">
-                                <dt>Entrada</dt><dd>{{ criteria.check_in|date:"d M Y" }}</dd>
+                                <dt>{% translate "Entrada" %}</dt><dd>{{ criteria.check_in|date:"d M Y" }}</dd>
                             </div>
                             <div class="mdj-summary__row">
-                                <dt>Salida</dt><dd>{{ criteria.check_out|date:"d M Y" }}</dd>
+                                <dt>{% translate "Salida" %}</dt><dd>{{ criteria.check_out|date:"d M Y" }}</dd>
                             </div>
                             <div class="mdj-summary__row">
-                                <dt>Noches</dt><dd class="mdj-numeric">{{ quote.nights }}</dd>
+                                <dt>{% translate "Noches" %}</dt><dd class="mdj-numeric">{{ quote.nights }}</dd>
                             </div>
                             <div class="mdj-summary__row">
-                                <dt>Huéspedes</dt>
-                                <dd>{{ criteria.adults }} adulto{{ criteria.adults|pluralize }}{% if criteria.children %}, {{ criteria.children }} niño{{ criteria.children|pluralize }}{% endif %}</dd>
+                                <dt>{% translate "Huéspedes" %}</dt>
+                                <dd>{% include "web/includes/guest_count.html" with adults=criteria.adults children=criteria.children %}</dd>
                             </div>
                             <div class="mdj-summary__row">
-                                <dt>Subtotal</dt><dd class="mdj-numeric">{{ quote.subtotal|cop }}</dd>
+                                <dt>{% translate "Subtotal" %}</dt><dd class="mdj-numeric">{{ quote.subtotal|cop }}</dd>
                             </div>
                             <div class="mdj-summary__row">
-                                <dt>Impuestos (IVA)</dt><dd class="mdj-numeric">{{ quote.taxes|cop }}</dd>
+                                <dt>{% translate "Impuestos (IVA)" %}</dt><dd class="mdj-numeric">{{ quote.taxes|cop }}</dd>
                             </div>
                             <div class="mdj-summary__row mdj-summary__total">
-                                <dt data-role="total-label">Total</dt>
+                                <dt data-role="total-label">{% translate "Total" %}</dt>
                                 <dd class="mdj-numeric" data-role="total-value">{{ quote.total|cop }} <small class="mdj-currency">COP</small></dd>
                             </div>
                         </dl>
 
                         <div class="mdj-actions mt-4">
-                            <button type="submit" class="mdj-btn mdj-btn--primary w-100" data-role="cta-primary" data-busy-label="Confirmando…">
-                                Confirmar reserva
+                            <button type="submit" class="mdj-btn mdj-btn--primary w-100" data-role="cta-primary" data-busy-label="{% translate 'Confirmando…' %}">
+                                {% translate "Confirmar reserva" %}
                             </button>
-                            <a href="{{ url_step_rooms }}" class="mdj-link text-center">Cambiar habitación</a>
+                            <a href="{{ url_step_rooms }}" class="mdj-link text-center">{% translate "Cambiar habitación" %}</a>
                         </div>
                     </section>
                 </div>
@@ -377,8 +390,11 @@ peticiones sin ninguna ventaja.
 <section class="mdj-section" data-section="booking-help">
     <div class="mdj-container">
         <p class="mdj-meta mb-0">
+            {% url 'web:reservation-lookup' as lookup_url %}
+            {% blocktranslate trimmed %}
             ¿Ya tienes una reserva?
-            <a href="{% url 'web:reservation-lookup' %}" class="mdj-link">Consúltala aquí</a>.
+            <a href="{{ lookup_url }}" class="mdj-link">Consúltala aquí</a>.
+            {% endblocktranslate %}
         </p>
     </div>
 </section>

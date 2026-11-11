@@ -6,10 +6,15 @@ from decimal import Decimal, InvalidOperation
 
 import requests
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 
 class ExperiencesServiceError(Exception):
     """MeetU2 did not provide a valid experiences response."""
+
+
+def _invalid_field(name):
+    return _("MeetU2 no contiene '%(field)s' válido.") % {"field": name}
 
 
 @dataclass(frozen=True)
@@ -42,25 +47,25 @@ class ExperiencesClient:
             payload = response.json()
         except (requests.RequestException, ValueError) as exc:
             raise ExperiencesServiceError(
-                "Las experiencias aliadas no están disponibles en este momento."
+                _("Las experiencias aliadas no están disponibles en este momento.")
             ) from exc
 
         if not isinstance(payload, dict) or not isinstance(
             payload.get("experiencias"), list
         ):
-            raise ExperiencesServiceError("MeetU2 devolvió un formato inválido.")
+            raise ExperiencesServiceError(_("MeetU2 devolvió un formato inválido."))
 
         return [self._parse_experience(item) for item in payload["experiencias"]]
 
     @classmethod
     def _parse_experience(cls, payload):
         if not isinstance(payload, dict):
-            raise ExperiencesServiceError("MeetU2 devolvió una experiencia inválida.")
+            raise ExperiencesServiceError(_("MeetU2 devolvió una experiencia inválida."))
         try:
             starts_at = datetime.fromisoformat(cls._text(payload, "fecha_hora"))
         except ValueError as exc:
             raise ExperiencesServiceError(
-                "MeetU2 devolvió una fecha inválida."
+                _("MeetU2 devolvió una fecha inválida.")
             ) from exc
         return Experience(
             id=cls._text(payload, "id"),
@@ -79,14 +84,14 @@ class ExperiencesClient:
     def _text(payload, name):
         value = payload.get(name)
         if not isinstance(value, str) or not value.strip():
-            raise ExperiencesServiceError(f"MeetU2 no contiene '{name}' válido.")
+            raise ExperiencesServiceError(_invalid_field(name))
         return value
 
     @staticmethod
     def _int(payload, name):
         value = payload.get(name)
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-            raise ExperiencesServiceError(f"MeetU2 no contiene '{name}' válido.")
+            raise ExperiencesServiceError(_invalid_field(name))
         return value
 
     @staticmethod
@@ -94,7 +99,7 @@ class ExperiencesClient:
         try:
             value = Decimal(str(payload.get(name)))
         except (InvalidOperation, TypeError, ValueError) as exc:
-            raise ExperiencesServiceError(f"MeetU2 no contiene '{name}' válido.") from exc
+            raise ExperiencesServiceError(_invalid_field(name)) from exc
         if not value.is_finite() or value < 0:
-            raise ExperiencesServiceError(f"MeetU2 no contiene '{name}' válido.")
+            raise ExperiencesServiceError(_invalid_field(name))
         return value

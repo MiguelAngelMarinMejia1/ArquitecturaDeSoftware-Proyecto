@@ -1,6 +1,7 @@
 """Admin registrations for back-office access to the booking data."""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from reservation.models import (
     Customer,
@@ -26,7 +27,7 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ["first_name", "last_name", "email", "document_id"]
     readonly_fields = ["created_at"]
 
-    @admin.display(boolean=True, description="cuenta registrada")
+    @admin.display(boolean=True, description=_("cuenta registrada"))
     def has_account(self, obj):
         return obj.user_id is not None
 

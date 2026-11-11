@@ -1,16 +1,19 @@
 {% extends "web/base.html" %}
+{% load i18n %}
 
-{% block title %}Experiencias · Hotel MDJ{% endblock %}
-{% block meta_description %}Experiencias de MeetU2 disponibles para huéspedes de Hotel MDJ.{% endblock %}
+{% block title %}{% translate "Experiencias · Hotel MDJ" %}{% endblock %}
+{% block meta_description %}{% translate "Experiencias de MeetU2 disponibles para huéspedes de Hotel MDJ." %}{% endblock %}
 
 {% block content %}
 <section class="mdj-section" aria-labelledby="experiences-title">
     <div class="mdj-container">
-        <span class="mdj-eyebrow">Nuestro aliado</span>
-        <h1 id="experiences-title">Experiencias</h1>
+        <span class="mdj-eyebrow">{% translate "Nuestro aliado" %}</span>
+        <h1 id="experiences-title">{% translate "Experiencias" %}</h1>
         <p class="mdj-lead mt-4">
+            {% blocktranslate trimmed %}
             En Hotel MDJ tenemos como aliado a MeetU2, quienes ofrecen las siguientes
             experiencias increíbles:
+            {% endblocktranslate %}
         </p>
 
         {% if experiences_available and experiences %}
@@ -23,12 +26,12 @@
                         <h2 class="h4 mt-2">{{ experience.title }}</h2>
                         <p class="mt-3">{{ experience.description }}</p>
                         <ul class="list-unstyled mdj-meta mb-0">
-                            <li><strong>Ciudad:</strong> {{ experience.city }}</li>
-                            <li><strong>Ubicación:</strong> {{ experience.location }}</li>
-                            <li><strong>Fecha:</strong> {{ experience.starts_at|date:"d/m/Y H:i" }}</li>
-                            <li><strong>Precio:</strong> ${{ experience.price|floatformat:0 }}</li>
-                            <li><strong>Cupos disponibles:</strong> {{ experience.available_slots }}</li>
-                            <li><strong>Organiza:</strong> {{ experience.organizer }}</li>
+                            <li><strong>{% translate "Ciudad" %}:</strong> {{ experience.city }}</li>
+                            <li><strong>{% translate "Ubicación" %}:</strong> {{ experience.location }}</li>
+                            <li><strong>{% translate "Fecha" %}:</strong> {{ experience.starts_at|date:"d/m/Y H:i" }}</li>
+                            <li><strong>{% translate "Precio" %}:</strong> ${{ experience.price|floatformat:0 }}</li>
+                            <li><strong>{% translate "Cupos disponibles" %}:</strong> {{ experience.available_slots }}</li>
+                            <li><strong>{% translate "Organiza" %}:</strong> {{ experience.organizer }}</li>
                         </ul>
                     </div>
                 </a>
@@ -37,11 +40,11 @@
         </div>
         {% elif not experiences_available %}
         <div class="mdj-panel mt-4" role="status">
-            <p class="mb-0">Lo sentimos, no pudimos cargar las experiencias.</p>
+            <p class="mb-0">{% translate "Lo sentimos, no pudimos cargar las experiencias." %}</p>
         </div>
         {% else %}
         <div class="mdj-panel mt-4" role="status">
-            <p class="mb-0">No hay experiencias publicadas en este momento.</p>
+            <p class="mb-0">{% translate "No hay experiencias publicadas en este momento." %}</p>
         </div>
         {% endif %}
     </div>

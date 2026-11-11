@@ -1,0 +1,1135 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Hotel MDJ\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-10 21:24-0500\n"
+"PO-Revision-Date: 2026-11-10 21:24-0500\n"
+"Last-Translator: Hotel MDJ team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Español"
+msgstr "Spanish"
+
+msgid "Inglés"
+msgstr "English"
+
+msgid "cuenta registrada"
+msgstr "registered account"
+
+msgid "La fecha de salida debe ser posterior a la de entrada."
+msgstr "The check-out date must be after the check-in date."
+
+msgid "Envía date_from y date_to juntos, o ninguno para el mes actual."
+msgstr "Send date_from and date_to together, or neither for the current month."
+
+msgid "Debe ser posterior a date_from."
+msgstr "Must be after date_from."
+
+#, python-format
+msgid "El rango no puede superar %(days)d día."
+msgid_plural "El rango no puede superar %(days)d días."
+msgstr[0] "The range cannot exceed %(days)d day."
+msgstr[1] "The range cannot exceed %(days)d days."
+
+msgid "La cola de tareas no está disponible, intenta más tarde."
+msgstr "The task queue is not available, please try again later."
+
+msgid "El reporte no se pudo generar."
+msgstr "The report could not be generated."
+
+msgid "cliente"
+msgstr "customer"
+
+msgid "fecha de entrada"
+msgstr "check-in date"
+
+msgid "fecha de salida"
+msgstr "check-out date"
+
+msgid "número de adultos"
+msgstr "number of adults"
+
+msgid "código de confirmación"
+msgstr "confirmation code"
+
+#, python-format
+msgid "Faltan datos requeridos para crear la reserva: %(fields)s."
+msgstr "Required data is missing to create the reservation: %(fields)s."
+
+msgid "Una reserva debe incluir al menos una habitación."
+msgstr "A reservation must include at least one room."
+
+msgid "La fecha de salida debe ser posterior a la fecha de entrada."
+msgstr "The check-out date must be after the check-in date."
+
+msgid "La fecha de entrada no puede estar en el pasado."
+msgstr "The check-in date cannot be in the past."
+
+msgid "La reserva debe incluir al menos un adulto."
+msgstr "The reservation must include at least one adult."
+
+#, python-format
+msgid "Las habitaciones seleccionadas admiten hasta %(capacity)d huésped"
+msgid_plural ""
+"Las habitaciones seleccionadas admiten hasta %(capacity)d huéspedes"
+msgstr[0] "The selected rooms hold up to %(capacity)d guest"
+msgstr[1] "The selected rooms hold up to %(capacity)d guests"
+
+#, python-format
+msgid "se solicitó %(guests)d"
+msgid_plural "se solicitaron %(guests)d"
+msgstr[0] "%(guests)d was requested"
+msgstr[1] "%(guests)d were requested"
+
+#, python-format
+msgid "%(capacity_text)s, pero %(requested_text)s."
+msgstr "%(capacity_text)s, but %(requested_text)s."
+
+#, python-format
+msgid ""
+"La habitación %(number)s no está disponible entre %(check_in)s y "
+"%(check_out)s."
+msgstr ""
+"Room %(number)s is not available between %(check_in)s and %(check_out)s."
+
+#, python-format
+msgid "El catálogo no contiene '%(field)s' válido."
+msgstr "The catalog does not contain a valid '%(field)s'."
+
+msgid "El catálogo devolvió un formato inválido."
+msgstr "The catalog returned an invalid format."
+
+msgid "El catálogo no está disponible en este momento."
+msgstr "The catalog is not available right now."
+
+msgid "El catálogo devolvió una habitación inválida."
+msgstr "The catalog returned an invalid room."
+
+#, python-format
+msgid "MeetU2 no contiene '%(field)s' válido."
+msgstr "MeetU2 does not contain a valid '%(field)s'."
+
+msgid "Las experiencias aliadas no están disponibles en este momento."
+msgstr "Partner experiences are not available right now."
+
+msgid "MeetU2 devolvió un formato inválido."
+msgstr "MeetU2 returned an invalid format."
+
+msgid "MeetU2 devolvió una experiencia inválida."
+msgstr "MeetU2 returned an invalid experience."
+
+msgid "MeetU2 devolvió una fecha inválida."
+msgstr "MeetU2 returned an invalid date."
+
+#, python-format
+msgid "Hotel MDJ - Reserva %(code)s"
+msgstr "Hotel MDJ - Reservation %(code)s"
+
+#, python-format
+msgid ""
+"Hola %(name)s,\n"
+"\n"
+"Tu reserva %(code)s quedó registrada.\n"
+"Entrada: %(check_in)s\n"
+"Salida: %(check_out)s\n"
+"Total: %(total)s\n"
+"\n"
+"Hotel MDJ"
+msgstr ""
+"Hello %(name)s,\n"
+"\n"
+"Your reservation %(code)s has been registered.\n"
+"Check-in: %(check_in)s\n"
+"Check-out: %(check_out)s\n"
+"Total: %(total)s\n"
+"\n"
+"Hotel MDJ"
+
+#, python-format
+msgid ""
+"Cobro simulado de %(amount)s aprobado (método %(method)s, referencia "
+"%(reference)s)."
+msgstr ""
+"Simulated charge of %(amount)s approved (method %(method)s, reference "
+"%(reference)s)."
+
+msgid ""
+"El servicio de pagos no está disponible en este momento. No se realizó ningún"
+" cobro, intenta de nuevo en unos minutos."
+msgstr ""
+"The payment service is not available right now. No charge was made, please "
+"try again in a few minutes."
+
+msgid ""
+"No pudimos procesar el pago en este momento. No se realizó ningún cobro, "
+"intenta de nuevo en unos minutos."
+msgstr ""
+"We could not process the payment right now. No charge was made, please try "
+"again in a few minutes."
+
+#, python-format
+msgid "API-Colombia no contiene '%(field)s' válido."
+msgstr "API-Colombia does not contain a valid '%(field)s'."
+
+msgid "Los lugares turísticos no están disponibles en este momento."
+msgstr "Tourist attractions are not available right now."
+
+msgid "API-Colombia devolvió un formato inválido."
+msgstr "API-Colombia returned an invalid format."
+
+msgid "API-Colombia devolvió un lugar inválido."
+msgstr "API-Colombia returned an invalid place."
+
+msgid "nombres"
+msgstr "first names"
+
+msgid "apellidos"
+msgstr "last names"
+
+msgid "correo electronico"
+msgstr "email address"
+
+msgid "telefono"
+msgstr "phone"
+
+msgid "pais"
+msgstr "country"
+
+msgid "documento de identidad"
+msgstr "identity document"
+
+msgid "Se captura en el check-in presencial, no al reservar."
+msgstr "Captured at the in-person check-in, not when booking."
+
+msgid "acepta comunicaciones comerciales"
+msgstr "accepts marketing communications"
+
+msgid "Opt-in explicito e independiente de la reserva."
+msgstr "Explicit opt-in, independent of the reservation."
+
+msgid "cuenta de usuario"
+msgstr "user account"
+
+msgid "Vacio mientras el huesped no tenga cuenta registrada."
+msgstr "Empty while the guest has no registered account."
+
+msgid "fecha de registro"
+msgstr "registration date"
+
+msgid "clientes"
+msgstr "customers"
+
+msgid "nombre"
+msgstr "name"
+
+msgid "descripcion"
+msgstr "description"
+
+msgid "capacidad maxima"
+msgstr "maximum capacity"
+
+msgid "tipo de cama"
+msgstr "bed type"
+
+msgid "precio base por noche"
+msgstr "base price per night"
+
+msgid "tipo de habitacion"
+msgstr "room type"
+
+msgid "tipos de habitacion"
+msgstr "room types"
+
+msgid "Disponible"
+msgstr "Available"
+
+msgid "Ocupada"
+msgstr "Occupied"
+
+msgid "En mantenimiento"
+msgstr "Under maintenance"
+
+msgid "numero"
+msgstr "number"
+
+msgid "piso"
+msgstr "floor"
+
+msgid "estado"
+msgstr "status"
+
+msgid "URLs de imagenes"
+msgstr "image URLs"
+
+msgid "URLs separadas por comas, en el orden de la galeria."
+msgstr "Comma-separated URLs, in gallery order."
+
+msgid "activa"
+msgstr "active"
+
+msgid "habitacion"
+msgstr "room"
+
+msgid "habitaciones"
+msgstr "rooms"
+
+#, python-format
+msgid "Habitación %(number)s - %(room_type)s"
+msgstr "Room %(number)s - %(room_type)s"
+
+msgid "Pendiente"
+msgstr "Pending"
+
+msgid "Confirmada"
+msgstr "Confirmed"
+
+msgid "Cancelada"
+msgstr "Cancelled"
+
+msgid "adultos"
+msgstr "adults"
+
+msgid "ninos"
+msgstr "children"
+
+msgid "solicitudes especiales"
+msgstr "special requests"
+
+msgid "codigo de confirmacion"
+msgstr "confirmation code"
+
+msgid "subtotal"
+msgstr "subtotal"
+
+msgid "impuestos"
+msgstr "taxes"
+
+msgid "total"
+msgstr "total"
+
+msgid "fecha de creacion"
+msgstr "creation date"
+
+msgid "reserva"
+msgstr "reservation"
+
+msgid "reservas"
+msgstr "reservations"
+
+#, python-format
+msgid "Reserva %(code)s"
+msgstr "Reservation %(code)s"
+
+msgid "precio por noche"
+msgstr "price per night"
+
+msgid "habitacion reservada"
+msgstr "booked room"
+
+msgid "habitaciones reservadas"
+msgstr "booked rooms"
+
+#, python-format
+msgid "%(room)s en %(reservation)s"
+msgstr "%(room)s in %(reservation)s"
+
+msgid "Tarjeta de credito"
+msgstr "Credit card"
+
+msgid "Tarjeta debito"
+msgstr "Debit card"
+
+msgid "Efectivo"
+msgstr "Cash"
+
+msgid "Transferencia bancaria"
+msgstr "Bank transfer"
+
+msgid "Completado"
+msgstr "Completed"
+
+msgid "Fallido"
+msgstr "Failed"
+
+msgid "Reembolsado"
+msgstr "Refunded"
+
+msgid "monto"
+msgstr "amount"
+
+msgid "fecha"
+msgstr "date"
+
+msgid "metodo de pago"
+msgstr "payment method"
+
+msgid "referencia de la pasarela"
+msgstr "gateway reference"
+
+msgid "Identificador devuelto por la pasarela de pago."
+msgstr "Identifier returned by the payment gateway."
+
+msgid "pago"
+msgstr "payment"
+
+msgid "pagos"
+msgstr "payments"
+
+#, python-format
+msgid "Pago de %(reservation)s"
+msgstr "Payment for %(reservation)s"
+
+msgid "fecha de emision"
+msgstr "issue date"
+
+msgid "factura"
+msgstr "invoice"
+
+msgid "facturas"
+msgstr "invoices"
+
+#, python-format
+msgid "Factura de %(reservation)s"
+msgstr "Invoice for %(reservation)s"
+
+msgid "El pago fue rechazado."
+msgstr "The payment was declined."
+
+msgid "No encontramos una reserva con ese código y correo electrónico."
+msgstr "We could not find a reservation with that code and email address."
+
+msgid "No encontramos una reserva con ese código."
+msgstr "We could not find a reservation with that code."
+
+#, python-format
+msgid "No existe la habitación con id %(ids)s."
+msgid_plural "No existen las habitaciones con id %(ids)s."
+msgstr[0] "There is no room with id %(ids)s."
+msgstr[1] "There are no rooms with ids %(ids)s."
+
+msgid "Saltar al contenido"
+msgstr "Skip to content"
+
+msgid "Navegación principal"
+msgstr "Main navigation"
+
+msgid "Inicio"
+msgstr "Home"
+
+msgid "Habitaciones"
+msgstr "Rooms"
+
+msgid "Servicios"
+msgstr "Services"
+
+msgid "Experiencias"
+msgstr "Experiences"
+
+msgid "Lugares turísticos"
+msgstr "Tourist attractions"
+
+msgid "Galería"
+msgstr "Gallery"
+
+msgid "Contacto"
+msgstr "Contact"
+
+msgid "Mi reserva"
+msgstr "My reservation"
+
+msgid "Idioma"
+msgstr "Language"
+
+msgid "Reservar"
+msgstr "Book"
+
+msgid "Abrir menú"
+msgstr "Open menu"
+
+msgid "Navegación principal móvil"
+msgstr "Mobile main navigation"
+
+msgid ""
+"Treinta y dos habitaciones en una casa restaurada de El Poblado, con el valle"
+" de Aburrá por ventana. Abierto todo el año."
+msgstr ""
+"Thirty-two rooms in a restored house in El Poblado, with the Aburrá valley as"
+" the view. Open all year round."
+
+msgid "Navegación del pie de página"
+msgstr "Footer navigation"
+
+msgid "Navegación"
+msgstr "Navigation"
+
+msgid "Reservas"
+msgstr "Reservations"
+
+msgid "Consultar mi reserva"
+msgstr "Find my reservation"
+
+msgid "Teléfono"
+msgstr "Phone"
+
+msgid "Correo"
+msgstr "Email"
+
+msgid "Redes sociales"
+msgstr "Social media"
+
+msgid "Políticas"
+msgstr "Policies"
+
+msgid "Privacidad"
+msgstr "Privacy"
+
+msgid "Términos y condiciones"
+msgstr "Terms and conditions"
+
+msgid "Cancelación"
+msgstr "Cancellation"
+
+msgid "Experiencias · Hotel MDJ"
+msgstr "Experiences · Hotel MDJ"
+
+msgid "Experiencias de MeetU2 disponibles para huéspedes de Hotel MDJ."
+msgstr "MeetU2 experiences available to Hotel MDJ guests."
+
+msgid "Nuestro aliado"
+msgstr "Our partner"
+
+msgid ""
+"En Hotel MDJ tenemos como aliado a MeetU2, quienes ofrecen las siguientes "
+"experiencias increíbles:"
+msgstr ""
+"At Hotel MDJ our partner is MeetU2, who offer the following amazing "
+"experiences:"
+
+msgid "Ciudad"
+msgstr "City"
+
+msgid "Ubicación"
+msgstr "Location"
+
+msgid "Fecha"
+msgstr "Date"
+
+msgid "Precio"
+msgstr "Price"
+
+msgid "Cupos disponibles"
+msgstr "Available spots"
+
+msgid "Organiza"
+msgstr "Organizer"
+
+msgid "Lo sentimos, no pudimos cargar las experiencias."
+msgstr "Sorry, we could not load the experiences."
+
+msgid "No hay experiencias publicadas en este momento."
+msgstr "There are no published experiences right now."
+
+msgid "Hotel MDJ · Medellín"
+msgstr "Hotel MDJ · Medellín"
+
+msgid ""
+"Hotel MDJ, Medellín. Treinta y dos habitaciones en una casa restaurada de El "
+"Poblado."
+msgstr ""
+"Hotel MDJ, Medellín. Thirty-two rooms in a restored house in El Poblado."
+
+msgid ""
+"Treinta y dos habitaciones en una casa restaurada de El Poblado, con el valle"
+" de Aburrá por ventana y la ciudad a diez minutos a pie."
+msgstr ""
+"Thirty-two rooms in a restored house in El Poblado, with the Aburrá valley as"
+" the view and the city a ten-minute walk away."
+
+msgid "Reservar ahora"
+msgstr "Book now"
+
+msgid "Conocer el hotel"
+msgstr "Discover the hotel"
+
+msgid "<span class=\"mdj-numeric\">32</span> habitaciones"
+msgstr "<span class=\"mdj-numeric\">32</span> rooms"
+
+msgid "Desayuno incluido"
+msgstr "Breakfast included"
+
+msgid "Cancelación gratis hasta 48 h antes"
+msgstr "Free cancellation up to 48 h before"
+
+msgid "Consultar disponibilidad"
+msgstr "Check availability"
+
+msgid "Entrada"
+msgstr "Check-in"
+
+msgid "Salida"
+msgstr "Check-out"
+
+msgid "Adultos"
+msgstr "Adults"
+
+msgid "Niños"
+msgstr "Children"
+
+msgid "Buscar"
+msgstr "Search"
+
+msgid "El hotel"
+msgstr "The hotel"
+
+msgid "Un lugar para detenerse"
+msgstr "A place to slow down"
+
+msgid ""
+"Hotel MDJ ocupa una casa de los años sesenta en la loma de El Poblado, "
+"restaurada habitación por habitación. Conservamos los pisos de terrazo, los "
+"patios interiores y los árboles que ya estaban. Añadimos camas grandes, "
+"silencio y un desayuno que se sirve hasta las once."
+msgstr ""
+"Hotel MDJ occupies a 1960s house on the El Poblado hillside, restored room by"
+" room. We kept the terrazzo floors, the inner courtyards and the trees that "
+"were already there. We added large beds, quiet and a breakfast served until "
+"eleven."
+
+msgid "No somos un hotel grande y no pretendemos serlo."
+msgstr "We are not a big hotel and we do not intend to be one."
+
+msgid "Alojamiento"
+msgstr "Accommodation"
+
+msgid "Ver disponibilidad"
+msgstr "See availability"
+
+#, python-format
+msgid "Habitación %(name)s"
+msgstr "%(name)s room"
+
+#, python-format
+msgid "Habitación %(number)s"
+msgstr "Room %(number)s"
+
+msgid "Capacidad"
+msgstr "Capacity"
+
+#, python-format
+msgid "%(capacity)s huésped"
+msgid_plural "%(capacity)s huéspedes"
+msgstr[0] "%(capacity)s guest"
+msgstr[1] "%(capacity)s guests"
+
+msgid "Cama"
+msgstr "Bed"
+
+msgid "Desde"
+msgstr "From"
+
+msgid "/ noche"
+msgstr "/ night"
+
+msgid "Aún no hay habitaciones cargadas."
+msgstr "No rooms have been added yet."
+
+msgid "A tu disposición"
+msgstr "At your service"
+
+msgid "Servicios y comodidades"
+msgstr "Services and amenities"
+
+msgid "Wi-Fi de fibra en todo el hotel"
+msgstr "Fiber Wi-Fi throughout the hotel"
+
+msgid "Desayuno incluido, hasta las 11:00"
+msgstr "Breakfast included, until 11:00"
+
+msgid "Recepción abierta las 24 horas"
+msgstr "Front desk open 24 hours"
+
+msgid "Parqueadero cubierto sin costo"
+msgstr "Free covered parking"
+
+msgid "Aire acondicionado en todas las habitaciones"
+msgstr "Air conditioning in every room"
+
+msgid "Limpieza diaria"
+msgstr "Daily housekeeping"
+
+msgid "Restaurante y bar en la terraza"
+msgstr "Rooftop restaurant and bar"
+
+msgid "Lavandería en el día"
+msgstr "Same-day laundry"
+
+msgid "Traslado al aeropuerto, con reserva previa"
+msgstr "Airport transfer, booked in advance"
+
+msgid "Alrededores"
+msgstr "Surroundings"
+
+msgid "Experiencia y ubicación"
+msgstr "Experience and location"
+
+msgid ""
+"Estamos sobre la carrera 43A, en la loma de El Poblado. Desde la terraza se "
+"ve el valle de extremo a extremo, y de noche las luces suben por las laderas."
+msgstr ""
+"We are on Carrera 43A, on the El Poblado hillside. From the terrace you can "
+"see the valley from end to end, and at night the lights climb up the slopes."
+
+#, python-format
+msgid "%(minutes)s minuto a pie"
+msgid_plural "%(minutes)s minutos a pie"
+msgstr[0] "%(minutes)s minute on foot"
+msgstr[1] "%(minutes)s minutes on foot"
+
+msgid "Estación Poblado del metro"
+msgstr "Poblado metro station"
+
+msgid "Museo de Antioquia"
+msgstr "Museo de Antioquia"
+
+#, python-format
+msgid "%(minutes)s minuto en carro"
+msgid_plural "%(minutes)s minutos en carro"
+msgstr[0] "%(minutes)s minute by car"
+msgstr[1] "%(minutes)s minutes by car"
+
+msgid "Aeropuerto José María Córdova"
+msgstr "José María Córdova Airport"
+
+msgid "El lugar"
+msgstr "The place"
+
+msgid "Huéspedes"
+msgstr "Guests"
+
+msgid "Lo que dicen quienes ya se quedaron"
+msgstr "What past guests say"
+
+msgid ""
+"<span class=\"mdj-numeric\">4,8</span> sobre 5 &middot; 214 opiniones de "
+"huéspedes"
+msgstr "<span class=\"mdj-numeric\">4.8</span> out of 5 &middot; 214 guest reviews"
+
+msgid ""
+"La vista desde la terraza al amanecer justifica el viaje. Volvimos dos veces "
+"el mismo año."
+msgstr ""
+"The view from the terrace at sunrise is worth the trip. We came back twice in"
+" the same year."
+
+msgid "tres estancias"
+msgstr "three stays"
+
+msgid ""
+"Salí a las cinco de la mañana para un vuelo y me dejaron el desayuno empacado"
+" sin que lo pidiera."
+msgstr ""
+"I left at five in the morning for a flight and they packed my breakfast "
+"without me asking."
+
+msgid "viaje de negocios"
+msgstr "business trip"
+
+msgid ""
+"Habitación silenciosa en pleno Poblado, que no es fácil. Dormí de verdad."
+msgstr "A quiet room right in El Poblado, which is not easy. I truly slept."
+
+msgid "fin de semana"
+msgstr "weekend"
+
+msgid "Sin intermediarios"
+msgstr "No middlemen"
+
+msgid "Reserva directamente con Hotel MDJ"
+msgstr "Book directly with Hotel MDJ"
+
+msgid ""
+"Al reservar en esta página hablas con nosotros, no con un intermediario. Eso "
+"nos permite darte condiciones que no aparecen en ningún otro sitio."
+msgstr ""
+"When you book on this page you deal with us, not with a middleman. That lets "
+"us offer you terms you will not find anywhere else."
+
+msgid "La tarifa más baja, garantizada"
+msgstr "Lowest rate, guaranteed"
+
+msgid "Cancelación sin costo hasta 48 horas antes"
+msgstr "Free cancellation up to 48 hours before"
+
+msgid "Entrada anticipada y salida tardía, según disponibilidad"
+msgstr "Early check-in and late check-out, subject to availability"
+
+msgid "Botella de vino de bienvenida en la habitación"
+msgstr "Welcome bottle of wine in your room"
+
+msgid "Atención directa por WhatsApp antes y durante tu estadía"
+msgstr "Direct WhatsApp support before and during your stay"
+
+msgid "¿Listo para tu estadía en Hotel MDJ?"
+msgstr "Ready for your stay at Hotel MDJ?"
+
+msgid ""
+"Consulta disponibilidad para tus fechas y reserva en dos minutos. Si algo "
+"cambia, cancelas sin costo hasta 48 horas antes."
+msgstr ""
+"Check availability for your dates and book in two minutes. If anything "
+"changes, cancel free of charge up to 48 hours before."
+
+#, python-format
+msgid "%(adults)s adulto"
+msgid_plural "%(adults)s adultos"
+msgstr[0] "%(adults)s adult"
+msgstr[1] "%(adults)s adults"
+
+#, python-format
+msgid "%(children)s niño"
+msgid_plural "%(children)s niños"
+msgstr[0] "%(children)s child"
+msgstr[1] "%(children)s children"
+
+#, python-format
+msgid "Reserva %(code)s · Hotel MDJ"
+msgstr "Reservation %(code)s · Hotel MDJ"
+
+msgid "Detalle de tu reserva en Hotel MDJ."
+msgstr "Details of your Hotel MDJ reservation."
+
+msgid "Tu reserva"
+msgstr "Your reservation"
+
+msgid "Todo listo"
+msgstr "All set"
+
+msgid "Reserva confirmada"
+msgstr "Reservation confirmed"
+
+#, python-format
+msgid ""
+"Gracias por reservar con Hotel MDJ. Enviaremos la confirmación a "
+"<strong>%(email)s</strong>."
+msgstr ""
+"Thank you for booking with Hotel MDJ. We will send the confirmation to "
+"<strong>%(email)s</strong>."
+
+msgid "Número de reserva"
+msgstr "Reservation number"
+
+msgid ""
+"Guárdalo: lo necesitarás junto con tu correo para consultar esta reserva."
+msgstr ""
+"Keep it: you will need it, together with your email, to look up this "
+"reservation."
+
+msgid "Información para tu llegada"
+msgstr "Arrival information"
+
+msgid ""
+"La entrada es desde las 15:00 y la salida hasta las 12:00. Si llegas antes, "
+"guardamos tu equipaje sin costo."
+msgstr ""
+"Check-in is from 15:00 and check-out is until 12:00. If you arrive early, we "
+"store your luggage free of charge."
+
+msgid ""
+"Presenta tu documento de identidad al registrarte. La recepción atiende las "
+"24 horas."
+msgstr ""
+"Please show your ID when you check in. The front desk is open 24 hours."
+
+msgid "Contacto Hotel MDJ"
+msgstr "Hotel MDJ contact"
+
+msgid "Acciones sobre la reserva"
+msgstr "Reservation actions"
+
+msgid "Consultar reserva"
+msgstr "Find reservation"
+
+msgid "Contactar Hotel MDJ"
+msgstr "Contact Hotel MDJ"
+
+msgid "Volver al inicio"
+msgstr "Back to home"
+
+msgid "Detalle de la estadía"
+msgstr "Stay details"
+
+msgid "Estado"
+msgstr "Status"
+
+msgid "Huésped"
+msgstr "Guest"
+
+msgctxt "etiqueta"
+msgid "Habitación"
+msgid_plural "Habitaciones"
+msgstr[0] "Room"
+msgstr[1] "Rooms"
+
+msgid "Solicitudes"
+msgstr "Requests"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Impuestos (IVA)"
+msgstr "Taxes (VAT)"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Consultar mi reserva · Hotel MDJ"
+msgstr "Find my reservation · Hotel MDJ"
+
+msgid "Consulta tu reserva en Hotel MDJ."
+msgstr "Look up your Hotel MDJ reservation."
+
+msgid ""
+"Ingresa el número de reserva que recibiste y el correo electrónico con el que"
+" reservaste."
+msgstr ""
+"Enter the reservation number you received and the email address you booked "
+"with."
+
+msgid "Correo electrónico"
+msgstr "Email address"
+
+msgid "nombre@correo.com"
+msgstr "name@example.com"
+
+msgid "Consultando…"
+msgstr "Searching…"
+
+#, python-format
+msgid ""
+"¿Aún no tienes una reserva? <a href=\"%(reservations_url)s\" class=\"mdj-"
+"link\">Reserva tu estadía</a>."
+msgstr ""
+"Don't have a reservation yet? <a href=\"%(reservations_url)s\" class=\"mdj-"
+"link\">Book your stay</a>."
+
+msgid "Reservar · Hotel MDJ"
+msgstr "Book · Hotel MDJ"
+
+msgid "Reserva tu estadía en Hotel MDJ, Medellín."
+msgstr "Book your stay at Hotel MDJ, Medellín."
+
+msgid "Reserva tu estadía"
+msgstr "Book your stay"
+
+msgid "Pasos de la reserva"
+msgstr "Booking steps"
+
+msgid "Fechas"
+msgstr "Dates"
+
+msgid "Habitación"
+msgstr "Room"
+
+msgid "Datos y confirmación"
+msgstr "Details and confirmation"
+
+msgid "Resumen de tu búsqueda"
+msgstr "Your search summary"
+
+msgid "Estadía"
+msgstr "Stay"
+
+#, python-format
+msgid "%(start)s al %(end)s"
+msgstr "%(start)s to %(end)s"
+
+#, python-format
+msgid "%(nights)s noche"
+msgid_plural "%(nights)s noches"
+msgstr[0] "%(nights)s night"
+msgstr[1] "%(nights)s nights"
+
+msgid "Cambiar"
+msgstr "Change"
+
+msgid "¿Cuándo quieres venir?"
+msgstr "When would you like to come?"
+
+msgid "Elige tus fechas y cuántos son. Después escoges la habitación."
+msgstr "Choose your dates and how many of you are coming. Then pick your room."
+
+msgid "Elige tu habitación"
+msgstr "Choose your room"
+
+#, python-format
+msgid "%(counter)s habitación disponible para tus fechas."
+msgid_plural "%(counter)s habitaciones disponibles para tus fechas."
+msgstr[0] "%(counter)s room available for your dates."
+msgstr[1] "%(counter)s rooms available for your dates."
+
+msgid "Piso"
+msgstr "Floor"
+
+msgid "Incluye desayuno, Wi-Fi, aire acondicionado y limpieza diaria."
+msgstr "Includes breakfast, Wi-Fi, air conditioning and daily housekeeping."
+
+msgid "Seleccionar"
+msgstr "Select"
+
+msgid "No hay habitaciones disponibles para esas fechas."
+msgstr "There are no rooms available for those dates."
+
+msgid "Probar con otras fechas"
+msgstr "Try other dates"
+
+msgid "Cambiar fechas"
+msgstr "Change dates"
+
+msgid "Continuar"
+msgstr "Continue"
+
+msgid "Tus datos"
+msgstr "Your details"
+
+msgid "Solo lo necesario para tu llegada."
+msgstr "Only what we need for your arrival."
+
+msgid "Nombre"
+msgstr "First name"
+
+msgid "Ej.: Laura"
+msgstr "e.g. Laura"
+
+msgid "Apellido"
+msgstr "Last name"
+
+msgid "Ej.: Gómez"
+msgstr "e.g. Gómez"
+
+msgid "Te enviaremos aquí la confirmación."
+msgstr "We will send the confirmation here."
+
+msgid "País"
+msgstr "Country"
+
+msgid "Colombia"
+msgstr "Colombia"
+
+msgid "Solicitudes especiales (opcional)"
+msgstr "Special requests (optional)"
+
+msgid "Hora estimada de llegada, cama adicional, alergias…"
+msgstr "Estimated arrival time, extra bed, allergies…"
+
+msgid "Quiero recibir ofertas y novedades de Hotel MDJ"
+msgstr "I want to receive offers and news from Hotel MDJ"
+
+msgid "Pago"
+msgstr "Payment"
+
+msgid "Método de pago"
+msgstr "Payment method"
+
+msgid ""
+"El cobro se realiza al confirmar la reserva. No pedimos datos de tarjeta en "
+"esta página."
+msgstr ""
+"The charge is made when you confirm the reservation. We do not ask for card "
+"details on this page."
+
+msgid "Antes de confirmar"
+msgstr "Before you confirm"
+
+msgid ""
+"Cancela sin costo hasta 48 horas antes de tu llegada. Después de ese plazo se"
+" cobra la primera noche."
+msgstr ""
+"Cancel free of charge up to 48 hours before arrival. After that, the first "
+"night is charged."
+
+msgid "La entrada es desde las 15:00 y la salida hasta las 12:00."
+msgstr "Check-in is from 15:00 and check-out is until 12:00."
+
+msgid ""
+"Al confirmar aceptas los términos y la política de cancelación de Hotel MDJ."
+msgstr "By confirming you accept the Hotel MDJ terms and cancellation policy."
+
+msgid "Resumen de tu reserva"
+msgstr "Your reservation summary"
+
+msgid "Noches"
+msgstr "Nights"
+
+msgid "Confirmando…"
+msgstr "Confirming…"
+
+msgid "Confirmar reserva"
+msgstr "Confirm reservation"
+
+msgid "Cambiar habitación"
+msgstr "Change room"
+
+#, python-format
+msgid ""
+"¿Ya tienes una reserva? <a href=\"%(lookup_url)s\" class=\"mdj-"
+"link\">Consúltala aquí</a>."
+msgstr ""
+"Already have a reservation? <a href=\"%(lookup_url)s\" class=\"mdj-"
+"link\">Look it up here</a>."
+
+msgid "Lugares turísticos · Hotel MDJ"
+msgstr "Tourist attractions · Hotel MDJ"
+
+msgid ""
+"Lugares turísticos de Colombia recomendados para huéspedes de Hotel MDJ."
+msgstr "Colombian tourist attractions recommended for Hotel MDJ guests."
+
+msgid "Una pausa para salir"
+msgstr "Time to go out"
+
+msgid "Colombia, a tu ritmo."
+msgstr "Colombia, at your own pace."
+
+#, python-format
+msgid ""
+"%(counter)s lugar para empezar a explorar el país desde la calma de Hotel "
+"MDJ."
+msgid_plural ""
+"%(counter)s lugares para empezar a explorar el país desde la calma de Hotel "
+"MDJ."
+msgstr[0] ""
+"%(counter)s place to start exploring the country from the calm of Hotel MDJ."
+msgstr[1] ""
+"%(counter)s places to start exploring the country from the calm of Hotel MDJ."
+
+msgid "Selección de API-Colombia"
+msgstr "Selected from API-Colombia"
+
+msgid "Datos públicos de Colombia"
+msgstr "Colombian public data"
+
+msgid "Para descubrir"
+msgstr "To discover"
+
+msgid "Lo sentimos, no pudimos cargar los lugares turísticos."
+msgstr "Sorry, we could not load the tourist attractions."
+
+msgid "No hay lugares turísticos disponibles en este momento."
+msgstr "There are no tourist attractions available right now."
+
+msgid ""
+"Para ver tu reserva necesitamos el código de confirmación y el correo "
+"electrónico con el que reservaste."
+msgstr ""
+"To view your reservation we need the confirmation code and the email address "
+"you booked with."

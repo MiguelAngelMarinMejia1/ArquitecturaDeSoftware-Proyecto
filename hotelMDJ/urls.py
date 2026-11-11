@@ -16,6 +16,9 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # POST /i18n/setlang/ (name "set_language"): stores the chosen language in
+    # a cookie and redirects back to the page given in ``next``.
+    path("i18n/", include("django.conf.urls.i18n")),
     path("api/v1/", include("reservation.api.urls")),
     path("", include("web.urls")),
 ]
