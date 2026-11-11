@@ -15,11 +15,14 @@ stock photos that would misdescribe the property.
 
 {# 1 - Portada: qué es este lugar y la única acción que importa. #}
 <section class="mdj-hero" aria-labelledby="hero-title" data-section="hero">
+    {% comment %} Photo slot 1: web/static/web/img/hero.jpg (drawn dusk scene if missing). {% endcomment %}
+    <div class="mdj-hero__media mdj-art mdj-art--dusk" aria-hidden="true">
+        <div class="mdj-photo mdj-photo--hero"></div>
+    </div>
     <div class="mdj-container">
-        <div class="row align-items-center g-4 g-lg-5">
-            <div class="col-12 col-lg-7">
-                <span class="mdj-eyebrow">Medellín, Colombia</span>
-                <h1 class="mdj-hero__title" id="hero-title">Hotel MDJ</h1>
+            <div class="mdj-hero__content">
+                <span class="mdj-eyebrow">Hotel MDJ · Medellín, Colombia</span>
+                <h1 class="mdj-hero__title" id="hero-title">{% blocktranslate trimmed %}Tu casa en la <em>eterna primavera</em>{% endblocktranslate %}</h1>
                 <p class="mdj-lead mb-4">
                     {% blocktranslate trimmed %}
                     Treinta y dos habitaciones en una casa restaurada de El Poblado,
@@ -36,10 +39,6 @@ stock photos that would misdescribe the property.
                     <li>{% translate "Cancelación gratis hasta 48 h antes" %}</li>
                 </ul>
             </div>
-            <div class="col-12 col-lg-5">
-                <div class="mdj-frame mdj-art mdj-art--dusk" aria-hidden="true"></div>
-            </div>
-        </div>
     </div>
 </section>
 
@@ -102,7 +101,11 @@ stock photos that would misdescribe the property.
                 </p>
             </div>
             <div class="col-12 col-lg-7 order-lg-1">
-                <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--patio" aria-hidden="true"></div>
+                {% comment %} Photo slot 2: web/static/web/img/hotel.jpg {% endcomment %}
+                <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--patio">
+                    <div class="mdj-photo mdj-photo--hotel" aria-hidden="true"></div>
+                    <span class="mdj-frame__badge">{% translate "Casa de los años 60" %}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -112,7 +115,7 @@ stock photos that would misdescribe the property.
    y el flujo de reserva no puedan contradecirse. {% endcomment %}
 <section class="mdj-section mdj-reveal" id="habitaciones" aria-labelledby="rooms-title" data-section="rooms-preview">
     <div class="mdj-container">
-        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
+        <div class="mdj-section-head">
             <div>
                 <span class="mdj-eyebrow">{% translate "Alojamiento" %}</span>
                 <h2 id="rooms-title">{% translate "Habitaciones" %}</h2>
@@ -127,7 +130,10 @@ stock photos that would misdescribe the property.
                     <div class="mdj-frame mdj-art mdj-art--room" data-variant="{% cycle '1' '2' '3' '4' %}">
                         {% if room.image_urls %}
                         <img src="{{ room.image_urls.0 }}" alt="{% blocktranslate with name=room.room_type.name %}Habitación {{ name }}{% endblocktranslate %}" loading="lazy">
+                        {% else %}
+                        <div class="mdj-photo mdj-photo--habitacion" aria-hidden="true"></div>
                         {% endif %}
+                        <span class="mdj-frame__badge">{{ room.room_type.name }}</span>
                     </div>
                     <div class="mdj-card__body">
                         <h3 id="room-{{ room.pk }}">{% blocktranslate with number=room.number %}Habitación {{ number }}{% endblocktranslate %}</h3>
@@ -161,20 +167,20 @@ stock photos that would misdescribe the property.
 </section>
 
 {# 5 - Servicios. #}
-<section class="mdj-section mdj-reveal" id="servicios" aria-labelledby="services-title" data-section="services">
+<section class="mdj-section mdj-section--sand mdj-reveal" id="servicios" aria-labelledby="services-title" data-section="services">
     <div class="mdj-container">
         <span class="mdj-eyebrow">{% translate "A tu disposición" %}</span>
         <h2 id="services-title">{% translate "Servicios y comodidades" %}</h2>
-        <ul class="mdj-services row row-cols-1 row-cols-sm-2 row-cols-lg-3 list-unstyled g-3 mt-3 mb-0">
-            <li class="col">{% translate "Wi-Fi de fibra en todo el hotel" %}</li>
-            <li class="col">{% translate "Desayuno incluido, hasta las 11:00" %}</li>
-            <li class="col">{% translate "Recepción abierta las 24 horas" %}</li>
-            <li class="col">{% translate "Parqueadero cubierto sin costo" %}</li>
-            <li class="col">{% translate "Aire acondicionado en todas las habitaciones" %}</li>
-            <li class="col">{% translate "Limpieza diaria" %}</li>
-            <li class="col">{% translate "Restaurante y bar en la terraza" %}</li>
-            <li class="col">{% translate "Lavandería en el día" %}</li>
-            <li class="col">{% translate "Traslado al aeropuerto, con reserva previa" %}</li>
+        <ul class="mdj-services row row-cols-1 row-cols-sm-2 row-cols-lg-3 list-unstyled g-3 mt-4 mb-0">
+            <li class="col"><span>{% translate "Wi-Fi de fibra en todo el hotel" %}</span></li>
+            <li class="col"><span>{% translate "Desayuno incluido, hasta las 11:00" %}</span></li>
+            <li class="col"><span>{% translate "Recepción abierta las 24 horas" %}</span></li>
+            <li class="col"><span>{% translate "Parqueadero cubierto sin costo" %}</span></li>
+            <li class="col"><span>{% translate "Aire acondicionado en todas las habitaciones" %}</span></li>
+            <li class="col"><span>{% translate "Limpieza diaria" %}</span></li>
+            <li class="col"><span>{% translate "Restaurante y bar en la terraza" %}</span></li>
+            <li class="col"><span>{% translate "Lavandería en el día" %}</span></li>
+            <li class="col"><span>{% translate "Traslado al aeropuerto, con reserva previa" %}</span></li>
         </ul>
     </div>
 </section>
@@ -202,7 +208,11 @@ stock photos that would misdescribe the property.
                 </ul>
             </div>
             <div class="col-12 col-lg-7">
-                <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--valley" aria-hidden="true"></div>
+                {% comment %} Photo slot 4: web/static/web/img/ciudad.jpg {% endcomment %}
+                <div class="mdj-frame mdj-frame--wide mdj-art mdj-art--valley">
+                    <div class="mdj-photo mdj-photo--ciudad" aria-hidden="true"></div>
+                    <span class="mdj-frame__badge">Carrera 43A · El Poblado</span>
+                </div>
             </div>
         </div>
     </div>
@@ -215,21 +225,23 @@ stock photos that would misdescribe the property.
             <span class="mdj-eyebrow">{% translate "El lugar" %}</span>
             <h2 id="gallery-title">{% translate "Galería" %}</h2>
         </div>
-        <ul class="row row-cols-2 row-cols-lg-4 list-unstyled g-3 g-lg-4 mb-0" aria-hidden="true">
-            <li class="col"><div class="mdj-frame mdj-art mdj-art--room" data-variant="2"></div></li>
-            <li class="col"><div class="mdj-frame mdj-art mdj-art--patio"></div></li>
-            <li class="col"><div class="mdj-frame mdj-art mdj-art--dusk"></div></li>
-            <li class="col"><div class="mdj-frame mdj-art mdj-art--room" data-variant="4"></div></li>
+        {% comment %} Reuses the four photo slots (hero, hotel, habitacion, ciudad). {% endcomment %}
+        <ul class="mdj-gallery" aria-hidden="true">
+            <li class="mdj-gallery__item"><div class="mdj-art mdj-art--dusk"><div class="mdj-photo mdj-photo--hero"></div></div></li>
+            <li class="mdj-gallery__item"><div class="mdj-art mdj-art--room" data-variant="2"><div class="mdj-photo mdj-photo--habitacion"></div></div></li>
+            <li class="mdj-gallery__item"><div class="mdj-art mdj-art--patio"><div class="mdj-photo mdj-photo--hotel"></div></div></li>
+            <li class="mdj-gallery__item"><div class="mdj-art mdj-art--valley"><div class="mdj-photo mdj-photo--ciudad"></div></div></li>
         </ul>
     </div>
 </section>
 
 {# 8 - Prueba social. #}
-<section class="mdj-section mdj-reveal" aria-labelledby="reviews-title" data-section="reviews">
+<section class="mdj-section mdj-section--dark" aria-labelledby="reviews-title" data-section="reviews">
     <div class="mdj-container">
         <span class="mdj-eyebrow">{% translate "Huéspedes" %}</span>
         <h2 id="reviews-title">{% translate "Lo que dicen quienes ya se quedaron" %}</h2>
-        <p class="mdj-meta mt-3">
+        <p class="mdj-meta mdj-rating mt-3">
+            <span class="mdj-rating__stars" aria-hidden="true">★★★★★</span>
             {% blocktranslate trimmed %}
             <span class="mdj-numeric">4,8</span> sobre 5 &middot; 214 opiniones de huéspedes
             {% endblocktranslate %}

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Hotel MDJ\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 21:24-0500\n"
-"PO-Revision-Date: 2026-11-10 21:24-0500\n"
+"POT-Creation-Date: 2026-11-10 23:15-0500\n"
+"PO-Revision-Date: 2026-11-10 23:15-0500\n"
 "Last-Translator: Hotel MDJ team\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -533,6 +533,9 @@ msgstr "Available spots"
 msgid "Organiza"
 msgstr "Organizer"
 
+msgid "Ver en MeetU2"
+msgstr "View on MeetU2"
+
 msgid "Lo sentimos, no pudimos cargar las experiencias."
 msgstr "Sorry, we could not load the experiences."
 
@@ -547,6 +550,9 @@ msgid ""
 "Poblado."
 msgstr ""
 "Hotel MDJ, Medellín. Thirty-two rooms in a restored house in El Poblado."
+
+msgid "Tu casa en la <em>eterna primavera</em>"
+msgstr "Your home in the <em>city of eternal spring</em>"
 
 msgid ""
 "Treinta y dos habitaciones en una casa restaurada de El Poblado, con el valle"
@@ -607,6 +613,9 @@ msgstr ""
 
 msgid "No somos un hotel grande y no pretendemos serlo."
 msgstr "We are not a big hotel and we do not intend to be one."
+
+msgid "Casa de los años 60"
+msgstr "A 1960s house"
 
 msgid "Alojamiento"
 msgstr "Accommodation"

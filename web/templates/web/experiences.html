@@ -7,43 +7,44 @@
 {% block content %}
 <section class="mdj-section" aria-labelledby="experiences-title">
     <div class="mdj-container">
-        <span class="mdj-eyebrow">{% translate "Nuestro aliado" %}</span>
-        <h1 id="experiences-title">{% translate "Experiencias" %}</h1>
-        <p class="mdj-lead mt-4">
-            {% blocktranslate trimmed %}
-            En Hotel MDJ tenemos como aliado a MeetU2, quienes ofrecen las siguientes
-            experiencias increíbles:
-            {% endblocktranslate %}
-        </p>
+        <header class="mdj-page-head">
+            <span class="mdj-eyebrow">{% translate "Nuestro aliado" %}</span>
+            <h1 id="experiences-title">{% translate "Experiencias" %}</h1>
+            <p class="mdj-lead">
+                {% blocktranslate trimmed %}
+                En Hotel MDJ tenemos como aliado a MeetU2, quienes ofrecen las siguientes
+                experiencias increíbles:
+                {% endblocktranslate %}
+            </p>
+        </header>
 
         {% if experiences_available and experiences %}
-        <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
             {% for experience in experiences %}
             <article class="col">
-                <a href="http://184.193.170.74/" target="_blank" style="text-decoration: none; color: black;">
-                    <div class="mdj-panel h-100">
-                        <span class="mdj-eyebrow">{{ experience.category }}</span>
-                        <h2 class="h4 mt-2">{{ experience.title }}</h2>
-                        <p class="mt-3">{{ experience.description }}</p>
-                        <ul class="list-unstyled mdj-meta mb-0">
-                            <li><strong>{% translate "Ciudad" %}:</strong> {{ experience.city }}</li>
-                            <li><strong>{% translate "Ubicación" %}:</strong> {{ experience.location }}</li>
-                            <li><strong>{% translate "Fecha" %}:</strong> {{ experience.starts_at|date:"d/m/Y H:i" }}</li>
-                            <li><strong>{% translate "Precio" %}:</strong> ${{ experience.price|floatformat:0 }}</li>
-                            <li><strong>{% translate "Cupos disponibles" %}:</strong> {{ experience.available_slots }}</li>
-                            <li><strong>{% translate "Organiza" %}:</strong> {{ experience.organizer }}</li>
-                        </ul>
-                    </div>
+                <a href="http://184.193.170.74/" target="_blank" rel="noopener" class="mdj-exp-card">
+                    <span class="mdj-chip">{{ experience.category }}</span>
+                    <h2>{{ experience.title }}</h2>
+                    {% if experience.description %}<p class="mb-0">{{ experience.description }}</p>{% endif %}
+                    <dl class="mdj-exp-card__meta">
+                        <dt>{% translate "Ciudad" %}</dt><dd>{{ experience.city }}</dd>
+                        <dt>{% translate "Ubicación" %}</dt><dd>{{ experience.location }}</dd>
+                        <dt>{% translate "Fecha" %}</dt><dd>{{ experience.starts_at|date:"d/m/Y H:i" }}</dd>
+                        <dt>{% translate "Precio" %}</dt><dd class="mdj-numeric">${{ experience.price|floatformat:0 }}</dd>
+                        <dt>{% translate "Cupos disponibles" %}</dt><dd class="mdj-numeric">{{ experience.available_slots }}</dd>
+                        <dt>{% translate "Organiza" %}</dt><dd>{{ experience.organizer }}</dd>
+                    </dl>
+                    <span class="mdj-exp-card__cta">{% translate "Ver en MeetU2" %} →</span>
                 </a>
             </article>
             {% endfor %}
         </div>
         {% elif not experiences_available %}
-        <div class="mdj-panel mt-4" role="status">
+        <div class="mdj-panel" role="status">
             <p class="mb-0">{% translate "Lo sentimos, no pudimos cargar las experiencias." %}</p>
         </div>
         {% else %}
-        <div class="mdj-panel mt-4" role="status">
+        <div class="mdj-panel" role="status">
             <p class="mb-0">{% translate "No hay experiencias publicadas en este momento." %}</p>
         </div>
         {% endif %}

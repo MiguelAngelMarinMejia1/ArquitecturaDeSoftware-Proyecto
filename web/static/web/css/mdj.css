@@ -1,113 +1,112 @@
 /* ==========================================================================
-   Hotel MDJ — "Luz de las cuatro" visual system
+   Hotel MDJ — "Casa de la eterna primavera" brand system
    --------------------------------------------------------------------------
-   The direction comes from late afternoon light over the Aburra valley: pale
-   grounds, generous air, and one long directional shadow running through the
-   whole page. Luxury is expressed as space and calm, never as ornament.
+   Identity: a restored 1960s house in El Poblado, Medellín. Three ideas drive
+   every decision:
+     * Forest green  — the Aburrá valley and the trees of the patio.
+     * Terracotta    — Medellín's brick, used only for actions and accents.
+     * Warm cream    — the lime-washed walls; the ground of every page.
+   The display face (Cormorant Garamond) carries the voice of the house; the
+   text face (Manrope) carries reading and booking.
 
-   Bootstrap supplies the grid, the utilities and the accessibility of its
-   components; every appearance is redefined here by overriding its CSS
-   variables, so that none of its default theme shows through.
+   Bootstrap supplies grid, utilities and component accessibility; its look is
+   overridden through CSS variables.
 
-   METHOD: mobile first. Everything outside a media query is the narrow
-   version, and each @media (min-width) only adds as space appears. There is
-   not a single max-width query in this file.
+   METHOD: mobile first. Each @media (min-width) only adds as space appears.
+   Breakpoints follow Bootstrap: 576 / 768 / 992 / 1200 px.
 
-   Breakpoints, aligned with Bootstrap's:
-       576px  large phone
-       768px  tablet
-       992px  desktop
-      1200px  wide desktop
+   PHOTOS: four slots read files from web/static/web/img/ (see the README
+   there). A missing file simply leaves the drawn composition underneath
+   visible, so the page never shows a broken image.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Tokens — base values are the mobile ones
+   1. Tokens
    -------------------------------------------------------------------------- */
 
 :root {
-    /* Colour. The pale tones carry the page; the deep green is the only
-       colour that acts, which is why it is reserved for anything clickable. */
-    --mdj-paper:       #FBFAF7;
-    --mdj-mist:       #EDEFEB;
-    --mdj-stone:      #7C857E;
-    --mdj-ink:       #23282A;
-    --mdj-sage:  #6E8F86;
-    --mdj-deep-green: #35544B;
-    --mdj-night-green: #22382F;
+    /* Colour */
+    --mdj-cream:          #F6F1E8;
+    --mdj-paper:          #FFFDF8;
+    --mdj-sand:           #ECE3D3;
+    --mdj-sand-deep:      #D9C8AC;
+    --mdj-ink:            #1B2420;
+    --mdj-stone:          #5B6159;   /* 5.6:1 on cream */
+    --mdj-line:           rgba(27, 36, 32, 0.12);
+    --mdj-line-strong:    rgba(27, 36, 32, 0.24);
+    --mdj-forest:         #1F3D33;
+    --mdj-forest-deep:    #132820;
+    --mdj-sage:           #7E9C8D;
+    --mdj-terracotta:     #B4532E;   /* 5.0:1 with white text */
+    --mdj-terracotta-deep:#93401F;
+    --mdj-gold:           #D9B877;   /* accents on dark grounds only */
+    --mdj-danger:         #9B3328;
+    --mdj-success:        #2F6B4F;
 
-    /* Type. Instrument Serif carries the voice; Inter Tight carries the
-       reading. The scale is deliberately mid-sized: booking has to feel
-       comfortable, and luxury set in tiny type just reads as cold. */
-    --mdj-font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
-    --mdj-font-body:   "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Type */
+    --mdj-font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --mdj-font-body:    "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-    --mdj-size-base:  1.0625rem;   /* 17px */
-    --mdj-size-meta:  0.9375rem;   /* 15px */
-    --mdj-size-lead:  1.125rem;
-    --mdj-size-h3:    1.25rem;
-    --mdj-size-h2:    clamp(1.625rem, 5.5vw, 2.625rem);
-    --mdj-size-h1:    clamp(2.25rem, 8vw, 4.75rem);
+    --mdj-size-base: 1rem;
+    --mdj-size-meta: 0.9rem;
+    --mdj-size-small: 0.78rem;
+    --mdj-size-lead: 1.0625rem;
+    --mdj-size-h3:   1.125rem;
+    --mdj-size-h2:   clamp(2rem, 5.2vw, 3.25rem);
+    --mdj-size-h1:   clamp(2.6rem, 8vw, 5.25rem);
 
-    /* Vertical rhythm. One geometric step keeps spacing from being arbitrary;
-       the long intervals widen once there is more screen. */
+    /* Space */
     --mdj-space-1: 0.5rem;
     --mdj-space-2: 1rem;
-    --mdj-space-3: 1.25rem;
-    --mdj-space-4: 2rem;
-    --mdj-space-5: 3rem;
+    --mdj-space-3: 1.5rem;
+    --mdj-space-4: 2.25rem;
+    --mdj-space-5: 3.5rem;
+    --mdj-space-6: 5rem;
 
-    /* Container side padding. It must always exceed half the gutter of any
-       Bootstrap row living inside: .row applies negative margins of that size,
-       and without this cushion the row spills past the viewport and a
-       horizontal scrollbar appears. */
+    /* Container side padding: must exceed half of any Bootstrap gutter, or
+       rows spill past the viewport. */
     --mdj-gutter: 1.25rem;
 
-    --mdj-radius:   2px;            /* casi recto: el lujo aqui es la precision */
-    --mdj-hairline:  1px solid color-mix(in srgb, var(--mdj-stone) 30%, transparent);
+    --mdj-radius-sm: 10px;
+    --mdj-radius:    16px;
+    --mdj-radius-lg: 24px;
+    --mdj-radius-pill: 999px;
 
-    /* The signature: long directional shadows, always from the same angle,
-       like afternoon light falling across a facade. */
-    --mdj-light-near: 8px 12px 24px -16px rgba(35, 40, 42, 0.32);
-    --mdj-light-far: 16px 24px 56px -32px rgba(35, 40, 42, 0.38);
+    --mdj-shadow-soft: 0 1px 2px rgba(19, 40, 32, 0.05), 0 10px 28px -16px rgba(19, 40, 32, 0.22);
+    --mdj-shadow-lift: 0 2px 6px rgba(19, 40, 32, 0.06), 0 30px 60px -30px rgba(19, 40, 32, 0.42);
 
-    --mdj-transition: 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    --mdj-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --mdj-transition: 360ms var(--mdj-ease);
 
-    /* Bootstrap theme reassignment */
-    --bs-body-bg: var(--mdj-paper);
+    /* Bootstrap theme */
+    --bs-body-bg: var(--mdj-cream);
     --bs-body-color: var(--mdj-ink);
     --bs-body-font-family: var(--mdj-font-body);
     --bs-body-font-size: var(--mdj-size-base);
     --bs-body-line-height: 1.65;
-    --bs-primary: var(--mdj-deep-green);
-    --bs-link-color: var(--mdj-deep-green);
-    --bs-link-hover-color: var(--mdj-night-green);
-    --bs-border-color: color-mix(in srgb, var(--mdj-stone) 30%, transparent);
-    --bs-border-radius: var(--mdj-radius);
-    --bs-focus-ring-color: color-mix(in srgb, var(--mdj-sage) 55%, transparent);
-    --bs-focus-ring-width: 3px;
+    --bs-primary: var(--mdj-forest);
+    --bs-link-color: var(--mdj-forest);
+    --bs-link-hover-color: var(--mdj-terracotta-deep);
+    --bs-border-color: var(--mdj-line);
+    --bs-border-radius: var(--mdj-radius-sm);
+    --bs-focus-ring-color: color-mix(in srgb, var(--mdj-terracotta) 45%, transparent);
 }
 
 @media (min-width: 768px) {
     :root {
         --mdj-gutter: 1.75rem;
-        --mdj-size-lead: 1.1875rem;
-        --mdj-size-h3: 1.3125rem;
-        --mdj-space-3: 1.5rem;
-        --mdj-space-4: 2.5rem;
-        --mdj-space-5: 4rem;
+        --mdj-size-lead: 1.125rem;
+        --mdj-space-5: 4.5rem;
+        --mdj-space-6: 6.5rem;
     }
 }
 
 @media (min-width: 992px) {
     :root {
         --mdj-gutter: 2rem;
-        --mdj-size-lead: 1.25rem;
-        --mdj-size-h3: 1.375rem;
-        --mdj-space-3: 1.75rem;
-        --mdj-space-4: 3rem;
-        --mdj-space-5: 5rem;
-        --mdj-light-near: 12px 16px 32px -18px rgba(35, 40, 42, 0.32);
-        --mdj-light-far: 28px 40px 80px -40px rgba(35, 40, 42, 0.38);
+        --mdj-size-lead: 1.1875rem;
+        --mdj-space-5: 5.5rem;
+        --mdj-space-6: 8rem;
     }
 }
 
@@ -121,95 +120,122 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { overflow-x: clip; }
+html { overflow-x: clip; scroll-behavior: smooth; }
 
 body {
-    background-color: var(--mdj-paper);
+    background-color: var(--mdj-cream);
     color: var(--mdj-ink);
     font-family: var(--mdj-font-body);
     font-size: var(--mdj-size-base);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    /* Safety net: 'clip' prevents sideways scrolling without creating a
-       scroll container, so position: sticky keeps working. The cause is fixed
-       in .mdj-container; this only stops a future slip from bringing the
-       scrollbar back. */
+    text-rendering: optimizeLegibility;
     overflow-x: clip;
 }
 
-/* One long word -- an e-mail, a booking code -- must not widen the page. */
 body, h1, h2, h3, p, dd, dt, li, a { overflow-wrap: break-word; }
 
 img, svg, video, iframe { max-width: 100%; height: auto; }
 
-h1, h2, h3, .mdj-display {
+::selection { background: color-mix(in srgb, var(--mdj-terracotta) 25%, transparent); }
+
+h1, h2, .mdj-display {
     font-family: var(--mdj-font-display);
-    font-weight: 400;
-    letter-spacing: -0.015em;
-    line-height: 1.12;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.04;
     text-wrap: balance;
+    color: var(--mdj-forest-deep);
 }
 
 h1 { font-size: var(--mdj-size-h1); }
 h2 { font-size: var(--mdj-size-h2); }
 h3 {
-    font-size: var(--mdj-size-h3);
     font-family: var(--mdj-font-body);
-    font-weight: 600;
-    letter-spacing: 0;
+    font-size: var(--mdj-size-h3);
+    font-weight: 700;
     line-height: 1.3;
+    color: var(--mdj-ink);
 }
 
-/* Eyebrow label above a section. It carries no number: the order of the
-   sections is not a procedure, so numbering them would misdescribe them. */
+/* Section label: terracotta caps preceded by a short rule. */
 .mdj-eyebrow {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
     font-family: var(--mdj-font-body);
-    font-size: var(--mdj-size-meta);
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--mdj-stone);
-    margin-bottom: var(--mdj-space-1);
+    color: var(--mdj-terracotta);
+    margin-bottom: var(--mdj-space-2);
+}
+.mdj-eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.5px;
+    background: currentColor;
+    flex: none;
 }
 
 .mdj-lead {
     font-size: var(--mdj-size-lead);
-    line-height: 1.55;
-    max-width: 46ch;
+    line-height: 1.7;
+    max-width: 52ch;
+    color: color-mix(in srgb, var(--mdj-ink) 86%, var(--mdj-cream));
 }
 
 .mdj-meta { font-size: var(--mdj-size-meta); color: var(--mdj-stone); }
 
-/* Lining figures: prices in a list have to be comparable at a glance,
-   digit column against digit column. */
-.mdj-numeric { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.mdj-numeric { font-variant-numeric: tabular-nums lining-nums; }
 
-.mdj-section { padding-block: var(--mdj-space-5); }
-.mdj-section + .mdj-section { border-top: var(--mdj-hairline); }
-
-/* The container carries its own side padding, which is what absorbs the
-   negative margins of Bootstrap rows. The max width adds that padding back so
-   the text column keeps its measure. */
 .mdj-container {
     width: 100%;
-    max-width: calc(1180px + var(--mdj-gutter) * 2);
+    max-width: calc(1200px + var(--mdj-gutter) * 2);
     margin-inline: auto;
     padding-inline: var(--mdj-gutter);
 }
 
-/* Skip link: out of sight until the keyboard reaches it. */
+.mdj-section { padding-block: var(--mdj-space-5); }
+.mdj-section--sand { background: var(--mdj-sand); }
+.mdj-section--dark {
+    background: var(--mdj-forest-deep);
+    color: color-mix(in srgb, var(--mdj-cream) 88%, transparent);
+}
+.mdj-section--dark h2 { color: var(--mdj-paper); }
+.mdj-section--dark .mdj-eyebrow { color: var(--mdj-gold); }
+.mdj-section--dark .mdj-meta { color: color-mix(in srgb, var(--mdj-cream) 72%, transparent); }
+
+/* Section heading row: title on the left, an optional action on the right. */
+.mdj-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--mdj-space-2) var(--mdj-space-4);
+    margin-bottom: var(--mdj-space-4);
+}
+.mdj-section-head h2 { margin-bottom: 0; }
+
 [data-role="skip-link"] { position: absolute; left: -9999px; }
 [data-role="skip-link"]:focus {
     left: var(--mdj-space-2);
     top: var(--mdj-space-2);
     z-index: 1080;
-    background: var(--mdj-ink);
+    background: var(--mdj-forest-deep);
     color: var(--mdj-paper);
     padding: var(--mdj-space-1) var(--mdj-space-2);
+    border-radius: var(--mdj-radius-sm);
 }
 
-:focus-visible { outline: 3px solid var(--mdj-sage); outline-offset: 3px; }
+:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--mdj-terracotta) 70%, transparent);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+[id] { scroll-margin-top: 6rem; }
 
 /* --------------------------------------------------------------------------
    3. Header
@@ -219,110 +245,150 @@ h3 {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: color-mix(in srgb, var(--mdj-paper) 92%, transparent);
-    backdrop-filter: blur(14px);
-    border-bottom: var(--mdj-hairline);
+    background: color-mix(in srgb, var(--mdj-cream) 88%, transparent);
+    backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid var(--mdj-line);
 }
 
+/* Brand lockup: arch monogram + wordmark + tagline. */
 .mdj-wordmark {
-    font-family: var(--mdj-font-display);
-    font-size: 1.375rem;
-    letter-spacing: 0.02em;
-    color: var(--mdj-ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--mdj-forest-deep);
     text-decoration: none;
     white-space: nowrap;
 }
+.mdj-wordmark:hover { color: var(--mdj-forest); }
+.mdj-wordmark__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+.mdj-wordmark__name {
+    font-family: var(--mdj-font-display);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+.mdj-wordmark__tagline {
+    display: none;
+    margin-top: 0.3rem;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mdj-stone);
+}
+@media (min-width: 576px) {
+    .mdj-wordmark__tagline { display: block; }
+}
+
+.mdj-logo { width: 2.1rem; height: auto; flex: none; color: currentColor; }
+.mdj-logo__sun { fill: var(--mdj-terracotta); }
 
 .mdj-nav-link {
+    position: relative;
     color: var(--mdj-ink);
     text-decoration: none;
     font-size: var(--mdj-size-meta);
-    letter-spacing: 0.02em;
-    padding-block: var(--mdj-space-1);
-    border-bottom: 1px solid transparent;
-    transition: border-color 200ms ease;
+    font-weight: 500;
+    white-space: nowrap;
+    padding-block: 0.4rem;
+    transition: color 200ms ease;
 }
-.mdj-nav-link:hover,
-.mdj-nav-link[aria-current="page"] {
-    border-bottom-color: var(--mdj-sage);
-    color: var(--mdj-ink);
+/* Desktop menu: tighter gap so all eight links fit on one line from 1200px. */
+.mdj-header nav > ul { gap: 1.35rem !important; }
+.mdj-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--mdj-terracotta);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--mdj-ease);
 }
+.mdj-nav-link:hover { color: var(--mdj-forest); }
+.mdj-nav-link:hover::after,
+.mdj-nav-link[aria-current="page"]::after { transform: scaleX(1); }
+.mdj-nav-link[aria-current="page"] { color: var(--mdj-forest-deep); font-weight: 600; }
 
-/* Mobile menu button. The bars are drawn with pseudo-elements and rotate into
-   a cross when the panel opens; Bootstrap already keeps aria-expanded current,
-   so the visual state derives from the accessible state instead of duplicating
-   it. */
+/* Mobile menu panel: larger targets, separated rows. */
+#nav-mobile .mdj-nav-link {
+    display: block;
+    font-size: 1.05rem;
+    padding-block: 0.65rem;
+    border-bottom: 1px solid var(--mdj-line);
+}
+#nav-mobile .mdj-nav-link::after { display: none; }
+
+/* Mobile menu button; bars rotate into a cross from aria-expanded. */
 .mdj-menu {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     flex: none;
     display: grid;
     place-items: center;
     padding: 0;
-    background: transparent;
-    border: 1px solid color-mix(in srgb, var(--mdj-stone) 45%, transparent);
-    border-radius: var(--mdj-radius);
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line-strong);
+    border-radius: var(--mdj-radius-pill);
     cursor: pointer;
 }
-.mdj-menu:hover { border-color: var(--mdj-deep-green); }
-
-.mdj-menu__bars {
-    position: relative;
+.mdj-menu:hover { border-color: var(--mdj-forest); }
+.mdj-menu__bars,
+.mdj-menu__bars::before,
+.mdj-menu__bars::after {
     display: block;
-    width: 20px;
-    height: 1.5px;
+    width: 18px;
+    height: 1.75px;
+    border-radius: 2px;
     background: var(--mdj-ink);
-    transition: background-color 160ms ease;
 }
+.mdj-menu__bars { position: relative; transition: background-color 160ms ease; }
 .mdj-menu__bars::before,
 .mdj-menu__bars::after {
     content: "";
     position: absolute;
     left: 0;
-    width: 20px;
-    height: 1.5px;
-    background: var(--mdj-ink);
-    transition: transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: transform 260ms var(--mdj-ease);
 }
 .mdj-menu__bars::before { top: -6px; }
 .mdj-menu__bars::after  { top: 6px; }
-
 .mdj-menu[aria-expanded="true"] .mdj-menu__bars { background: transparent; }
 .mdj-menu[aria-expanded="true"] .mdj-menu__bars::before { transform: translateY(6px) rotate(45deg); }
 .mdj-menu[aria-expanded="true"] .mdj-menu__bars::after  { transform: translateY(-6px) rotate(-45deg); }
 
-@media (min-width: 992px) {
-    .mdj-wordmark { font-size: 1.5rem; }
-}
-
-/* Language switcher (ES / EN). Two submit buttons of one set_language form;
-   aria-pressed marks the active language, and the look follows from it. */
+/* Language switcher (ES / EN): a segmented pill. */
 .mdj-lang fieldset {
     display: flex;
     margin: 0;
-    padding: 0;
-    border: 1px solid color-mix(in srgb, var(--mdj-stone) 45%, transparent);
-    border-radius: var(--mdj-radius);
+    padding: 3px;
+    border: 1px solid var(--mdj-line-strong);
+    border-radius: var(--mdj-radius-pill);
+    background: var(--mdj-paper);
 }
 .mdj-lang__option {
-    min-width: 44px;
-    height: 44px;
-    padding: 0 var(--mdj-space-1);
+    min-width: 40px;
+    height: 36px;
+    padding: 0 0.6rem;
     background: transparent;
     border: 0;
+    border-radius: var(--mdj-radius-pill);
     color: var(--mdj-stone);
-    font-size: var(--mdj-size-meta);
-    font-weight: 500;
-    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     cursor: pointer;
     transition: color 160ms ease, background-color 160ms ease;
 }
-.mdj-lang__option + .mdj-lang__option {
-    border-left: 1px solid color-mix(in srgb, var(--mdj-stone) 45%, transparent);
-}
 .mdj-lang__option:hover { color: var(--mdj-ink); }
 .mdj-lang__option[aria-pressed="true"] {
-    background: var(--mdj-deep-green);
+    background: var(--mdj-forest);
     color: var(--mdj-paper);
 }
 
@@ -330,8 +396,6 @@ h3 {
    4. Actions
    -------------------------------------------------------------------------- */
 
-/* On mobile the buttons take the full width: they are the primary touch
-   target and nothing else is competing for the room. */
 .mdj-btn {
     display: flex;
     width: 100%;
@@ -339,213 +403,276 @@ h3 {
     justify-content: center;
     gap: var(--mdj-space-1);
     font-family: var(--mdj-font-body);
-    font-size: var(--mdj-size-base);
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     letter-spacing: 0.01em;
-    padding: 0.8rem 1.5rem;
+    padding: 0.8rem 1.6rem;
     min-height: 48px;
-    border-radius: var(--mdj-radius);
-    border: 1px solid transparent;
+    border-radius: var(--mdj-radius-pill);
+    border: 1.5px solid transparent;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
     transition: transform var(--mdj-transition), box-shadow var(--mdj-transition),
-                background-color 200ms ease, color 200ms ease;
+                background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 
 .mdj-btn--primary {
-    background: var(--mdj-deep-green);
-    color: var(--mdj-paper);
-    box-shadow: var(--mdj-light-near);
+    background: var(--mdj-terracotta);
+    color: #FFFFFF;
+    box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--mdj-terracotta) 90%, transparent);
 }
 .mdj-btn--primary:hover {
-    background: var(--mdj-night-green);
-    color: var(--mdj-paper);
+    background: var(--mdj-terracotta-deep);
+    color: #FFFFFF;
 }
 
 .mdj-btn--secondary {
     background: transparent;
-    color: var(--mdj-ink);
-    border-color: color-mix(in srgb, var(--mdj-stone) 45%, transparent);
+    color: var(--mdj-forest-deep);
+    border-color: var(--mdj-line-strong);
 }
 .mdj-btn--secondary:hover {
-    border-color: var(--mdj-deep-green);
-    color: var(--mdj-deep-green);
+    border-color: var(--mdj-forest);
+    background: var(--mdj-forest);
+    color: var(--mdj-paper);
 }
 
 @media (min-width: 576px) {
-    .mdj-btn {
-        display: inline-flex;
-        width: auto;
-        padding-inline: 1.9rem;
-    }
-    /* The lift on hover only means something where there is a pointer; on
-       touch it does nothing at all. */
-    .mdj-btn--primary:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--mdj-light-far);
-    }
+    .mdj-btn { display: inline-flex; width: auto; }
+    .mdj-btn--primary:hover { transform: translateY(-2px); }
 }
 
+.mdj-btn:disabled,
+.mdj-btn[aria-busy="true"] {
+    opacity: 0.7;
+    cursor: progress;
+    transform: none;
+    box-shadow: none;
+}
 
-/* Text link whose underline thickens on hover. */
+/* Text link: terracotta underline that thickens on hover. */
 .mdj-link {
-    color: var(--mdj-deep-green);
+    color: var(--mdj-forest);
+    font-weight: 600;
     text-decoration: none;
-    background-image: linear-gradient(var(--mdj-sage), var(--mdj-sage));
+    background-image: linear-gradient(var(--mdj-terracotta), var(--mdj-terracotta));
     background-repeat: no-repeat;
     background-position: 0 100%;
-    background-size: 100% 1px;
-    transition: background-size 260ms ease;
+    background-size: 100% 1.5px;
+    transition: background-size 240ms ease, color 200ms ease;
 }
-.mdj-link:hover { background-size: 100% 2px; color: var(--mdj-night-green); }
+.mdj-link:hover { background-size: 100% 3px; color: var(--mdj-terracotta-deep); }
 
 /* --------------------------------------------------------------------------
-   5. Hero
+   5. Photo slots and drawn compositions
+   --------------------------------------------------------------------------
+   .mdj-art draws a scene with gradients only. .mdj-photo sits on top and
+   paints a file from /static/web/img/; if the file is absent the layer stays
+   empty and the drawing shows through.
    -------------------------------------------------------------------------- */
 
-.mdj-hero { padding-block: var(--mdj-space-5); }
-.mdj-hero__title { margin-bottom: var(--mdj-space-3); }
+.mdj-art { position: relative; isolation: isolate; overflow: hidden; }
 
-@media (min-width: 992px) {
-    .mdj-hero { padding-block: clamp(var(--mdj-space-5), 12vh, 8rem); }
+.mdj-photo {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: transform 900ms var(--mdj-ease);
+}
+.mdj-photo--hero       { background-image: url("../img/hero.jpg"); }
+.mdj-photo--hotel      { background-image: url("../img/hotel.jpg"); }
+.mdj-photo--habitacion { background-image: url("../img/habitacion.jpg"); }
+.mdj-photo--ciudad     { background-image: url("../img/ciudad.jpg"); }
+
+/* Valley at dusk (dark, so white hero text stays legible). */
+.mdj-art--dusk {
+    background:
+        radial-gradient(circle at 74% 34%, #F3C98B 0 4.5%, rgba(243, 201, 139, 0.35) 4.6% 9%, transparent 9.2%),
+        radial-gradient(120% 60% at 12% 108%, #0F211B 0 46%, transparent 46.4%),
+        radial-gradient(140% 58% at 92% 112%, #183229 0 48%, transparent 48.4%),
+        radial-gradient(170% 62% at 50% 118%, #2C4A3E 0 54%, transparent 54.4%),
+        linear-gradient(180deg, #3A3A35 0%, #8A5A3E 48%, #C9875A 74%, #E2B07C 100%);
 }
 
-/* The image takes the long shadow: it is the piece where the light of the
-   direction becomes visible. */
+/* Interior patio: terrazzo floor and a lattice shadow. */
+.mdj-art--patio {
+    background:
+        radial-gradient(circle at 76% 28%, color-mix(in srgb, var(--mdj-sage) 75%, transparent) 0 13%, transparent 13.4%),
+        repeating-linear-gradient(115deg, transparent 0 44px, rgba(27, 36, 32, 0.05) 44px 66px),
+        linear-gradient(to top, var(--mdj-sand-deep) 0 28%, transparent 28%),
+        linear-gradient(160deg, var(--mdj-paper) 0%, var(--mdj-sand) 100%);
+}
+
+/* Room: wall, floor and window light. Four tones so neighbours differ. */
+.mdj-art--room {
+    --mdj-wall: var(--mdj-sand);
+    background:
+        radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--mdj-sage) 55%, transparent) 0 10%, transparent 10.4%),
+        linear-gradient(to top, color-mix(in srgb, var(--mdj-sand-deep) 80%, var(--mdj-terracotta)) 0 16%, transparent 16%),
+        linear-gradient(115deg, transparent 0 44%, rgba(255, 255, 255, 0.5) 44% 60%, transparent 60%),
+        var(--mdj-wall);
+}
+.mdj-art--room[data-variant="2"] { --mdj-wall: #E7D3C2; }
+.mdj-art--room[data-variant="3"] { --mdj-wall: color-mix(in srgb, var(--mdj-sage) 45%, var(--mdj-paper)); }
+.mdj-art--room[data-variant="4"] { --mdj-wall: #DCD6C8; }
+
+/* Location: contour lines of the valley and the hotel pin. */
+.mdj-art--valley {
+    background:
+        radial-gradient(circle at 58% 52%, var(--mdj-terracotta) 0 2.2%, var(--mdj-paper) 2.3% 3.4%, transparent 3.5%),
+        repeating-radial-gradient(ellipse at 58% 52%, transparent 0 22px,
+            color-mix(in srgb, var(--mdj-forest) 22%, transparent) 22px 23px),
+        linear-gradient(135deg, var(--mdj-sand) 0%, color-mix(in srgb, var(--mdj-sage) 30%, var(--mdj-paper)) 100%);
+}
+
+/* Framed image block (about, location, room cards). */
 .mdj-frame {
     position: relative;
-    background: var(--mdj-mist);
-    border-radius: var(--mdj-radius);
-    box-shadow: var(--mdj-light-far);
-    aspect-ratio: 3 / 2;
-    display: grid;
-    place-items: center;
+    /* background-color only: the .mdj-art drawing keeps its gradient layers. */
+    background-color: var(--mdj-sand);
+    border-radius: var(--mdj-radius-lg);
+    box-shadow: var(--mdj-shadow-lift);
+    aspect-ratio: 4 / 3;
     overflow: hidden;
 }
-.mdj-frame--wide { aspect-ratio: 16 / 9; }
-.mdj-frame img { width: 100%; height: 100%; object-fit: cover; }
-.mdj-frame figcaption {
-    font-size: var(--mdj-size-meta);
-    color: var(--mdj-stone);
-    padding: var(--mdj-space-2);
-    text-align: center;
-}
+.mdj-frame--wide { aspect-ratio: 16 / 10; }
+.mdj-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 @media (min-width: 768px) {
     .mdj-frame { aspect-ratio: 4 / 5; }
-    .mdj-frame--wide { aspect-ratio: 16 / 10; }
+    .mdj-frame--wide { aspect-ratio: 16 / 11; }
+}
+
+/* A small floating caption over a frame, like a museum label. */
+.mdj-frame__badge {
+    position: absolute;
+    left: var(--mdj-space-2);
+    bottom: var(--mdj-space-2);
+    z-index: 2;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--mdj-radius-pill);
+    background: color-mix(in srgb, var(--mdj-paper) 92%, transparent);
+    backdrop-filter: blur(6px);
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mdj-forest-deep);
 }
 
 /* --------------------------------------------------------------------------
-   6. Forms
+   6. Hero
+   -------------------------------------------------------------------------- */
+
+.mdj-hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: end;
+    min-height: clamp(560px, 88vh, 860px);
+    padding-block: var(--mdj-space-6) calc(var(--mdj-space-6) + 2rem);
+    color: var(--mdj-paper);
+    overflow: hidden;
+}
+.mdj-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+/* Shade over photo and drawing so text always meets contrast. */
+.mdj-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(19, 40, 32, 0.9) 0%, rgba(19, 40, 32, 0.62) 48%, rgba(19, 40, 32, 0.18) 100%),
+        linear-gradient(0deg, rgba(19, 40, 32, 0.55) 0%, transparent 45%);
+}
+.mdj-hero__content { position: relative; max-width: 42rem; }
+.mdj-hero .mdj-eyebrow { color: var(--mdj-gold); }
+.mdj-hero__title {
+    color: #FFFFFF;
+    margin-bottom: var(--mdj-space-3);
+}
+.mdj-hero__title em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--mdj-gold);
+}
+.mdj-hero .mdj-lead { color: rgba(255, 255, 255, 0.86); }
+.mdj-hero .mdj-btn--secondary {
+    color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.55);
+}
+.mdj-hero .mdj-btn--secondary:hover {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    color: var(--mdj-forest-deep);
+}
+
+.mdj-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: var(--mdj-size-meta);
+}
+.mdj-highlights li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--mdj-radius-pill);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+}
+.mdj-highlights li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mdj-gold);
+}
+
+/* Availability panel floats over the bottom edge of the hero. */
+.mdj-section--tight {
+    position: relative;
+    z-index: 2;
+    padding-block: 0 var(--mdj-space-5);
+    margin-top: calc(-1 * (var(--mdj-space-6) - 0.5rem));
+}
+.mdj-panel--raised {
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line);
+    box-shadow: var(--mdj-shadow-lift);
+}
+
+/* --------------------------------------------------------------------------
+   7. Panels and forms
    -------------------------------------------------------------------------- */
 
 .mdj-panel {
-    background: var(--mdj-mist);
+    background: var(--mdj-paper);
     padding: var(--mdj-space-3);
-    border-radius: var(--mdj-radius);
-    box-shadow: var(--mdj-light-near);
+    border: 1px solid var(--mdj-line);
+    border-radius: var(--mdj-radius-lg);
+    box-shadow: var(--mdj-shadow-soft);
 }
-
-.mdj-tourism-hero {
-    display: grid;
-    gap: var(--mdj-space-4);
-    align-items: end;
-    border-bottom: var(--mdj-hairline);
-    padding-bottom: var(--mdj-space-4);
-}
-
-.mdj-tourism-hero__note {
-    margin: 0;
-    color: var(--mdj-stone);
-    font-size: var(--mdj-size-meta);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
-.mdj-tourism-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--mdj-space-4);
-}
-
-.mdj-tourism-card {
-    overflow: hidden;
-    background: var(--mdj-mist);
-    box-shadow: var(--mdj-light-near);
-}
-
-.mdj-tourism-card__image {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background: var(--mdj-night-green);
-}
-
-.mdj-tourism-card__image img,
-.mdj-tourism-card__image-fallback {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.mdj-tourism-card__image img {
-    display: block;
-    transition: transform var(--mdj-transition);
-}
-
-.mdj-tourism-card:hover .mdj-tourism-card__image img { transform: scale(1.035); }
-
-.mdj-tourism-card__image-fallback {
-    display: grid;
-    place-items: center;
-    background:
-        radial-gradient(circle at 70% 30%, color-mix(in srgb, var(--mdj-sage) 55%, transparent), transparent 34%),
-        linear-gradient(135deg, var(--mdj-night-green), var(--mdj-deep-green));
-    color: var(--mdj-paper);
-    font-family: var(--mdj-font-display);
-    font-size: 2rem;
-}
-
-.mdj-tourism-card__image-fallback[hidden] { display: none; }
-
-.mdj-tourism-card__place {
-    position: absolute;
-    right: var(--mdj-space-2);
-    bottom: var(--mdj-space-2);
-    color: var(--mdj-paper);
-    font-size: var(--mdj-size-meta);
-    letter-spacing: 0.12em;
-}
-
-.mdj-tourism-card__body { padding: var(--mdj-space-3); }
-.mdj-tourism-card__body h2 { font-size: clamp(1.45rem, 3vw, 2rem); }
-.mdj-tourism-card__body > p:not(.mdj-eyebrow):not(.mdj-meta) {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    color: color-mix(in srgb, var(--mdj-ink) 82%, var(--mdj-paper));
-}
-
-@media (min-width: 700px) {
-    .mdj-tourism-hero { grid-template-columns: 1fr auto; }
-    .mdj-tourism-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .mdj-tourism-card__body { padding: var(--mdj-space-4); }
-}
-
 @media (min-width: 992px) {
     .mdj-panel { padding: var(--mdj-space-4); }
 }
 
-.mdj-field { display: flex; flex-direction: column; gap: 0.4rem; }
+.mdj-field { display: flex; flex-direction: column; gap: 0.45rem; }
 
 .mdj-field > label,
 .mdj-label {
-    font-size: var(--mdj-size-meta);
-    font-weight: 500;
-    letter-spacing: 0.06em;
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--mdj-stone);
 }
@@ -554,46 +681,68 @@ h3 {
 .mdj-field select,
 .mdj-field textarea {
     font-family: var(--mdj-font-body);
-    /* 16px minimum: below that Safari on iOS zooms in when the field takes
-       focus and knocks the page out of place. */
-    font-size: 1rem;
+    font-size: 1rem;            /* 16px: iOS does not zoom on focus */
     color: var(--mdj-ink);
-    background: var(--mdj-paper);
-    border: 1px solid color-mix(in srgb, var(--mdj-stone) 40%, transparent);
-    border-radius: var(--mdj-radius);
-    padding: 0.7rem 0.85rem;
+    background: #FFFFFF;
+    border: 1.5px solid var(--mdj-line-strong);
+    border-radius: var(--mdj-radius-sm);
+    padding: 0.7rem 0.9rem;
     width: 100%;
     max-width: 100%;
-    min-height: 48px;
+    min-height: 50px;
     transition: border-color 200ms ease, box-shadow 200ms ease;
 }
-.mdj-field textarea { min-height: 7rem; }
+.mdj-field input::placeholder,
+.mdj-field textarea::placeholder { color: color-mix(in srgb, var(--mdj-stone) 70%, transparent); }
+.mdj-field textarea { min-height: 7rem; resize: vertical; }
+.mdj-field input:hover,
+.mdj-field select:hover,
+.mdj-field textarea:hover { border-color: color-mix(in srgb, var(--mdj-forest) 45%, transparent); }
 .mdj-field input:focus,
 .mdj-field select:focus,
 .mdj-field textarea:focus {
-    border-color: var(--mdj-deep-green);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mdj-sage) 30%, transparent);
+    border-color: var(--mdj-forest);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--mdj-forest) 14%, transparent);
     outline: none;
+}
+.mdj-field small { font-size: var(--mdj-size-small); }
+
+.mdj-field input:user-invalid,
+.mdj-field select:user-invalid,
+.mdj-field textarea:user-invalid {
+    border-color: var(--mdj-danger);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--mdj-danger) 12%, transparent);
 }
 
 .mdj-check { display: flex; align-items: flex-start; gap: 0.7rem; }
 .mdj-check input {
-    width: 1.15rem;
-    height: 1.15rem;
-    margin-top: 0.3rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.25rem;
     flex: none;
-    accent-color: var(--mdj-deep-green);
+    accent-color: var(--mdj-forest);
 }
-.mdj-check label {
-    font-size: var(--mdj-size-base);
-    color: var(--mdj-ink);
-    text-transform: none;
-    letter-spacing: 0;
-    font-weight: 400;
+.mdj-check label { font-size: var(--mdj-size-base); color: var(--mdj-ink); }
+
+/* The whole "Seleccionar" pill is the target, not just the tiny box. */
+.mdj-check--select {
+    align-items: center;
+    min-height: 44px;
+    padding: 0.4rem 1rem;
+    border: 1.5px solid var(--mdj-line-strong);
+    border-radius: var(--mdj-radius-pill);
+    cursor: pointer;
+    transition: border-color 200ms ease, background-color 200ms ease;
 }
+.mdj-check--select input { margin-top: 0; }
+.mdj-check--select label { cursor: pointer; font-size: var(--mdj-size-meta); font-weight: 600; }
+.mdj-check--select:hover { border-color: var(--mdj-forest); }
+.mdj-check--select:has(input:checked) { background: var(--mdj-forest); border-color: var(--mdj-forest); }
+.mdj-check--select:has(input:checked) label { color: var(--mdj-paper); }
+.mdj-check--select:has(input:checked) input { accent-color: var(--mdj-gold); }
 
 /* --------------------------------------------------------------------------
-   7. Cards
+   8. Cards
    -------------------------------------------------------------------------- */
 
 .mdj-card {
@@ -601,103 +750,238 @@ h3 {
     flex-direction: column;
     height: 100%;
     background: var(--mdj-paper);
-    border: var(--mdj-hairline);
+    border: 1px solid var(--mdj-line);
     border-radius: var(--mdj-radius);
     overflow: hidden;
-    transition: transform var(--mdj-transition), box-shadow var(--mdj-transition);
+    box-shadow: var(--mdj-shadow-soft);
+    transition: transform var(--mdj-transition), box-shadow var(--mdj-transition), border-color 200ms ease;
+}
+.mdj-card .mdj-frame {
+    border-radius: 0;
+    box-shadow: none;
+    aspect-ratio: 4 / 3;
 }
 .mdj-card__body {
     padding: var(--mdj-space-3);
     display: flex;
     flex-direction: column;
-    gap: var(--mdj-space-2);
+    gap: 0.85rem;
     flex: 1;
 }
+.mdj-card__body h3 { margin: 0; }
 .mdj-card__footer {
     margin-top: auto;
+    padding-top: var(--mdj-space-2);
+    border-top: 1px solid var(--mdj-line);
     display: flex;
     flex-wrap: wrap;
     gap: var(--mdj-space-2);
     align-items: center;
 }
 
-.mdj-card--selected {
-    border-color: var(--mdj-deep-green);
-    box-shadow: var(--mdj-light-near);
+.mdj-card--selected,
+.mdj-card:has(.mdj-check--select input:checked) {
+    border-color: var(--mdj-forest);
+    box-shadow: 0 0 0 2px var(--mdj-forest), var(--mdj-shadow-soft);
 }
 
 @media (min-width: 992px) {
-    .mdj-card:hover { transform: translateY(-4px); box-shadow: var(--mdj-light-far); }
+    .mdj-card:hover { transform: translateY(-4px); box-shadow: var(--mdj-shadow-lift); }
+    .mdj-card:hover .mdj-frame img { transform: scale(1.04); }
+    .mdj-card .mdj-frame img { transition: transform 900ms var(--mdj-ease); }
 }
 
-/* Room facts: label/value pairs, unadorned. */
+.mdj-card .mdj-eyebrow { margin-bottom: 0.25rem; }
+
 .mdj-specs {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.35rem var(--mdj-space-2);
+    gap: 0.3rem var(--mdj-space-2);
     margin: 0;
 }
-.mdj-specs dt { font-size: var(--mdj-size-meta); color: var(--mdj-stone); font-weight: 400; }
-.mdj-specs dd { margin: 0; font-size: var(--mdj-size-meta); }
+.mdj-specs dt { font-size: var(--mdj-size-meta); color: var(--mdj-stone); font-weight: 500; }
+.mdj-specs dd { margin: 0; font-size: var(--mdj-size-meta); font-weight: 600; }
 
-/* --------------------------------------------------------------------------
-   8. Booking summary
-   -------------------------------------------------------------------------- */
-
-.mdj-summary {
-    background: var(--mdj-mist);
-    border-radius: var(--mdj-radius);
-    padding: var(--mdj-space-3);
-    box-shadow: var(--mdj-light-near);
+.mdj-price {
+    font-family: var(--mdj-font-display);
+    font-size: 1.85rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--mdj-forest-deep);
 }
 
-.mdj-summary__row {
+/* Category chip. */
+.mdj-chip {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--mdj-radius-pill);
+    background: color-mix(in srgb, var(--mdj-terracotta) 12%, var(--mdj-paper));
+    color: var(--mdj-terracotta-deep);
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   9. Home sections
+   -------------------------------------------------------------------------- */
+
+/* Amenities as tiles with a check mark. */
+.mdj-services li > span {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    height: 100%;
+    padding: 1rem 1.1rem;
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line);
+    border-radius: var(--mdj-radius);
+    font-weight: 500;
+}
+.mdj-services li > span::before {
+    content: "";
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.05rem;
+    border-radius: 50%;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23FFFDF8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 70% no-repeat,
+        var(--mdj-forest);
+}
+
+.mdj-benefits li {
+    position: relative;
+    padding: 0.85rem 0 0.85rem 2.25rem;
+    border-bottom: 1px solid var(--mdj-line);
+    font-weight: 500;
+}
+.mdj-benefits li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23FFFFFF' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 70% no-repeat,
+        var(--mdj-terracotta);
+}
+
+.mdj-distances { display: grid; margin-top: var(--mdj-space-3); }
+.mdj-distances li {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: var(--mdj-space-2);
-    padding-block: 0.5rem;
-    border-bottom: var(--mdj-hairline);
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--mdj-line);
+    font-weight: 500;
 }
-.mdj-summary__row:last-child { border-bottom: 0; }
-.mdj-summary__row dt {
-    font-weight: 400;
-    color: var(--mdj-stone);
-    font-size: var(--mdj-size-meta);
-    flex: none;
-}
-.mdj-summary__row dd { margin: 0; text-align: right; min-width: 0; }
+.mdj-distances li .mdj-meta { text-align: right; flex: none; font-weight: 400; }
 
-.mdj-summary__total {
-    border-top: 2px solid var(--mdj-ink);
-    margin-top: var(--mdj-space-2);
-    padding-top: var(--mdj-space-2);
+/* Gallery mosaic: four photo slots, the first one large. */
+.mdj-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 9.5rem;
+    gap: var(--mdj-space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-.mdj-summary__total dt,
-.mdj-summary__total dd {
+.mdj-gallery__item {
+    position: relative;
+    border-radius: var(--mdj-radius);
+    overflow: hidden;
+    box-shadow: var(--mdj-shadow-soft);
+}
+.mdj-gallery__item > .mdj-art { position: absolute; inset: 0; }
+.mdj-gallery__item:first-child { grid-column: span 2; grid-row: span 2; }
+.mdj-gallery__item:hover .mdj-photo { transform: scale(1.05); }
+
+@media (min-width: 768px) {
+    .mdj-gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 13rem; }
+    .mdj-gallery__item:nth-child(4) { grid-column: span 2; }
+}
+
+/* Rating line. */
+.mdj-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.mdj-rating__stars { color: var(--mdj-gold); letter-spacing: 0.15em; font-size: 1.05rem; }
+
+/* Reviews on the dark band. */
+.mdj-quote {
+    background: rgba(255, 253, 248, 0.06);
+    border: 1px solid rgba(255, 253, 248, 0.14);
+    box-shadow: none;
+    color: color-mix(in srgb, var(--mdj-cream) 92%, transparent);
+}
+.mdj-quote .mdj-card__body::before {
+    content: "\201C";
     font-family: var(--mdj-font-display);
-    font-size: 1.375rem;
-    color: var(--mdj-ink);
+    font-size: 4.5rem;
+    line-height: 0.5;
+    margin-top: 0.75rem;
+    color: var(--mdj-gold);
+}
+.mdj-quote blockquote p {
+    font-family: var(--mdj-font-display);
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.35;
+}
+.mdj-quote figcaption { color: color-mix(in srgb, var(--mdj-cream) 70%, transparent) !important; }
+@media (min-width: 992px) {
+    .mdj-quote:hover { transform: none; box-shadow: none; border-color: rgba(217, 184, 119, 0.5); }
 }
 
-@media (min-width: 992px) {
-    .mdj-summary { padding: var(--mdj-space-4); }
-    .mdj-summary__total dt,
-    .mdj-summary__total dd { font-size: 1.5rem; }
-    /* The summary follows the guest while they fill in their details, but
-       only where there are two columns: on mobile it sits after the form. */
-    .mdj-sticky { position: sticky; top: 6.5rem; }
+/* Closing call to action: terracotta band with an arch watermark. */
+.mdj-closing {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(60% 120% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 60%),
+        linear-gradient(135deg, var(--mdj-terracotta) 0%, var(--mdj-terracotta-deep) 100%);
+    color: rgba(255, 255, 255, 0.9);
 }
+.mdj-closing h2 { color: #FFFFFF; }
+.mdj-closing .mdj-lead { color: rgba(255, 255, 255, 0.88); }
+.mdj-closing .mdj-btn--primary {
+    background: var(--mdj-paper);
+    color: var(--mdj-terracotta-deep);
+    box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.45);
+}
+.mdj-closing .mdj-btn--primary:hover { background: #FFFFFF; color: var(--mdj-forest-deep); }
+body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
 
 /* --------------------------------------------------------------------------
-   9. Steps and alerts
+   10. Inner page header
    -------------------------------------------------------------------------- */
 
-/* Here numbering does state something true: booking is a sequence, and the
-   guest needs to know which of the three stretches they are in. */
+.mdj-page-head {
+    padding-bottom: var(--mdj-space-4);
+    margin-bottom: var(--mdj-space-4);
+    border-bottom: 1px solid var(--mdj-line);
+}
+.mdj-page-head h1 { margin-bottom: 0; }
+.mdj-page-head .mdj-lead { margin-top: var(--mdj-space-2); margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   11. Booking flow
+   -------------------------------------------------------------------------- */
+
 .mdj-steps {
     display: flex;
     flex-direction: column;
-    gap: var(--mdj-space-2);
+    gap: 0.6rem;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -707,66 +991,71 @@ h3 {
     counter-increment: paso;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.65rem;
     color: var(--mdj-stone);
     font-size: var(--mdj-size-meta);
+    font-weight: 600;
 }
 .mdj-steps li::before {
     content: counter(paso);
     font-variant-numeric: tabular-nums;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2rem;
+    height: 2rem;
     flex: none;
     display: grid;
     place-items: center;
-    border: 1px solid currentColor;
+    border: 1.5px solid var(--mdj-line-strong);
     border-radius: 50%;
+    background: var(--mdj-paper);
     font-size: 0.8125rem;
 }
-.mdj-steps li[aria-current="step"] { color: var(--mdj-ink); font-weight: 500; }
+.mdj-steps li[aria-current="step"] { color: var(--mdj-forest-deep); }
 .mdj-steps li[aria-current="step"]::before {
-    background: var(--mdj-deep-green);
-    border-color: var(--mdj-deep-green);
-    color: var(--mdj-paper);
+    background: var(--mdj-terracotta);
+    border-color: var(--mdj-terracotta);
+    color: #FFFFFF;
 }
-
-/* A finished step shows a mark instead of its number: the number stops
-   informing anything once the step is behind you. */
-.mdj-steps li[data-state="complete"] { color: var(--mdj-deep-green); }
+.mdj-steps li[data-state="complete"] { color: var(--mdj-forest); }
 .mdj-steps li[data-state="complete"]::before {
     content: "\2713";
-    border-color: var(--mdj-sage);
-    color: var(--mdj-deep-green);
+    background: var(--mdj-forest);
+    border-color: var(--mdj-forest);
+    color: var(--mdj-paper);
 }
 .mdj-steps a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
 .mdj-steps a:hover { border-bottom-color: currentColor; }
 
 @media (min-width: 768px) {
-    .mdj-steps { flex-direction: row; flex-wrap: wrap; gap: var(--mdj-space-3); }
+    .mdj-steps { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+    .mdj-steps li:not(:last-child)::after {
+        content: "";
+        width: 2.5rem;
+        height: 1.5px;
+        margin-left: 0.4rem;
+        background: var(--mdj-line-strong);
+    }
 }
 
-/* Context bar for steps 2 and 3: it recalls what was already chosen without
-   making the guest go back to check. */
 .mdj-recap {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     gap: var(--mdj-space-2) var(--mdj-space-4);
-    background: var(--mdj-mist);
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line);
     border-radius: var(--mdj-radius);
     padding: var(--mdj-space-3);
+    box-shadow: var(--mdj-shadow-soft);
 }
-.mdj-recap__item { font-size: var(--mdj-size-meta); }
+.mdj-recap__item { font-size: var(--mdj-size-meta); font-weight: 600; }
+.mdj-recap__item .mdj-label { margin-bottom: 0.2rem; }
 .mdj-recap__change { margin-left: auto; font-size: var(--mdj-size-meta); }
 
-/* Action row of a step. On mobile they stack with the primary action on top,
-   since that is the one almost always pressed. */
 .mdj-actions {
     display: flex;
     flex-direction: column-reverse;
     gap: var(--mdj-space-2);
 }
-
 @media (min-width: 576px) {
     .mdj-actions {
         flex-direction: row;
@@ -776,58 +1065,309 @@ h3 {
     }
 }
 
-/* Inside the side summary the action leads: nothing competes with it. */
+.mdj-summary {
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line);
+    border-radius: var(--mdj-radius-lg);
+    padding: var(--mdj-space-3);
+    box-shadow: var(--mdj-shadow-lift);
+}
+.mdj-summary > h2 {
+    font-size: 1.6rem;
+    padding-bottom: var(--mdj-space-2);
+    border-bottom: 1px solid var(--mdj-line);
+}
 .mdj-summary .mdj-actions { flex-direction: column; align-items: stretch; }
+.mdj-summary .mdj-actions .mdj-btn { width: 100%; }
+
+.mdj-summary__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--mdj-space-2);
+    padding-block: 0.65rem;
+    border-bottom: 1px dashed var(--mdj-line-strong);
+}
+.mdj-summary__row:last-child { border-bottom: 0; }
+.mdj-summary__row dt { font-weight: 500; color: var(--mdj-stone); font-size: var(--mdj-size-meta); flex: none; }
+.mdj-summary__row dd { margin: 0; text-align: right; min-width: 0; font-weight: 600; }
+
+.mdj-summary__total {
+    margin-top: var(--mdj-space-2);
+    padding: var(--mdj-space-2);
+    border: 0;
+    border-radius: var(--mdj-radius-sm);
+    background: var(--mdj-forest-deep);
+    align-items: baseline;
+}
+.mdj-summary__total dt,
+.mdj-summary__total dd {
+    font-family: var(--mdj-font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--mdj-paper);
+}
+.mdj-summary__total .mdj-currency { color: var(--mdj-gold); }
+
+@media (min-width: 992px) {
+    .mdj-summary { padding: var(--mdj-space-4); }
+    .mdj-summary__total dt,
+    .mdj-summary__total dd { font-size: 1.7rem; }
+    .mdj-sticky { position: sticky; top: 6.5rem; }
+}
+
+.mdj-currency {
+    font-family: var(--mdj-font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--mdj-stone);
+}
+
+/* Booking code: large and spaced, easy to read aloud. */
+.mdj-code {
+    font-family: var(--mdj-font-body);
+    font-size: clamp(1.6rem, 6vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    color: var(--mdj-terracotta-deep);
+    user-select: all;
+}
+
+/* Check mark above "Reserva confirmada". */
+.mdj-success {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: var(--mdj-space-3);
+    border-radius: 50%;
+    background: var(--mdj-success);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--mdj-success) 14%, transparent);
+}
+.mdj-success::before {
+    content: "";
+    width: 0.85rem;
+    height: 1.5rem;
+    margin-top: -0.25rem;
+    border: solid #FFFFFF;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+}
+
+/* --------------------------------------------------------------------------
+   12. Alerts
+   -------------------------------------------------------------------------- */
 
 .mdj-alerts { list-style: none; padding: 0; margin: 0; }
 .mdj-alert {
-    padding: var(--mdj-space-2) var(--mdj-space-3);
-    border-left: 3px solid var(--mdj-deep-green);
-    background: var(--mdj-mist);
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.9rem 1.1rem;
     margin-bottom: var(--mdj-space-2);
+    border-radius: var(--mdj-radius-sm);
+    border: 1px solid var(--mdj-line);
+    border-left: 4px solid var(--mdj-forest);
+    background: var(--mdj-paper);
+    font-weight: 500;
 }
-.mdj-alert[data-level~="error"] { border-left-color: #8C3A32; }
+.mdj-alert[data-level~="error"] {
+    border-color: color-mix(in srgb, var(--mdj-danger) 30%, transparent);
+    border-left-color: var(--mdj-danger);
+    background: color-mix(in srgb, var(--mdj-danger) 7%, var(--mdj-paper));
+    color: #6B231B;
+}
+.mdj-alert[data-level~="success"] {
+    border-left-color: var(--mdj-success);
+    background: color-mix(in srgb, var(--mdj-success) 8%, var(--mdj-paper));
+}
 
-/* Content the hotel has not supplied yet. Marked in the DOM so it is easy to
-   find, but without visual noise on screen. */
 [data-placeholder] { color: var(--mdj-stone); font-style: italic; }
 
 /* --------------------------------------------------------------------------
-   10. Footer
+   13. Integrations: experiences (MeetU2) and tourism (API-Colombia)
    -------------------------------------------------------------------------- */
 
-.mdj-footer {
-    background: var(--mdj-night-green);
-    color: color-mix(in srgb, var(--mdj-paper) 82%, transparent);
-    padding-block: var(--mdj-space-5) var(--mdj-space-3);
-    margin-top: var(--mdj-space-5);
+.mdj-exp-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    padding: var(--mdj-space-3);
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line);
+    border-radius: var(--mdj-radius);
+    box-shadow: var(--mdj-shadow-soft);
+    color: var(--mdj-ink);
+    text-decoration: none;
+    transition: transform var(--mdj-transition), box-shadow var(--mdj-transition), border-color 200ms ease;
 }
-.mdj-footer h2 {
-    font-family: var(--mdj-font-body);
+.mdj-exp-card:hover { color: var(--mdj-ink); border-color: var(--mdj-terracotta); }
+.mdj-exp-card h2 {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    margin: 0;
+}
+.mdj-exp-card__meta {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.3rem 1rem;
+    margin: auto 0 0;
+    padding-top: var(--mdj-space-2);
+    border-top: 1px solid var(--mdj-line);
     font-size: var(--mdj-size-meta);
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--mdj-paper) 60%, transparent);
-    margin-bottom: var(--mdj-space-2);
 }
-.mdj-footer a { color: var(--mdj-paper); text-decoration: none; }
-.mdj-footer a:hover { text-decoration: underline; }
-.mdj-footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; }
-.mdj-footer address { font-style: normal; }
-.mdj-footer [data-placeholder] { color: color-mix(in srgb, var(--mdj-paper) 55%, transparent); }
-.mdj-footer__wordmark { font-family: var(--mdj-font-display); font-size: 1.75rem; color: var(--mdj-paper); }
-
+.mdj-exp-card__meta dt { color: var(--mdj-stone); font-weight: 500; }
+.mdj-exp-card__meta dd { margin: 0; font-weight: 600; }
+.mdj-exp-card__cta {
+    font-size: var(--mdj-size-meta);
+    font-weight: 700;
+    color: var(--mdj-terracotta-deep);
+}
 @media (min-width: 992px) {
-    .mdj-footer__wordmark { font-size: 2rem; }
+    .mdj-exp-card:hover { transform: translateY(-4px); box-shadow: var(--mdj-shadow-lift); }
+}
+
+.mdj-tourism-hero {
+    display: grid;
+    gap: var(--mdj-space-3);
+    align-items: end;
+    border-bottom: 1px solid var(--mdj-line);
+    padding-bottom: var(--mdj-space-4);
+}
+.mdj-tourism-hero__note {
+    margin: 0;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--mdj-radius);
+    background: var(--mdj-sand);
+    color: var(--mdj-forest-deep);
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.mdj-tourism-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--mdj-space-3);
+}
+.mdj-tourism-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--mdj-paper);
+    border: 1px solid var(--mdj-line);
+    border-radius: var(--mdj-radius);
+    box-shadow: var(--mdj-shadow-soft);
+    transition: transform var(--mdj-transition), box-shadow var(--mdj-transition);
+}
+.mdj-tourism-card__image {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--mdj-forest-deep);
+}
+.mdj-tourism-card__image img,
+.mdj-tourism-card__image-fallback { width: 100%; height: 100%; object-fit: cover; }
+.mdj-tourism-card__image img { display: block; transition: transform 900ms var(--mdj-ease); }
+.mdj-tourism-card:hover .mdj-tourism-card__image img { transform: scale(1.05); }
+.mdj-tourism-card__image-fallback {
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 72% 30%, rgba(217, 184, 119, 0.45), transparent 34%),
+        linear-gradient(135deg, var(--mdj-forest-deep), var(--mdj-forest));
+    color: var(--mdj-paper);
+    font-family: var(--mdj-font-display);
+    font-size: 2rem;
+    font-weight: 600;
+}
+.mdj-tourism-card__image-fallback[hidden] { display: none; }
+.mdj-tourism-card__place {
+    position: absolute;
+    left: var(--mdj-space-2);
+    top: var(--mdj-space-2);
+    display: grid;
+    place-items: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--mdj-radius-pill);
+    background: var(--mdj-terracotta);
+    color: #FFFFFF;
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+.mdj-tourism-card__body { padding: var(--mdj-space-3); }
+.mdj-tourism-card__body h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+.mdj-tourism-card__body > p:not(.mdj-eyebrow):not(.mdj-meta) {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    color: color-mix(in srgb, var(--mdj-ink) 82%, var(--mdj-paper));
+}
+.mdj-tourism-card__body .mdj-meta { font-weight: 600; color: var(--mdj-forest); }
+
+@media (min-width: 700px) {
+    .mdj-tourism-hero { grid-template-columns: 1fr auto; }
+    .mdj-tourism-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mdj-tourism-card__body { padding: var(--mdj-space-4); }
+}
+@media (min-width: 1200px) {
+    .mdj-tourism-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mdj-tourism-card__body { padding: var(--mdj-space-3); }
+}
+@media (min-width: 992px) {
+    .mdj-tourism-card:hover { transform: translateY(-4px); box-shadow: var(--mdj-shadow-lift); }
 }
 
 /* --------------------------------------------------------------------------
-   11. The signature: light travelling down the page
-   --------------------------------------------------------------------------
-   Each block enters drifting in from the direction the light arrives from.
-   No JavaScript: animation-timeline handles it where the browser supports it,
-   and where it does not, the content simply appears in place.
+   14. Footer
+   -------------------------------------------------------------------------- */
+
+.mdj-footer {
+    position: relative;
+    background: var(--mdj-forest-deep);
+    color: color-mix(in srgb, var(--mdj-cream) 80%, transparent);
+    padding-block: var(--mdj-space-5) var(--mdj-space-3);
+    margin-top: var(--mdj-space-5);
+    border-top: 4px solid var(--mdj-terracotta);
+}
+.mdj-footer h2 {
+    font-family: var(--mdj-font-body);
+    font-size: var(--mdj-size-small);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mdj-gold);
+    margin-bottom: var(--mdj-space-2);
+}
+.mdj-footer a { color: var(--mdj-paper); text-decoration: none; transition: color 160ms ease; }
+.mdj-footer a:hover { color: var(--mdj-gold); }
+.mdj-footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.mdj-footer address { font-style: normal; }
+.mdj-footer [data-placeholder] { color: color-mix(in srgb, var(--mdj-paper) 55%, transparent); }
+.mdj-footer__wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--mdj-font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--mdj-paper);
+}
+.mdj-footer__wordmark .mdj-logo { width: 2.5rem; color: var(--mdj-gold); }
+.mdj-footer__meta { font-size: var(--mdj-size-meta); color: color-mix(in srgb, var(--mdj-paper) 62%, transparent); }
+.mdj-footer__legal {
+    margin-top: var(--mdj-space-4);
+    padding-top: var(--mdj-space-3);
+    border-top: 1px solid color-mix(in srgb, var(--mdj-paper) 14%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   15. Motion
    -------------------------------------------------------------------------- */
 
 @supports (animation-timeline: view()) {
@@ -835,15 +1375,25 @@ h3 {
         .mdj-reveal {
             animation: mdj-enter linear both;
             animation-timeline: view();
-            animation-range: entry 5% cover 28%;
+            animation-range: entry 5% cover 25%;
         }
     }
 }
 
 @keyframes mdj-enter {
-    /* Vertical travel only: shifting a full-width block sideways is exactly
-       what brings a horizontal scrollbar back. */
     from { opacity: 0; transform: translate3d(0, 1.5rem, 0); }
+    to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mdj-hero__content > * { animation: mdj-rise 800ms var(--mdj-ease) both; }
+    .mdj-hero__content > :nth-child(2) { animation-delay: 80ms; }
+    .mdj-hero__content > :nth-child(3) { animation-delay: 160ms; }
+    .mdj-hero__content > :nth-child(4) { animation-delay: 240ms; }
+    .mdj-hero__content > :nth-child(5) { animation-delay: 320ms; }
+}
+@keyframes mdj-rise {
+    from { opacity: 0; transform: translate3d(0, 1rem, 0); }
     to   { opacity: 1; transform: none; }
 }
 
@@ -857,262 +1407,3 @@ h3 {
     .mdj-card:hover,
     .mdj-btn--primary:hover { transform: none; }
 }
-
-/* --------------------------------------------------------------------------
-   12. Decorative compositions (stand-ins for photography)
-   --------------------------------------------------------------------------
-   Until the hotel supplies its own photos, image slots show abstract scenes
-   drawn only with gradients from the palette: no extra requests, no stock
-   images misdescribing the property. Every scene carries the same diagonal
-   band of light at 115deg, the direction of the system's long shadows.
-   -------------------------------------------------------------------------- */
-
-:root {
-    --mdj-sand:       #E6D9C3;
-    --mdj-sand-deep:  #CDB894;
-    --mdj-light-band: linear-gradient(115deg, transparent 0 34%,
-                        rgba(255, 255, 255, 0.38) 34% 52%, transparent 52%);
-}
-
-.mdj-art { isolation: isolate; }
-.mdj-art::after {
-    /* The shared band of afternoon light. */
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--mdj-light-band);
-    mix-blend-mode: soft-light;
-    pointer-events: none;
-}
-
-/* Valley at dusk: sun low over two ridges. */
-.mdj-art--dusk {
-    background:
-        radial-gradient(circle at 70% 36%, rgba(251, 250, 247, 0.95) 0 7%, transparent 7.4%),
-        radial-gradient(130% 58% at 18% 104%, var(--mdj-deep-green) 0 44%, transparent 44.4%),
-        radial-gradient(150% 56% at 88% 108%, var(--mdj-night-green) 0 46%, transparent 46.4%),
-        radial-gradient(160% 60% at 50% 112%, var(--mdj-sage) 0 52%, transparent 52.4%),
-        linear-gradient(180deg, #EFE4D2 0%, var(--mdj-sand) 42%, #B9C3B5 100%);
-}
-
-/* Interior patio: terrazzo floor and the shadow of a lattice. */
-.mdj-art--patio {
-    background:
-        radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--mdj-sage) 70%, transparent) 0 12%, transparent 12.4%),
-        repeating-linear-gradient(115deg, transparent 0 46px, rgba(35, 40, 42, 0.035) 46px 70px),
-        linear-gradient(to top, var(--mdj-sand-deep) 0 26%, transparent 26%),
-        linear-gradient(160deg, var(--mdj-paper) 0%, var(--mdj-mist) 100%);
-}
-
-/* Room: wall, floor and window light. Four tones so neighbours differ. */
-.mdj-art--room {
-    --mdj-wall: var(--mdj-mist);
-    background:
-        linear-gradient(to top, color-mix(in srgb, var(--mdj-deep-green) 82%, var(--mdj-ink)) 0 20%, transparent 20%),
-        linear-gradient(to top, transparent 20%, color-mix(in srgb, var(--mdj-paper) 85%, transparent) 20% 31%, transparent 31%),
-        linear-gradient(115deg, transparent 0 44%, rgba(255, 255, 255, 0.55) 44% 60%, transparent 60%),
-        var(--mdj-wall);
-}
-.mdj-art--room[data-variant="2"] { --mdj-wall: var(--mdj-sand); }
-.mdj-art--room[data-variant="3"] { --mdj-wall: color-mix(in srgb, var(--mdj-sage) 45%, var(--mdj-paper)); }
-.mdj-art--room[data-variant="4"] { --mdj-wall: color-mix(in srgb, var(--mdj-stone) 30%, var(--mdj-paper)); }
-
-/* Location: contour lines of the valley and the hotel's pin. */
-.mdj-art--valley {
-    background:
-        radial-gradient(circle at 58% 52%, var(--mdj-deep-green) 0 2.2%, var(--mdj-paper) 2.3% 3.3%, transparent 3.4%),
-        repeating-radial-gradient(ellipse at 58% 52%, transparent 0 22px,
-            color-mix(in srgb, var(--mdj-deep-green) 22%, transparent) 22px 23px),
-        linear-gradient(135deg, var(--mdj-mist) 0%, color-mix(in srgb, var(--mdj-sage) 25%, var(--mdj-paper)) 100%);
-}
-
-/* --------------------------------------------------------------------------
-   13. Home retouches
-   -------------------------------------------------------------------------- */
-
-/* Key facts under the hero, separated by hairlines rather than bullets. */
-.mdj-highlights {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--mdj-space-1) var(--mdj-space-3);
-    font-size: var(--mdj-size-meta);
-    color: var(--mdj-stone);
-}
-.mdj-highlights li { display: inline-flex; align-items: center; gap: var(--mdj-space-1); }
-.mdj-highlights li::before {
-    content: "";
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--mdj-sage);
-}
-
-/* The availability panel sits right under the hero: less air before it. */
-.mdj-section--tight { padding-block: var(--mdj-space-3) var(--mdj-space-5); }
-.mdj-section--tight + .mdj-section { border-top: 0; }
-.mdj-panel--raised { background: var(--mdj-paper); border: var(--mdj-hairline); box-shadow: var(--mdj-light-far); }
-
-.mdj-price {
-    font-family: var(--mdj-font-display);
-    font-size: 1.5rem;
-    line-height: 1.1;
-    color: var(--mdj-ink);
-}
-
-/* Lists of amenities, distances and benefits: a short sage rule instead of
-   a bullet, aligned with the first line of text. */
-.mdj-services li,
-.mdj-benefits li {
-    position: relative;
-    padding-left: 1.4rem;
-}
-/* Services are Bootstrap columns: keep their half-gutter and add ours. */
-.mdj-services li { padding-left: calc(var(--bs-gutter-x) * 0.5 + 1.4rem); }
-.mdj-services li::before,
-.mdj-benefits li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.82em;
-    width: 0.7rem;
-    height: 1px;
-    background: var(--mdj-sage);
-}
-.mdj-services li::before { left: calc(var(--bs-gutter-x) * 0.5); }
-
-.mdj-distances { display: grid; gap: 0; margin-top: var(--mdj-space-3); }
-.mdj-distances li {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--mdj-space-2);
-    padding-block: 0.6rem;
-    border-bottom: var(--mdj-hairline);
-}
-.mdj-distances li .mdj-meta { text-align: right; flex: none; }
-
-/* Reviews: an opening quote mark in the display face. */
-.mdj-quote .mdj-card__body::before {
-    content: "\201C";
-    font-family: var(--mdj-font-display);
-    font-size: 3.5rem;
-    line-height: 0.6;
-    color: var(--mdj-sage);
-    margin-top: 0.4rem;
-}
-.mdj-quote blockquote p { font-size: var(--mdj-size-lead); line-height: 1.5; }
-
-/* Closing call to action on mist, crossed by the band of light, running
-   straight into the footer. */
-.mdj-closing {
-    background-color: var(--mdj-mist);
-    background-image: var(--mdj-light-band);
-}
-body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
-
-/* --------------------------------------------------------------------------
-   14. Booking and receipt retouches
-   -------------------------------------------------------------------------- */
-
-/* The whole "Seleccionar" control is the target, not just the tiny box. */
-.mdj-check--select {
-    align-items: center;
-    padding: 0.45rem 0.85rem;
-    border: 1px solid color-mix(in srgb, var(--mdj-stone) 40%, transparent);
-    border-radius: var(--mdj-radius);
-    cursor: pointer;
-    transition: border-color 200ms ease, background-color 200ms ease;
-}
-.mdj-check--select input { margin-top: 0; }
-.mdj-check--select label { cursor: pointer; font-size: var(--mdj-size-meta); }
-.mdj-check--select:hover { border-color: var(--mdj-deep-green); }
-.mdj-check--select:has(input:checked) {
-    background: var(--mdj-deep-green);
-    border-color: var(--mdj-deep-green);
-}
-.mdj-check--select:has(input:checked) label { color: var(--mdj-paper); }
-.mdj-check--select:has(input:checked) input { accent-color: var(--mdj-paper); }
-
-/* The card follows its checkbox even before the page reloads. */
-.mdj-card:has(.mdj-check--select input:checked) {
-    border-color: var(--mdj-deep-green);
-    box-shadow: var(--mdj-light-near);
-}
-
-.mdj-currency {
-    font-family: var(--mdj-font-body);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    color: var(--mdj-stone);
-}
-
-/* Booking code: large, spaced, easy to read aloud over the phone. */
-.mdj-code {
-    font-family: var(--mdj-font-body);
-    font-size: clamp(1.5rem, 6vw, 2rem);
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    font-variant-numeric: tabular-nums;
-    color: var(--mdj-deep-green);
-    user-select: all;
-}
-
-/* Check mark above "Reserva confirmada". */
-.mdj-success {
-    display: grid;
-    place-items: center;
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: var(--mdj-space-2);
-    border-radius: 50%;
-    background: var(--mdj-deep-green);
-    box-shadow: var(--mdj-light-near);
-}
-.mdj-success::before {
-    content: "";
-    width: 0.8rem;
-    height: 1.4rem;
-    margin-top: -0.25rem;
-    border: solid var(--mdj-paper);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-/* Disabled while a form is being sent (see js/mdj.js). */
-.mdj-btn:disabled,
-.mdj-btn[aria-busy="true"] {
-    opacity: 0.7;
-    cursor: progress;
-    transform: none;
-    box-shadow: none;
-}
-
-/* Error alerts get a tinted ground, not only a coloured edge, so they are
-   noticed without reading the colour of a 3px line. */
-.mdj-alert[data-level~="error"] {
-    background: color-mix(in srgb, #8C3A32 8%, var(--mdj-paper));
-    color: #5E2621;
-}
-
-/* Fields the browser already knows are invalid, once the guest touched them. */
-.mdj-field input:user-invalid,
-.mdj-field select:user-invalid,
-.mdj-field textarea:user-invalid {
-    border-color: #8C3A32;
-}
-
-/* --------------------------------------------------------------------------
-   15. Footer retouches
-   -------------------------------------------------------------------------- */
-
-/* Stone on night green failed contrast; secondary footer text uses a
-   translucent paper instead. */
-.mdj-footer__meta { font-size: var(--mdj-size-meta); color: color-mix(in srgb, var(--mdj-paper) 62%, transparent); }
-.mdj-footer__legal {
-    margin-top: var(--mdj-space-4);
-    padding-top: var(--mdj-space-3);
-    border-top: 1px solid color-mix(in srgb, var(--mdj-paper) 14%, transparent);
-}
-
-/* Anchor jumps land below the sticky header instead of under it. */
-[id] { scroll-margin-top: 6rem; }
-html { scroll-behavior: smooth; }

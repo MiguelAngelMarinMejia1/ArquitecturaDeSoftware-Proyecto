@@ -4,16 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#22382F">
+    <meta name="theme-color" content="#132820">
+    <link rel="icon" href="{% static 'web/img/favicon.svg' %}" type="image/svg+xml">
     <title>{% block title %}Hotel MDJ{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Hotel MDJ{% endblock %}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'web/vendor/bootstrap/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}?v=20261110-i18n">
+    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}?v=20261111-brand">
 </head>
 <body>
 
@@ -25,9 +26,15 @@
     <a href="#main-content" data-role="skip-link">{% translate "Saltar al contenido" %}</a>
 
     <div class="mdj-container d-flex align-items-center justify-content-between gap-3 py-3">
-        <a href="{{ home_url }}" class="mdj-wordmark" data-role="brand">Hotel MDJ</a>
+        <a href="{{ home_url }}" class="mdj-wordmark" data-role="brand">
+            {% include "web/includes/logo.html" %}
+            <span class="mdj-wordmark__text">
+                <span class="mdj-wordmark__name">Hotel MDJ</span>
+                <span class="mdj-wordmark__tagline">El Poblado · Medellín</span>
+            </span>
+        </a>
 
-        <nav class="d-none d-lg-block" aria-label="{% translate 'Navegación principal' %}">
+        <nav class="d-none d-xl-block" aria-label="{% translate 'Navegación principal' %}">
             <ul class="list-unstyled d-flex align-items-center gap-4 mb-0">
                 <li><a class="mdj-nav-link" href="{{ home_url }}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>{% translate "Inicio" %}</a></li>
                 <li><a class="mdj-nav-link" href="{{ home_url }}#habitaciones">{% translate "Habitaciones" %}</a></li>
@@ -62,7 +69,7 @@
 
             <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary d-none d-sm-inline-flex" data-role="cta-primary">{% translate "Reservar" %}</a>
 
-            <button class="mdj-menu d-lg-none" type="button" data-bs-toggle="collapse"
+            <button class="mdj-menu d-xl-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#nav-mobile" aria-controls="nav-mobile"
                     aria-expanded="false" aria-label="{% translate 'Abrir menú' %}">
                 <span class="mdj-menu__bars" aria-hidden="true"></span>
@@ -70,7 +77,7 @@
         </div>
     </div>
 
-    <div class="collapse d-lg-none" id="nav-mobile">
+    <div class="collapse d-xl-none" id="nav-mobile">
         <nav class="mdj-container pb-4" aria-label="{% translate 'Navegación principal móvil' %}">
             <ul class="list-unstyled d-grid gap-3 mb-4">
                 <li><a class="mdj-nav-link" href="{{ home_url }}">{% translate "Inicio" %}</a></li>
@@ -105,7 +112,7 @@
     <div class="mdj-container">
         <div class="row g-4 g-lg-5">
             <div class="col-12 col-lg-4">
-                <p class="mdj-footer__wordmark mb-3">Hotel MDJ</p>
+                <p class="mdj-footer__wordmark mb-3">{% include "web/includes/logo.html" %}Hotel MDJ</p>
                 <p>
                     {% blocktranslate trimmed %}
                     Treinta y dos habitaciones en una casa restaurada de El Poblado,
