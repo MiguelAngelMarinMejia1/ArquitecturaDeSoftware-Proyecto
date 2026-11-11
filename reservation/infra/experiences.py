@@ -70,7 +70,10 @@ class ExperiencesClient:
         return Experience(
             id=cls._text(payload, "id"),
             title=cls._text(payload, "titulo"),
-            description=cls._text(payload, "descripcion"),
+            # MeetU2 publishes some experiences without a description.
+            description=(payload.get("descripcion") or "").strip()
+            if isinstance(payload.get("descripcion"), (str, type(None)))
+            else "",
             category=cls._text(payload, "categoria"),
             city=cls._text(payload, "ciudad"),
             location=cls._text(payload, "ubicacion"),

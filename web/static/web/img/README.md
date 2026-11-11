@@ -8,7 +8,7 @@ alguna, se ve la composición dibujada en CSS y no una imagen rota.
 |------------------|-------------------------------------------------------|-----------------|
 | `hero.jpg`       | Portada (pantalla completa) y galería                 | 1920 × 1080     |
 | `hotel.jpg`      | Sección "El hotel" y galería                          | 1600 × 1000     |
-| `habitacion.jpg` | Tarjetas de habitaciones sin foto propia y galería    | 1200 × 900      |
+| `habitacion.jpeg` | Tarjetas de habitaciones sin foto propia y galería    | 1200 × 900      |
 | `ciudad.jpg`     | Sección "Experiencia y ubicación" y galería           | 1600 × 1000     |
 
 - Formato JPG, calidad ~75-80 %, idealmente menos de 400 KB cada una.

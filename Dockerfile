@@ -18,12 +18,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the project (except what .dockerignore excludes).
 COPY . .
 
-# Folder for a local SQLite file (only used when POSTGRES_HOST is not set).
-RUN mkdir -p /app/data
+# Gather CSS, JS and site photos into /app/staticfiles; WhiteNoise serves them.
+# Translations (.mo) are committed in locale/, so no compile step is needed.
+RUN python manage.py collectstatic --noinput \
+    && mkdir -p /app/data /app/media
 
 EXPOSE 8000
 
-# On start: create/update tables, load the sample rooms, run the server.
-# 0.0.0.0 lets Nginx reach Django from another container.
-# runserver is a development server: fine for this workshop, not for production.
-CMD ["sh", "-c", "python manage.py migrate && python manage.py loaddata seed && python manage.py runserver 0.0.0.0:8000"]
+# On start: create/update tables, load the sample rooms, then serve with
+# gunicorn (production WSGI server). 3 workers: Django calls the Flask
+# services synchronously, so one slow call must not block every visitor.
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py loaddata seed && exec gunicorn hotelMDJ.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-3} --timeout 60 --access-logfile - --error-logfile -"]

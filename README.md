@@ -182,6 +182,28 @@ crear un usuario en el host no lo crea automáticamente en PostgreSQL.
 
 Si el puerto 80 está ocupado, cambia `"80:80"` por `"8080:80"` en `docker-compose.yml`.
 
+## Despliegue en AWS Academy (EC2)
+
+Django corre con **gunicorn** y `DEBUG=False`; los estáticos (CSS, JS y fotos
+de `web/static/web/img/`) se agrupan con `collectstatic` al construir la imagen
+y los sirve WhiteNoise. Las fotos subidas (`/media/`) las sirve Nginx.
+
+1. Instancia Ubuntu `t3.small` o mayor. Security Group: 22 (tu IP) y 80 (0.0.0.0/0).
+2. Asocia una **IP elástica** a la instancia.
+3. En la instancia:
+   ```bash
+   sudo apt update && sudo apt install -y docker.io docker-compose-v2 git
+   sudo usermod -aG docker $USER && newgrp docker
+   git clone <url-del-repo> && cd ArquitecturaDeSoftware-Proyecto
+   cp .env.example .env   # pon la IP elástica y secretos reales
+   docker compose up -d --build
+   ```
+4. En `.env`, la IP elástica va en `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`
+   (`http://<IP>`) y `PUBLIC_BASE_URL` (`http://<IP>`).
+
+API pública para el equipo aliado (GET, con CORS habilitado):
+`http://<IP>/api/v1/rooms/?page=1&page_size=12`
+
 ## Puesta en marcha sin Docker
 
 ```bash

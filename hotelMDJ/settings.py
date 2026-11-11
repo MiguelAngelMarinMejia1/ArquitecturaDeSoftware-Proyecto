@@ -36,17 +36,27 @@ SECRET_KEY = os.environ.get(
     'django-insecure-local-development-only-do-not-deploy-with-this-value',
 )
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-# Host names Django will answer to, as a comma-separated list. Left empty for
-# a local checkout (Django then accepts localhost while DEBUG is on); Docker
-# sets it because requests arrive through Nginx and between containers.
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get('ALLOWED_HOSTS', '').split(',')
-    if host.strip()
-]
+def _env_list(name, default=''):
+    return [item.strip() for item in os.environ.get(name, default).split(',') if item.strip()]
+
+
+# Off unless DEBUG=True is set (local .env). Docker and AWS run with it off,
+# so tracebacks and settings are never shown to visitors.
+DEBUG = os.environ.get('DEBUG', 'False').strip().lower() in {'1', 'true', 'yes'}
+
+# Host names Django answers to, comma-separated. On AWS add the Elastic IP
+# (and a domain, if any) through ALLOWED_HOSTS in .env.
+ALLOWED_HOSTS = _env_list('ALLOWED_HOSTS')
+
+# Origins allowed to POST forms (scheme + host), e.g. http://3.90.1.2
+CSRF_TRUSTED_ORIGINS = _env_list('CSRF_TRUSTED_ORIGINS')
+
+# Nginx is the only entry point: trust the scheme and host it forwards.
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 
 # Application definition
@@ -69,6 +79,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Serves the collected static files (CSS, JS, photos) under gunicorn,
+    # where DEBUG is off and Django no longer serves them.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # Picks the active language per request (language cookie set by
     # set_language, then Accept-Language, then LANGUAGE_CODE). It must run
@@ -177,9 +190,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# ``collectstatic`` gathers every app's static files (site photos included)
+# here at image build time; WhiteNoise serves them compressed and cached.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
+WHITENOISE_MAX_AGE = 60 * 60 * 24 * 7
+
+# Uploaded files (room galleries from the admin). In Docker they live in the
+# media_data volume and Nginx serves them directly.
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path(os.environ.get('MEDIA_ROOT', BASE_DIR / 'media'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -269,3 +293,14 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 # Publishing must not hang a booking request if Redis is down.
 CELERY_BROKER_TRANSPORT_OPTIONS = {'max_retries': 1, 'socket_connect_timeout': 2}
+
+
+# --- Logging -----------------------------------------------------------------
+# With DEBUG off Django would only e-mail errors; send them to stdout instead
+# so ``docker compose logs django_web`` shows them on the EC2 instance.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'root': {'handlers': ['console'], 'level': os.environ.get('LOG_LEVEL', 'INFO')},
+}

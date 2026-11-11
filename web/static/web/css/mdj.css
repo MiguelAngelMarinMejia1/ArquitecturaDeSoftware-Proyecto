@@ -484,7 +484,7 @@ h3 {
 }
 .mdj-photo--hero       { background-image: url("../img/hero.jpg"); }
 .mdj-photo--hotel      { background-image: url("../img/hotel.jpg"); }
-.mdj-photo--habitacion { background-image: url("../img/habitacion.jpg"); }
+.mdj-photo--habitacion { background-image: url("../img/habitacion.jpeg"); }
 .mdj-photo--ciudad     { background-image: url("../img/ciudad.jpg"); }
 
 /* Valley at dusk (dark, so white hero text stays legible). */
@@ -573,7 +573,7 @@ h3 {
     display: grid;
     align-items: end;
     min-height: clamp(560px, 88vh, 860px);
-    padding-block: var(--mdj-space-6) calc(var(--mdj-space-6) + 2rem);
+    padding-block: var(--mdj-space-6);
     color: var(--mdj-paper);
     overflow: hidden;
 }
@@ -638,12 +638,11 @@ h3 {
     background: var(--mdj-gold);
 }
 
-/* Availability panel floats over the bottom edge of the hero. */
+/* Availability panel: fully below the hero so the photo stays clear. */
 .mdj-section--tight {
     position: relative;
     z-index: 2;
-    padding-block: 0 var(--mdj-space-5);
-    margin-top: calc(-1 * (var(--mdj-space-6) - 0.5rem));
+    padding-block: var(--mdj-space-4) var(--mdj-space-5);
 }
 .mdj-panel--raised {
     background: var(--mdj-paper);

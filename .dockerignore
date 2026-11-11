@@ -5,6 +5,7 @@
 .gitignore
 .vscode
 .idea
+.kiro
 
 # Python
 __pycache__/
@@ -12,13 +13,20 @@ __pycache__/
 venv/
 .venv/
 
-# Local data and secrets
+# Local data, generated files and secrets
 db.sqlite3
+*.sqlite3
+staticfiles/
+media/
 .env
 
 # Other services (they have their own image or are not needed by Django)
 pricing_service/
+catalog_service/
+payment_service/
+notification_service/
 nginx/
+postgres/
 wiki/
 
 # Docker files
