@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'web/vendor/bootstrap/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}?v=20261111-deploy">
+    <link rel="stylesheet" href="{% static 'web/css/mdj.css' %}?v=20261111-hero2">
 </head>
 <body>
 
@@ -67,7 +67,7 @@
                 </fieldset>
             </form>
 
-            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary d-none d-sm-inline-flex" data-role="cta-primary">{% translate "Reservar" %}</a>
+            <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--secondary mdj-btn--sm d-none d-sm-inline-flex" data-role="header-cta">{% translate "Reservar" %}</a>
 
             <button class="mdj-menu d-xl-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#nav-mobile" aria-controls="nav-mobile"
@@ -173,6 +173,6 @@
 </footer>
 
 <script src="{% static 'web/vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'web/js/mdj.js' %}" defer></script>
+<script src="{% static 'web/js/mdj.js' %}?v=20261111-hero2" defer></script>
 </body>
 </html>

@@ -37,8 +37,8 @@
     --mdj-forest:         #1F3D33;
     --mdj-forest-deep:    #132820;
     --mdj-sage:           #7E9C8D;
-    --mdj-terracotta:     #B4532E;   /* 5.0:1 with white text */
-    --mdj-terracotta-deep:#93401F;
+    --mdj-accent:         #8A6A3B;   /* brass accent, 5.5:1 on cream */
+    --mdj-accent-deep:    #6B5230;
     --mdj-gold:           #D9B877;   /* accents on dark grounds only */
     --mdj-danger:         #9B3328;
     --mdj-success:        #2F6B4F;
@@ -67,10 +67,10 @@
        rows spill past the viewport. */
     --mdj-gutter: 1.25rem;
 
-    --mdj-radius-sm: 10px;
-    --mdj-radius:    16px;
-    --mdj-radius-lg: 24px;
-    --mdj-radius-pill: 999px;
+    --mdj-radius-sm: 6px;
+    --mdj-radius:    12px;
+    --mdj-radius-lg: 14px;
+    --mdj-radius-pill: 6px;    /* buttons and chips: crisp, not pills */
 
     --mdj-shadow-soft: 0 1px 2px rgba(19, 40, 32, 0.05), 0 10px 28px -16px rgba(19, 40, 32, 0.22);
     --mdj-shadow-lift: 0 2px 6px rgba(19, 40, 32, 0.06), 0 30px 60px -30px rgba(19, 40, 32, 0.42);
@@ -86,10 +86,10 @@
     --bs-body-line-height: 1.65;
     --bs-primary: var(--mdj-forest);
     --bs-link-color: var(--mdj-forest);
-    --bs-link-hover-color: var(--mdj-terracotta-deep);
+    --bs-link-hover-color: var(--mdj-accent-deep);
     --bs-border-color: var(--mdj-line);
     --bs-border-radius: var(--mdj-radius-sm);
-    --bs-focus-ring-color: color-mix(in srgb, var(--mdj-terracotta) 45%, transparent);
+    --bs-focus-ring-color: color-mix(in srgb, var(--mdj-accent) 45%, transparent);
 }
 
 @media (min-width: 768px) {
@@ -137,7 +137,7 @@ body, h1, h2, h3, p, dd, dt, li, a { overflow-wrap: break-word; }
 
 img, svg, video, iframe { max-width: 100%; height: auto; }
 
-::selection { background: color-mix(in srgb, var(--mdj-terracotta) 25%, transparent); }
+::selection { background: color-mix(in srgb, var(--mdj-accent) 25%, transparent); }
 
 h1, h2, .mdj-display {
     font-family: var(--mdj-font-display);
@@ -168,7 +168,7 @@ h3 {
     font-weight: 700;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--mdj-terracotta);
+    color: var(--mdj-accent);
     margin-bottom: var(--mdj-space-2);
 }
 .mdj-eyebrow::before {
@@ -230,7 +230,7 @@ h3 {
 }
 
 :focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--mdj-terracotta) 70%, transparent);
+    outline: 3px solid color-mix(in srgb, var(--mdj-accent) 70%, transparent);
     outline-offset: 3px;
     border-radius: 4px;
 }
@@ -285,7 +285,7 @@ h3 {
 }
 
 .mdj-logo { width: 2.1rem; height: auto; flex: none; color: currentColor; }
-.mdj-logo__sun { fill: var(--mdj-terracotta); }
+.mdj-logo__sun { fill: var(--mdj-accent); }
 
 .mdj-nav-link {
     position: relative;
@@ -307,7 +307,7 @@ h3 {
     bottom: 0;
     height: 2px;
     border-radius: 2px;
-    background: var(--mdj-terracotta);
+    background: var(--mdj-accent);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 260ms var(--mdj-ease);
@@ -417,30 +417,49 @@ h3 {
                 background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 
+/* Primary: forest green, the one colour that means "act". */
 .mdj-btn--primary {
-    background: var(--mdj-terracotta);
+    background: var(--mdj-forest);
+    border-color: var(--mdj-forest);
     color: #FFFFFF;
-    box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--mdj-terracotta) 90%, transparent);
+    box-shadow: 0 1px 2px rgba(19, 40, 32, 0.12);
 }
 .mdj-btn--primary:hover {
-    background: var(--mdj-terracotta-deep);
+    background: var(--mdj-forest-deep);
+    border-color: var(--mdj-forest-deep);
     color: #FFFFFF;
 }
 
+/* Secondary: outlined in solid ink. */
 .mdj-btn--secondary {
     background: transparent;
-    color: var(--mdj-forest-deep);
-    border-color: var(--mdj-line-strong);
+    color: var(--mdj-ink);
+    border-color: var(--mdj-ink);
 }
 .mdj-btn--secondary:hover {
-    border-color: var(--mdj-forest);
-    background: var(--mdj-forest);
+    background: var(--mdj-ink);
+    border-color: var(--mdj-ink);
     color: var(--mdj-paper);
+}
+
+.mdj-btn--sm {
+    min-height: 40px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.875rem;
 }
 
 @media (min-width: 576px) {
     .mdj-btn { display: inline-flex; width: auto; }
-    .mdj-btn--primary:hover { transform: translateY(-2px); }
+}
+
+/* Header CTA steps aside while the hero's own button is on screen
+   (js/mdj.js toggles the class), so the page never shows two "Book". */
+[data-role="header-cta"] {
+    transition: opacity 220ms ease, visibility 220ms ease, background-color 200ms ease, color 200ms ease;
+}
+[data-role="header-cta"].is-hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .mdj-btn:disabled,
@@ -456,13 +475,13 @@ h3 {
     color: var(--mdj-forest);
     font-weight: 600;
     text-decoration: none;
-    background-image: linear-gradient(var(--mdj-terracotta), var(--mdj-terracotta));
+    background-image: linear-gradient(var(--mdj-accent), var(--mdj-accent));
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 100% 1.5px;
     transition: background-size 240ms ease, color 200ms ease;
 }
-.mdj-link:hover { background-size: 100% 3px; color: var(--mdj-terracotta-deep); }
+.mdj-link:hover { background-size: 100% 3px; color: var(--mdj-accent-deep); }
 
 /* --------------------------------------------------------------------------
    5. Photo slots and drawn compositions
@@ -511,7 +530,7 @@ h3 {
     --mdj-wall: var(--mdj-sand);
     background:
         radial-gradient(circle at 78% 30%, color-mix(in srgb, var(--mdj-sage) 55%, transparent) 0 10%, transparent 10.4%),
-        linear-gradient(to top, color-mix(in srgb, var(--mdj-sand-deep) 80%, var(--mdj-terracotta)) 0 16%, transparent 16%),
+        linear-gradient(to top, color-mix(in srgb, var(--mdj-sand-deep) 80%, var(--mdj-accent)) 0 16%, transparent 16%),
         linear-gradient(115deg, transparent 0 44%, rgba(255, 255, 255, 0.5) 44% 60%, transparent 60%),
         var(--mdj-wall);
 }
@@ -522,7 +541,7 @@ h3 {
 /* Location: contour lines of the valley and the hotel pin. */
 .mdj-art--valley {
     background:
-        radial-gradient(circle at 58% 52%, var(--mdj-terracotta) 0 2.2%, var(--mdj-paper) 2.3% 3.4%, transparent 3.5%),
+        radial-gradient(circle at 58% 52%, var(--mdj-accent) 0 2.2%, var(--mdj-paper) 2.3% 3.4%, transparent 3.5%),
         repeating-radial-gradient(ellipse at 58% 52%, transparent 0 22px,
             color-mix(in srgb, var(--mdj-forest) 22%, transparent) 22px 23px),
         linear-gradient(135deg, var(--mdj-sand) 0%, color-mix(in srgb, var(--mdj-sage) 30%, var(--mdj-paper)) 100%);
@@ -582,16 +601,15 @@ h3 {
     inset: 0;
     z-index: -1;
 }
-/* Shade over photo and drawing so text always meets contrast. */
+/* Shade over the photo: dark at the top (menu side) and bottom (text side),
+   lighter in the middle so the city lights still read. */
 .mdj-hero__media::after {
     content: "";
     position: absolute;
     inset: 0;
-    background:
-        linear-gradient(90deg, rgba(19, 40, 32, 0.9) 0%, rgba(19, 40, 32, 0.62) 48%, rgba(19, 40, 32, 0.18) 100%),
-        linear-gradient(0deg, rgba(19, 40, 32, 0.55) 0%, transparent 45%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
 }
-.mdj-hero__content { position: relative; max-width: 42rem; }
+.mdj-hero__content { position: relative; max-width: 40rem; }
 .mdj-hero .mdj-eyebrow { color: var(--mdj-gold); }
 .mdj-hero__title {
     color: #FFFFFF;
@@ -602,52 +620,103 @@ h3 {
     font-weight: 500;
     color: var(--mdj-gold);
 }
-.mdj-hero .mdj-lead { color: rgba(255, 255, 255, 0.86); }
-.mdj-hero .mdj-btn--secondary {
-    color: #FFFFFF;
-    border-color: rgba(255, 255, 255, 0.55);
+.mdj-hero__lead {
+    max-width: 36rem;
+    line-height: 1.75;
+    margin-bottom: var(--mdj-space-3);
+    color: rgba(255, 255, 255, 0.9);
 }
-.mdj-hero .mdj-btn--secondary:hover {
+/* Soft halo so text stays legible over the brightest city lights. */
+.mdj-hero__lead,
+.mdj-highlights { text-shadow: 0 1px 14px rgba(0, 0, 0, 0.55); }
+
+/* Perks: a quiet line of text with micro-icons; no pills, no glass. */
+.mdj-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    margin: 0 0 var(--mdj-space-4);
+    font-size: var(--mdj-size-meta);
+    color: rgba(255, 255, 255, 0.82);
+}
+.mdj-highlights__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.mdj-highlights__item::before {
+    content: "";
+    flex: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    background: var(--mdj-gold);
+    -webkit-mask: var(--mdj-icon) center / contain no-repeat;
+    mask: var(--mdj-icon) center / contain no-repeat;
+}
+.mdj-highlights__item--rooms {
+    --mdj-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 19v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 16h18M6 11V7.5A1.5 1.5 0 0 1 7.5 6h3A1.5 1.5 0 0 1 12 7.5V11'/%3E%3C/svg%3E");
+}
+.mdj-highlights__item--breakfast {
+    --mdj-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10h12v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 11.5h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v3M12 3.5v3'/%3E%3C/svg%3E");
+}
+.mdj-highlights__item--cancel {
+    --mdj-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15' rx='2'/%3E%3Cpath d='M3.5 9.5h17M8 3v4M16 3v4M9 14.5l2 2 4-4'/%3E%3C/svg%3E");
+}
+
+/* Hero actions: one filled button, one text link. On the photo the primary
+   is cream so it stands out without a loud colour. */
+.mdj-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--mdj-space-2) var(--mdj-space-4);
+}
+.mdj-hero .mdj-btn--primary {
+    background: #FBF9F5;
+    border-color: #FBF9F5;
+    color: var(--mdj-forest-deep);
+}
+.mdj-hero .mdj-btn--primary:hover {
     background: #FFFFFF;
     border-color: #FFFFFF;
     color: var(--mdj-forest-deep);
 }
+.mdj-hero__link {
+    color: #FFFFFF;
+    font-weight: 600;
+    text-decoration: none;
+    padding-block: 0.4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+    transition: border-color 200ms ease;
+}
+.mdj-hero__link:hover { color: #FFFFFF; border-bottom-color: #FFFFFF; }
+.mdj-hero__link span { display: inline-block; transition: transform 200ms ease; }
+.mdj-hero__link:hover span { transform: translateX(3px); }
 
-.mdj-highlights {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    font-size: var(--mdj-size-meta);
-}
-.mdj-highlights li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: var(--mdj-radius-pill);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(4px);
-}
-.mdj-highlights li::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--mdj-gold);
-}
-
-/* Availability panel: fully below the hero so the photo stays clear. */
+/* Booking engine: an independent solid module right under the photo. */
 .mdj-section--tight {
     position: relative;
     z-index: 2;
     padding-block: var(--mdj-space-4) var(--mdj-space-5);
 }
 .mdj-panel--raised {
-    background: var(--mdj-paper);
+    background: #FBF9F5;
     border: 1px solid var(--mdj-line);
-    box-shadow: var(--mdj-shadow-lift);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(19, 40, 32, 0.04), 0 16px 40px -28px rgba(19, 40, 32, 0.35);
+}
+.mdj-panel--raised h2 {
+    font-family: var(--mdj-font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--mdj-ink);
+}
+.mdj-panel--raised .mdj-field > label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #6B7280;
 }
 
 /* --------------------------------------------------------------------------
@@ -816,8 +885,8 @@ h3 {
     align-self: flex-start;
     padding: 0.3rem 0.75rem;
     border-radius: var(--mdj-radius-pill);
-    background: color-mix(in srgb, var(--mdj-terracotta) 12%, var(--mdj-paper));
-    color: var(--mdj-terracotta-deep);
+    background: color-mix(in srgb, var(--mdj-accent) 12%, var(--mdj-paper));
+    color: var(--mdj-accent-deep);
     font-size: var(--mdj-size-small);
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -868,7 +937,7 @@ h3 {
     border-radius: 50%;
     background:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23FFFFFF' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 70% no-repeat,
-        var(--mdj-terracotta);
+        var(--mdj-accent);
 }
 
 .mdj-distances { display: grid; margin-top: var(--mdj-space-3); }
@@ -948,15 +1017,16 @@ h3 {
     overflow: hidden;
     background:
         radial-gradient(60% 120% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 60%),
-        linear-gradient(135deg, var(--mdj-terracotta) 0%, var(--mdj-terracotta-deep) 100%);
+        linear-gradient(135deg, var(--mdj-forest) 0%, var(--mdj-forest-deep) 100%);
     color: rgba(255, 255, 255, 0.9);
 }
 .mdj-closing h2 { color: #FFFFFF; }
 .mdj-closing .mdj-lead { color: rgba(255, 255, 255, 0.88); }
 .mdj-closing .mdj-btn--primary {
-    background: var(--mdj-paper);
-    color: var(--mdj-terracotta-deep);
-    box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.45);
+    background: #FBF9F5;
+    border-color: #FBF9F5;
+    color: var(--mdj-forest-deep);
+    box-shadow: none;
 }
 .mdj-closing .mdj-btn--primary:hover { background: #FFFFFF; color: var(--mdj-forest-deep); }
 body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
@@ -1010,8 +1080,8 @@ body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
 }
 .mdj-steps li[aria-current="step"] { color: var(--mdj-forest-deep); }
 .mdj-steps li[aria-current="step"]::before {
-    background: var(--mdj-terracotta);
-    border-color: var(--mdj-terracotta);
+    background: var(--mdj-accent);
+    border-color: var(--mdj-accent);
     color: #FFFFFF;
 }
 .mdj-steps li[data-state="complete"] { color: var(--mdj-forest); }
@@ -1129,7 +1199,7 @@ body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
     font-weight: 700;
     letter-spacing: 0.14em;
     font-variant-numeric: tabular-nums;
-    color: var(--mdj-terracotta-deep);
+    color: var(--mdj-accent-deep);
     user-select: all;
 }
 
@@ -1202,7 +1272,7 @@ body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
     text-decoration: none;
     transition: transform var(--mdj-transition), box-shadow var(--mdj-transition), border-color 200ms ease;
 }
-.mdj-exp-card:hover { color: var(--mdj-ink); border-color: var(--mdj-terracotta); }
+.mdj-exp-card:hover { color: var(--mdj-ink); border-color: var(--mdj-accent); }
 .mdj-exp-card h2 {
     font-size: clamp(1.6rem, 3vw, 2rem);
     margin: 0;
@@ -1221,7 +1291,7 @@ body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
 .mdj-exp-card__cta {
     font-size: var(--mdj-size-meta);
     font-weight: 700;
-    color: var(--mdj-terracotta-deep);
+    color: var(--mdj-accent-deep);
 }
 @media (min-width: 992px) {
     .mdj-exp-card:hover { transform: translateY(-4px); box-shadow: var(--mdj-shadow-lift); }
@@ -1292,7 +1362,7 @@ body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
     min-width: 2.5rem;
     height: 2.5rem;
     border-radius: var(--mdj-radius-pill);
-    background: var(--mdj-terracotta);
+    background: var(--mdj-accent);
     color: #FFFFFF;
     font-size: var(--mdj-size-small);
     font-weight: 700;
@@ -1332,7 +1402,7 @@ body:has(main > .mdj-closing:last-child) .mdj-footer { margin-top: 0; }
     color: color-mix(in srgb, var(--mdj-cream) 80%, transparent);
     padding-block: var(--mdj-space-5) var(--mdj-space-3);
     margin-top: var(--mdj-space-5);
-    border-top: 4px solid var(--mdj-terracotta);
+    border-top: 4px solid var(--mdj-accent);
 }
 .mdj-footer h2 {
     font-family: var(--mdj-font-body);

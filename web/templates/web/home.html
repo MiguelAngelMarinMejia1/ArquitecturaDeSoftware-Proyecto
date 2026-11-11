@@ -23,21 +23,23 @@ stock photos that would misdescribe the property.
             <div class="mdj-hero__content">
                 <span class="mdj-eyebrow">Hotel MDJ · Medellín, Colombia</span>
                 <h1 class="mdj-hero__title" id="hero-title">{% blocktranslate trimmed %}Tu casa en la <em>eterna primavera</em>{% endblocktranslate %}</h1>
-                <p class="mdj-lead mb-4">
+                <p class="mdj-lead mdj-hero__lead">
                     {% blocktranslate trimmed %}
                     Treinta y dos habitaciones en una casa restaurada de El Poblado,
                     con el valle de Aburrá por ventana y la ciudad a diez minutos a pie.
                     {% endblocktranslate %}
                 </p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary" data-role="cta-primary">{% translate "Reservar ahora" %}</a>
-                    <a href="#about" class="mdj-btn mdj-btn--secondary" data-role="cta-secondary">{% translate "Conocer el hotel" %}</a>
-                </div>
-                <ul class="mdj-highlights list-unstyled mt-5 mb-0">
-                    <li>{% blocktranslate trimmed %}<span class="mdj-numeric">32</span> habitaciones{% endblocktranslate %}</li>
-                    <li>{% translate "Desayuno incluido" %}</li>
-                    <li>{% translate "Cancelación gratis hasta 48 h antes" %}</li>
+                {% comment %} Perks: plain inline text with micro-icons, not buttons. {% endcomment %}
+                <ul class="mdj-highlights list-unstyled">
+                    <li class="mdj-highlights__item mdj-highlights__item--rooms">{% blocktranslate trimmed %}<span class="mdj-numeric">32</span> habitaciones{% endblocktranslate %}</li>
+                    <li class="mdj-highlights__item mdj-highlights__item--breakfast">{% translate "Desayuno incluido" %}</li>
+                    <li class="mdj-highlights__item mdj-highlights__item--cancel">{% translate "Cancelación gratis hasta 48 h antes" %}</li>
                 </ul>
+                {% comment %} One dominant action; the second is a quiet text link. {% endcomment %}
+                <div class="mdj-hero__actions">
+                    <a href="{% url 'web:reservations' %}" class="mdj-btn mdj-btn--primary" data-role="hero-cta">{% translate "Reservar ahora" %}</a>
+                    <a href="#about" class="mdj-hero__link" data-role="cta-secondary">{% translate "Conocer el hotel" %} <span aria-hidden="true">→</span></a>
+                </div>
             </div>
     </div>
 </section>

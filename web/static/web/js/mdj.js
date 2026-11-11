@@ -31,6 +31,17 @@
         if (checkIn.value) checkOut.min = nextDay(checkIn.value);
     });
 
+    /* Only one "Book" on screen: the header button fades out while the
+       hero's own call to action is visible. Without IntersectionObserver
+       (or on pages with no hero) the header button simply stays. */
+    var heroCta = document.querySelector('[data-role="hero-cta"]');
+    var headerCta = document.querySelector('[data-role="header-cta"]');
+    if (heroCta && headerCta && "IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+            headerCta.classList.toggle("is-hidden", entries[0].isIntersecting);
+        }, { rootMargin: "-80px 0px 0px 0px" }).observe(heroCta);
+    }
+
     /* Avoid double bookings from a double click: once a POST form is sent,
        its submit button is disabled and says what is happening. */
     document.querySelectorAll('form[method="post"]').forEach(function (form) {
